@@ -50,4 +50,7 @@ export const common = StyleSheet.create({
   text_gray: {
     color: color.gray,
   },
+  text_white: {
+    color: '#ffffff',
+  },
 });

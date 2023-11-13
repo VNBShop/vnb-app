@@ -91,7 +91,9 @@ export default function KeyboardShift({
   return (
     <KeyboardAvoidingView
       keyboardVerticalOffset={keyboardVerticalOffset}
-      style={[styles.container, style]}>
+      style={[styles.container, style]}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      enabled>
       {children}
     </KeyboardAvoidingView>
   );

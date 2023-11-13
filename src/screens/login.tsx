@@ -5,6 +5,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 
@@ -71,51 +72,75 @@ export default function LoginScreen() {
   }, [isInputFocus]);
   return (
     <SafeArea color="#ffffff">
-      <KeyboardShift style={[box.container, spec.space_horizontal]}>
-        <View style={flex.center}>
-          <TouchableOpacity style={common.position_left}>
-            <Text style={[common.text_base, common.text_gray]}>Cancel</Text>
-          </TouchableOpacity>
-          <Image style={common.logo_center} source={icon} />
-        </View>
+      <KeyboardShift
+        style={[
+          box.container,
+          spec.space_horizontal,
+          {display: 'flex', justifyContent: 'space-between'},
+        ]}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <>
+            <View>
+              <View style={flex.center}>
+                <TouchableOpacity style={common.position_left}>
+                  <Text style={[common.text_base, common.text_gray]}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                <Image style={common.logo_center} source={icon} />
+              </View>
 
-        <Text style={styles.tip}>
-          To get started, first enter your username, password
-        </Text>
+              <Text style={styles.tip}>
+                To get started, first enter your username, password
+              </Text>
 
-        <View style={styles.form}>
-          <TextInput
-            ref={emailRef}
-            onFocus={() => setIsInputFocus('email')}
-            onBlur={() => setIsInputFocus(null)}
-            // onChangeText={setEmail}
-            placeholder="Username"
-            autoCapitalize="none"
-            style={styles.input}
-          />
+              <View style={styles.form}>
+                <TextInput
+                  ref={emailRef}
+                  onFocus={() => setIsInputFocus('email')}
+                  onBlur={() => setIsInputFocus(null)}
+                  // onChangeText={setEmail}
+                  placeholder="Username"
+                  autoCapitalize="none"
+                  style={styles.input}
+                />
 
-          <View>
-            <TextInput
-              ref={passwordRef}
-              secureTextEntry={!showPassword}
-              onChangeText={setPassword}
-              onFocus={() => setIsInputFocus('password')}
-              onBlur={() => setIsInputFocus(null)}
-              autoCapitalize="none"
-              style={styles.input}
-              placeholder="Password"
-            />
-            {password && password.length > 0 && (
-              <TouchableOpacity onPress={() => setShowPassword(prev => !prev)}>
-                {/* {showPassword ? (
-                        <Icon name="eye" size={24} color="black" />
-                      ) : (
-                        <Icon name="eye-off" size={24} color="black" />
-                      )} */}
+                <View>
+                  <TextInput
+                    ref={passwordRef}
+                    secureTextEntry={!showPassword}
+                    onChangeText={setPassword}
+                    onFocus={() => setIsInputFocus('password')}
+                    onBlur={() => setIsInputFocus(null)}
+                    autoCapitalize="none"
+                    style={styles.input}
+                    placeholder="Password"
+                  />
+                  {password && password.length > 0 && (
+                    <TouchableOpacity
+                      onPress={() => setShowPassword(prev => !prev)}>
+                      {/* {showPassword ? (
+                              <Icon name="eye" size={24} color="black" />
+                            ) : (
+                              <Icon name="eye-off" size={24} color="black" />
+                            )} */}
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </View>
+            </View>
+
+            <View style={[styles.footer]}>
+              <TouchableOpacity style={styles.button}>
+                <Text style={[common.text_base, common.text_white]}>Login</Text>
               </TouchableOpacity>
-            )}
-          </View>
-        </View>
+
+              <TouchableOpacity>
+                <Text style={common.text_base}>Forgot password?</Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        </TouchableWithoutFeedback>
       </KeyboardShift>
     </SafeArea>
   );
@@ -123,12 +148,12 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   tip: {
-    fontSize: 20,
+    fontSize: 28,
     fontWeight: '600',
-    marginTop: 24,
+    marginTop: 32,
   },
   form: {
-    marginVertical: 32,
+    marginVertical: 40,
     flexDirection: 'column',
     gap: 32,
   },
@@ -136,5 +161,23 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderBottomWidth: 1,
     borderBottomColor: color.divider,
+  },
+  footer: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 24,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 24,
+    marginBottom: 16,
+  },
+  button: {
+    borderRadius: 9999,
+    backgroundColor: color.primary,
+    alignItems: 'center',
+    padding: 16,
+    width: '100%',
   },
 });
