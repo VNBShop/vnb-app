@@ -15,7 +15,7 @@ import {color} from '../UIkit/palette';
 import {common, flex, spec} from '../UIkit/styles';
 import {icon} from '../assets';
 
-export default function LoginScreen() {
+export default function ChangePasswordScreen() {
   // const [email, setEmail] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
@@ -49,9 +49,7 @@ export default function LoginScreen() {
               <Image style={common.logo_center} source={icon} />
             </View>
 
-            <Text style={styles.tip}>
-              To get started, first enter your username, password
-            </Text>
+            <Text style={styles.tip}>Change password</Text>
 
             <View style={styles.form}>
               <TextInput
@@ -59,7 +57,7 @@ export default function LoginScreen() {
                 onFocus={() => setIsInputFocus('email')}
                 onBlur={() => setIsInputFocus(null)}
                 // onChangeText={setEmail}
-                placeholder="Username"
+                placeholder="New password"
                 autoCapitalize="none"
                 style={styles.input}
               />
@@ -73,7 +71,7 @@ export default function LoginScreen() {
                   onBlur={() => setIsInputFocus(null)}
                   autoCapitalize="none"
                   style={styles.input}
-                  placeholder="Password"
+                  placeholder="Confirm new password"
                 />
                 {password && password.length > 0 && (
                   <TouchableOpacity
@@ -91,11 +89,7 @@ export default function LoginScreen() {
 
           <View style={[styles.footer]}>
             <TouchableOpacity style={styles.button}>
-              <Text style={[common.text_base, common.text_white]}>Login</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity>
-              <Text style={common.text_base}>Forgot password?</Text>
+              <Text style={[common.text_base, common.text_white]}>Confirm</Text>
             </TouchableOpacity>
           </View>
         </View>

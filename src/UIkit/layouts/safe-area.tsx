@@ -16,7 +16,11 @@ export type SafeAreaProps = {
   color?: string;
 };
 
-export default function SafeArea({children, style, color}: SafeAreaProps) {
+export default function SafeArea({
+  children,
+  style,
+  color = '#ffffff',
+}: SafeAreaProps) {
   const insets = useSafeAreaInsets();
   return (
     <SafeAreaView style={[styles.container, style, {backgroundColor: color}]}>

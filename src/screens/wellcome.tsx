@@ -1,26 +1,20 @@
-import * as React from 'react';
-import {
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {icon, wellcome} from '../assets';
-import {box, common, spec} from '../UIkit/styles';
-import {color} from '../UIkit/palette';
-import * as Animatable from 'react-native-animatable';
 import {useNavigation} from '@react-navigation/native';
-import {RootStackProps} from '../types/stack';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import * as React from 'react';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import SafeArea from '../UIkit/layouts/safe-area';
+import {color} from '../UIkit/palette';
+import {common, spec} from '../UIkit/styles';
+import {icon, wellcome} from '../assets';
+import {RootStackProps} from '../types/stack';
 
 export default function WellcomeScreen() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackProps, 'Login'>>();
 
   return (
-    <SafeAreaView style={[box.container]}>
+    <SafeArea>
       <View style={[spec.space_horizontal]}>
         <Image source={icon} style={common.logo} />
       </View>
@@ -54,7 +48,7 @@ export default function WellcomeScreen() {
           </View>
         </View>
       </View>
-    </SafeAreaView>
+    </SafeArea>
   );
 }
 

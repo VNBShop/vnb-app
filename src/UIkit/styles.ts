@@ -1,9 +1,21 @@
-import {StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
 import {color} from './palette';
+
+export const {width: WIDTH_DEVICE, height: HEIGHT_DEVICE} =
+  Dimensions.get('window');
 
 export const spec = StyleSheet.create({
   space_horizontal: {
     paddingHorizontal: 16,
+  },
+  mt_xl: {
+    marginTop: 24,
+  },
+  mt_2xl: {
+    marginTop: 32,
+  },
+  mt_3xl: {
+    marginTop: 64,
   },
 });
 
@@ -35,6 +47,9 @@ export const common = StyleSheet.create({
     objectFit: 'contain',
     paddingLeft: 16,
   },
+  flex_full: {
+    flex: 1,
+  },
   logo_center: {
     width: 40,
     height: 40,
@@ -52,5 +67,11 @@ export const common = StyleSheet.create({
   },
   text_white: {
     color: '#ffffff',
+  },
+  des_lineheight: {
+    lineHeight: 24,
+  },
+  text_link: {
+    color: color.link,
   },
 });

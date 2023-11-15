@@ -10,6 +10,7 @@ import {
   StyleProp,
   StyleSheet,
   TextInput,
+  TouchableWithoutFeedback,
   ViewStyle,
 } from 'react-native';
 import Animated, {
@@ -94,7 +95,9 @@ export default function KeyboardShift({
       style={[styles.container, style]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       enabled>
-      {children}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        {children}
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 }
