@@ -47,6 +47,13 @@ export const common = StyleSheet.create({
     objectFit: 'contain',
     paddingLeft: 16,
   },
+  inset: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+  },
   flex_full: {
     flex: 1,
   },
