@@ -1,12 +1,14 @@
 import {
   accessorie,
   backpack,
+  badminton,
   bag,
   pant,
   racket,
   shirt,
   shoe,
   skirt,
+  tenis,
 } from '../assets';
 
 export const navList = [
@@ -49,5 +51,68 @@ export const navList = [
     id: 8,
     label: 'Other',
     icon: accessorie,
+  },
+];
+
+export const fakeData = [
+  {
+    id: 1,
+    image: tenis,
+    name: 'Babolat Pure Drive Team 2021',
+    price: 3200000,
+  },
+  {
+    id: 2,
+    image: badminton,
+    name: 'Yonex Nanoflare X7',
+    price: 2800000,
+  },
+  {
+    id: 3,
+    image: badminton,
+    name: 'Yonex Nanoflare X7',
+    price: 2800000,
+  },
+  {
+    id: 4,
+    image: tenis,
+    name: 'Babolat Pure Drive Team 2021',
+    price: 3200000,
+  },
+  {
+    id: 5,
+    image: badminton,
+    name: 'Yonex Nanoflare X7',
+    price: 2800000,
+  },
+  {
+    id: 6,
+    image: tenis,
+    name: 'Babolat Pure Drive Team 2021',
+    price: 3200000,
+  },
+  {
+    id: 7,
+    image: badminton,
+    name: 'Yonex Nanoflare X7',
+    price: 2800000,
+  },
+  {
+    id: 8,
+    image: tenis,
+    name: 'Babolat Pure Drive Team 2021',
+    price: 3200000,
+  },
+  {
+    id: 9,
+    image: badminton,
+    name: 'Yonex Nanoflare X7',
+    price: 2800000,
+  },
+  {
+    id: 10,
+    image: badminton,
+    name: 'Yonex Nanoflare X7',
+    price: 2800000,
   },
 ];

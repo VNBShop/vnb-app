@@ -8,6 +8,7 @@ export const spec = StyleSheet.create({
   space_horizontal: {
     paddingHorizontal: 16,
   },
+
   mt_xl: {
     marginTop: 24,
   },
@@ -80,5 +81,8 @@ export const common = StyleSheet.create({
   },
   text_link: {
     color: color.link,
+  },
+  text_secondary: {
+    color: color.secondary,
   },
 });
