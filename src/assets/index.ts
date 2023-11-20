@@ -21,3 +21,5 @@ export {default as cart} from './cart.png';
 export {default as cart_gray} from './cart_gray.png';
 export {default as order} from './order.png';
 export {default as back} from './back.png';
+export {default as filter} from './filter.png';
+export {default as new} from './new.png';
