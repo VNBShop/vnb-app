@@ -27,7 +27,7 @@ export default function SignupOptionScreen() {
             <Text style={styles.button_text}>Continue with google</Text>
           </TouchableOpacity>
 
-          <OrHr />
+          <OrHr isText />
 
           <TouchableOpacity style={[styles.button, styles.button_primary]}>
             <Text style={[common.text_white, styles.button_text]}>

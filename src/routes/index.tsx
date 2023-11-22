@@ -1,7 +1,7 @@
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {NavigationContainer} from '@react-navigation/native';
 import * as React from 'react';
-import ProductScreen from '../screens/products';
+import CheckoutScreen from '../screens/checkout';
 import ForumStackNavigation from './forum-stack';
 
 const Drawer = createDrawerNavigator();
@@ -12,7 +12,7 @@ export default function Navigation() {
         screenOptions={{
           headerShown: false,
         }}>
-        <Drawer.Screen name="Root" component={ProductScreen} />
+        <Drawer.Screen name="Root" component={CheckoutScreen} />
         <Drawer.Screen name="ForumDrawer" component={ForumStackNavigation} />
       </Drawer.Navigator>
     </NavigationContainer>

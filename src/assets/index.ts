@@ -23,3 +23,7 @@ export {default as order} from './order.png';
 export {default as back} from './back.png';
 export {default as filter} from './filter.png';
 export {default as new} from './new.png';
+export {default as share} from './share.png';
+export {default as cartPlus} from './cart-plus.png';
+export {default as location} from './location.png';
+export {default as forwardGray} from './forward_gray.png';

@@ -18,6 +18,9 @@ export const spec = StyleSheet.create({
   mt_3xl: {
     marginTop: 64,
   },
+  marginVerticalBase: {
+    marginVertical: 16,
+  },
 });
 
 export const flex = StyleSheet.create({
@@ -65,7 +68,7 @@ export const common = StyleSheet.create({
   },
   position_left: {
     position: 'absolute',
-    left: 0,
+    left: 16,
   },
   text_base: {
     fontSize: 16,
@@ -84,5 +87,9 @@ export const common = StyleSheet.create({
   },
   text_secondary: {
     color: color.secondary,
+  },
+  headerTitle: {
+    fontWeight: '500',
+    fontSize: 18,
   },
 });

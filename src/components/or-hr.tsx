@@ -3,12 +3,18 @@ import {StyleSheet, Text, View} from 'react-native';
 import {color} from '../UIkit/palette';
 import {common} from '../UIkit/styles';
 
-export default function OrHr() {
+export default function OrHr({
+  isText = false,
+  marginVertical,
+}: {
+  isText?: boolean;
+  marginVertical?: number;
+}) {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {marginVertical: marginVertical}]}>
       <View style={styles.hr} />
-      <Text style={common.text_gray}>or</Text>
-      <View style={styles.hr} />
+      {isText && <Text style={common.text_gray}>or</Text>}
+      {isText && <View style={styles.hr} />}
     </View>
   );
 }

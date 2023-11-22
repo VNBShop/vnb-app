@@ -4,6 +4,7 @@ export const color = {
   secondaryPastel: '#ffe2e8',
   gray: '#606770',
   divider: 'rgba(0, 0, 0, 0.1)',
-  border_input: '#E8E9EB',
+  superDivider: 'rgba(0, 0, 0, 0.05)',
+  border_input: '#dcdee1',
   link: '#4567FF',
 };
