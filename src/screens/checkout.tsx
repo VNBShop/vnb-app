@@ -9,14 +9,17 @@ import {
   View,
 } from 'react-native';
 import SafeArea from '../UIkit/layouts/safe-area';
-import {common} from '../UIkit/styles';
-import {back, forwardGray, location} from '../assets';
 import {color} from '../UIkit/palette';
-import {fakeData} from '../utils/contants';
-import OrHr from '../components/or-hr';
+import {WIDTH_DEVICE, common, flex} from '../UIkit/styles';
+import {back, forwardGray, location, voucher} from '../assets';
 import HrVertical from '../components/hrVertical';
+import OrHr from '../components/or-hr';
+import RadioCard from '../components/radio-card';
+import {fakeData, paymentMethod} from '../utils/contants';
 
 export default function CheckoutScreen() {
+  const [paymentM, setPaymentM] = React.useState(0);
+
   return (
     <SafeArea>
       <View style={styles.header}>
@@ -28,7 +31,7 @@ export default function CheckoutScreen() {
       </View>
 
       <View style={styles.container}>
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.locationContainer}>
             <View>
               <View style={styles.locationContainerLeft}>
@@ -93,23 +96,97 @@ export default function CheckoutScreen() {
 
           <View style={styles.paymentMethod}>
             <Text style={styles.title}>Payment method</Text>
+
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.methodContainer}>
+              {paymentMethod.map(payment => (
+                <TouchableOpacity
+                  onPress={() => setPaymentM(payment.id)}
+                  key={payment.id}
+                  style={[
+                    styles.methodItem,
+                    {
+                      borderColor:
+                        paymentM === payment.id ? color.link : color.gray,
+                    },
+                  ]}>
+                  <RadioCard
+                    isAcive={paymentM === payment.id ? true : false}
+                    label={payment.label}
+                    labelLogo={payment.logo}
+                  />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+
+          <View>
+            <Text style={styles.title}>Summary</Text>
+            <View style={styles.sumaryContainer}>
+              <View style={flex.between}>
+                <Text style={common.text_gray}>Temp</Text>
+                <Text style={common.text_gray}>
+                  {Number(30000000).toLocaleString()}
+                </Text>
+              </View>
+
+              <View style={flex.between}>
+                <Text style={common.text_gray}>Shipping</Text>
+                <Text style={common.text_gray}>
+                  {Number(23000).toLocaleString()}
+                </Text>
+              </View>
+
+              <View style={flex.between}>
+                <Text style={common.text_gray}>Discount</Text>
+                <Text style={common.text_success}>
+                  -{Number(423000).toLocaleString()}
+                </Text>
+              </View>
+
+              <OrHr />
+
+              <View style={flex.between}>
+                <Text style={styles.title}>Total</Text>
+                <Text style={styles.title}>
+                  {Number(29600000).toLocaleString()}
+                </Text>
+              </View>
+            </View>
           </View>
         </ScrollView>
       </View>
 
       <View style={styles.footer}>
-        <View>
-          <Text style={common.text_gray}>Total</Text>
-          <Text style={styles.total}>
-            {fakeData
-              .reduce((acc, curr) => acc + curr.price, 0)
-              .toLocaleString()}
-          </Text>
+        <View style={styles.footerAction}>
+          <View style={styles.footerActionInline}>
+            <Image source={voucher} style={styles.locationImg} />
+            <Text style={common.text_gray}>Voucher</Text>
+          </View>
+
+          <View style={styles.footerActionInline}>
+            <Text style={common.text_gray}>Fill or choose voucher</Text>
+            <Image source={forwardGray} style={styles.locationImg} />
+          </View>
         </View>
 
-        <TouchableOpacity style={styles.checkoutBtn}>
-          <Text style={styles.checkoutText}>Order</Text>
-        </TouchableOpacity>
+        <OrHr />
+
+        <View style={styles.footerAction}>
+          <View>
+            <Text style={common.text_gray}>Total</Text>
+            <Text style={styles.total}>
+              {fakeData
+                .reduce((acc, curr) => acc + curr.price, 0)
+                .toLocaleString()}
+            </Text>
+          </View>
+          <TouchableOpacity style={styles.checkoutBtn}>
+            <Text style={styles.checkoutText}>Order</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeArea>
   );
@@ -228,11 +305,19 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingLeft: 20,
     paddingRight: 16,
+    borderTopColor: color.border_input,
+    borderTopWidth: 0.5,
+    gap: 12,
+  },
+  footerAction: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderTopColor: color.border_input,
-    borderTopWidth: 0.5,
+  },
+  footerActionInline: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
   total: {
     fontSize: 16,
@@ -252,5 +337,22 @@ const styles = StyleSheet.create({
   },
   paymentMethod: {
     marginVertical: 32,
+  },
+  methodContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  methodItem: {
+    padding: 16,
+    borderWidth: 0.2,
+    borderRadius: 6,
+    width: WIDTH_DEVICE - 120,
+  },
+  sumaryContainer: {
+    marginTop: 12,
+    gap: 8,
+    marginBottom: 32,
   },
 });

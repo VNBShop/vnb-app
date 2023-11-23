@@ -34,6 +34,11 @@ export const flex = StyleSheet.create({
     justifyContent: 'center',
     position: 'relative',
   },
+  between: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
 });
 
 export const box = StyleSheet.create({
@@ -87,6 +92,9 @@ export const common = StyleSheet.create({
   },
   text_secondary: {
     color: color.secondary,
+  },
+  text_success: {
+    color: color.success,
   },
   headerTitle: {
     fontWeight: '500',

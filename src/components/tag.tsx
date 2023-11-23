@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: 9999,
     padding: 8,
+    alignSelf: 'flex-start',
   },
   text: {
     fontSize: 12,

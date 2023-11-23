@@ -27,3 +27,8 @@ export {default as share} from './share.png';
 export {default as cartPlus} from './cart-plus.png';
 export {default as location} from './location.png';
 export {default as forwardGray} from './forward_gray.png';
+export {default as voucher} from './voucher.png';
+export {default as cashondelivery} from './cashondelivery.png';
+export {default as vnpay} from './vnpay.webp';
+export {default as banking} from './banking.png';
+export {default as pen} from './pen.png';

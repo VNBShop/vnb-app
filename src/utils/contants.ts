@@ -3,12 +3,15 @@ import {
   backpack,
   badminton,
   bag,
+  banking,
+  cashondelivery,
   pant,
   racket,
   shirt,
   shoe,
   skirt,
   tenis,
+  vnpay,
 } from '../assets';
 
 export const navList = [
@@ -114,5 +117,23 @@ export const fakeData = [
     image: badminton,
     name: 'Yonex Nanoflare X7',
     price: 2800000,
+  },
+];
+
+export const paymentMethod = [
+  {
+    id: 1,
+    label: 'VNPay',
+    logo: vnpay,
+  },
+  {
+    id: 2,
+    label: 'Banking',
+    logo: banking,
+  },
+  {
+    id: 3,
+    label: 'Cash on delivery',
+    logo: cashondelivery,
   },
 ];
