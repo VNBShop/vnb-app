@@ -7,7 +7,7 @@ import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, flex, spec} from '../UIkit/styles';
 import {icon} from '../assets';
-import {InputOtp} from '../components/input-otp';
+import {InputOtp} from '../components/ui/input-otp';
 
 export default function IdentifyScreen() {
   return (

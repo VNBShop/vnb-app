@@ -4,7 +4,7 @@ import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, flex, spec} from '../UIkit/styles';
 import {google, icon} from '../assets';
-import OrHr from '../components/or-hr';
+import OrHr from '../components/ui/or-hr';
 
 export default function LoginOptionScreen() {
   return (

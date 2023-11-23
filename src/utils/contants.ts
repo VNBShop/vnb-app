@@ -5,8 +5,12 @@ import {
   bag,
   banking,
   cashondelivery,
+  delivery,
   pant,
+  processing,
   racket,
+  refund,
+  shipping,
   shirt,
   shoe,
   skirt,
@@ -135,5 +139,28 @@ export const paymentMethod = [
     id: 3,
     label: 'Cash on delivery',
     logo: cashondelivery,
+  },
+];
+
+export const navPerson = [
+  {
+    id: 1,
+    label: 'Processing',
+    logo: processing,
+  },
+  {
+    id: 2,
+    label: 'Shipping',
+    logo: shipping,
+  },
+  {
+    id: 3,
+    label: 'Delivered',
+    logo: delivery,
+  },
+  {
+    id: 4,
+    label: 'Returned',
+    logo: refund,
   },
 ];

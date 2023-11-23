@@ -12,10 +12,10 @@ import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, spec} from '../UIkit/styles';
 import {back, cartPlus, cart_gray, heartOutline, share, tenis} from '../assets';
-import CommentCard from '../components/comment-card';
-import OrHr from '../components/or-hr';
+import CommentCard from '../components/ui/comment-card';
+import OrHr from '../components/ui/or-hr';
 import ProductDescription from '../components/product-description';
-import Tag from '../components/tag';
+import Tag from '../components/ui/tag';
 
 export default function ProductDetailScreen() {
   return (

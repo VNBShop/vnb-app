@@ -32,3 +32,8 @@ export {default as cashondelivery} from './cashondelivery.png';
 export {default as vnpay} from './vnpay.webp';
 export {default as banking} from './banking.png';
 export {default as pen} from './pen.png';
+export {default as setting} from './setting.png';
+export {default as processing} from './processing.png';
+export {default as shipping} from './shipping.png';
+export {default as delivery} from './delivery.png';
+export {default as refund} from './refund.png';

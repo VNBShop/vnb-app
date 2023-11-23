@@ -12,9 +12,9 @@ import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {WIDTH_DEVICE, common, flex} from '../UIkit/styles';
 import {back, forwardGray, location, voucher} from '../assets';
-import HrVertical from '../components/hrVertical';
-import OrHr from '../components/or-hr';
-import RadioCard from '../components/radio-card';
+import HrVertical from '../components/ui/hrVertical';
+import OrHr from '../components/ui/or-hr';
+import RadioCard from '../components/ui/radio-card';
 import {fakeData, paymentMethod} from '../utils/contants';
 
 export default function CheckoutScreen() {

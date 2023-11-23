@@ -11,4 +11,5 @@ export const color = {
   successPastel: '#f3fbf2',
   danger: '#fa113d',
   dangerPastel: '#fff1f3',
+  white: '#ffffff',
 };

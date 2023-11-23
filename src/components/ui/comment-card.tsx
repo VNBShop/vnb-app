@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Text} from 'react-native-animatable';
-import {color} from '../UIkit/palette';
+import {color} from '../../UIkit/palette';
 
 export default function CommentCard() {
   return (

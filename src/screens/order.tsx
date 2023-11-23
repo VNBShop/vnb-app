@@ -9,10 +9,10 @@ import {
   TabView,
 } from 'react-native-tab-view';
 import {Scene} from 'react-native-tab-view/lib/typescript/src/types';
-import {color} from '../../UIkit/palette';
-import {WIDTH_DEVICE, common} from '../../UIkit/styles';
-import {back, search_gray} from '../../assets';
-import Order from './all-order';
+import {color} from '../UIkit/palette';
+import {WIDTH_DEVICE, common} from '../UIkit/styles';
+import {back, search_gray} from '../assets';
+import Order from '../components/order';
 
 const renderScene = SceneMap({
   allorder: Order,

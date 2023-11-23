@@ -13,7 +13,7 @@ import {common} from '../UIkit/styles';
 import {back, forwardGray, location} from '../assets';
 import {color} from '../UIkit/palette';
 import {fakeData} from '../utils/contants';
-import OrHr from '../components/or-hr';
+import OrHr from '../components/ui/or-hr';
 
 export default function CartScreen() {
   return (

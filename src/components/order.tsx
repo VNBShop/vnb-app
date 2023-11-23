@@ -7,13 +7,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import HrVertical from '../../components/hrVertical';
-import {fakeData} from '../../utils/contants';
-import {common, flex} from '../../UIkit/styles';
-import OrHr from '../../components/or-hr';
-import {color} from '../../UIkit/palette';
-import Tag from '../../components/tag';
-import {pen} from '../../assets';
+import HrVertical from './ui/hrVertical';
+import {fakeData} from '../utils/contants';
+import {common, flex} from '../UIkit/styles';
+import OrHr from './ui/or-hr';
+import {color} from '../UIkit/palette';
+import Tag from './ui/tag';
+import {pen} from '../assets';
 
 export default function Order() {
   return (

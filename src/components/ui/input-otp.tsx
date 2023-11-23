@@ -21,8 +21,8 @@ import {
   isLastFilledCell,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
-import {color} from '../UIkit/palette';
-import {common} from '../UIkit/styles';
+import {color} from '../../UIkit/palette';
+import {common} from '../../UIkit/styles';
 
 export type InputOtpRefProps = {
   value: string;

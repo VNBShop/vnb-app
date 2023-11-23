@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 import {StyleSheet, Text, View} from 'react-native';
-import {color} from '../UIkit/palette';
-import {common} from '../UIkit/styles';
+import {color} from '../../UIkit/palette';
+import {common} from '../../UIkit/styles';
 
 export default function OrHr({
   isText = false,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Image, ImageSourcePropType, StyleSheet, Text, View} from 'react-native';
-import {color} from '../UIkit/palette';
+import {color} from '../../UIkit/palette';
 
 export type RadioCardProps = {
   size?: number;
