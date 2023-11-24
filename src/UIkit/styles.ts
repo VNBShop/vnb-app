@@ -100,4 +100,7 @@ export const common = StyleSheet.create({
     fontWeight: '500',
     fontSize: 18,
   },
+  fz13: {
+    fontSize: 13,
+  },
 });

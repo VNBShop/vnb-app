@@ -6,10 +6,13 @@ import {
   banking,
   cashondelivery,
   delivery,
+  logout,
   pant,
+  password,
   processing,
   racket,
   refund,
+  save,
   shipping,
   shirt,
   shoe,
@@ -162,5 +165,26 @@ export const navPerson = [
     id: 4,
     label: 'Returned',
     logo: refund,
+  },
+];
+
+export const actionOption = [
+  {
+    id: 1,
+    label: 'Change password',
+    icon: password,
+    bgColor: '#FFC60B',
+  },
+  {
+    id: 2,
+    label: 'Save',
+    icon: save,
+    bgColor: '#1394e4',
+  },
+  {
+    id: 3,
+    label: 'Logout',
+    bgColor: '#85A389',
+    icon: logout,
   },
 ];

@@ -7,6 +7,8 @@ import {
   ViewStyle,
   TextStyle,
   StyleSheet,
+  ImageProps,
+  Image,
 } from 'react-native';
 
 export type TagProps = {
@@ -15,6 +17,8 @@ export type TagProps = {
   textColor?: ColorValue;
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
+  icon?: ImageProps;
+  iconSize?: number;
 };
 
 export default function Tag({
@@ -23,9 +27,14 @@ export default function Tag({
   textColor = '#ffffff',
   style,
   textStyle,
+  icon,
+  iconSize = 15,
 }: TagProps) {
   return (
     <View style={[styles.container, {backgroundColor: backGroundColor}, style]}>
+      {icon ? (
+        <Image source={icon} style={{width: iconSize, height: iconSize}} />
+      ) : null}
       <Text
         style={[
           styles.text,
@@ -42,7 +51,11 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: 9999,
     padding: 8,
+    paddingVertical: 6,
     alignSelf: 'flex-start',
+    flexDirection: 'row',
+    gap: 6,
+    alignItems: 'center',
   },
   text: {
     fontSize: 12,

@@ -1,20 +1,18 @@
-import {createDrawerNavigator} from '@react-navigation/drawer';
 import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import * as React from 'react';
-import PersonalScreen from '../screens/personal';
-import ForumStackNavigation from './forum-stack';
+import TabNavigation from './tab';
 
-const Drawer = createDrawerNavigator();
+const Stack = createNativeStackNavigator();
 export default function Navigation() {
   return (
     <NavigationContainer>
-      <Drawer.Navigator
+      <Stack.Navigator
         screenOptions={{
           headerShown: false,
         }}>
-        <Drawer.Screen name="Root" component={PersonalScreen} />
-        <Drawer.Screen name="ForumDrawer" component={ForumStackNavigation} />
-      </Drawer.Navigator>
+        <Stack.Screen name="Tab" component={TabNavigation} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
