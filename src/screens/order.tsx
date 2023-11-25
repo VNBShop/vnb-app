@@ -1,5 +1,6 @@
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import * as React from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   Route,
@@ -13,6 +14,10 @@ import {color} from '../UIkit/palette';
 import {WIDTH_DEVICE, common} from '../UIkit/styles';
 import {back, search_gray} from '../assets';
 import Order from '../components/order';
+import {Icon} from '../components/ui/icon';
+import {RootStackProps} from '../types/route';
+
+type OrderedScreenProps = NativeStackScreenProps<RootStackProps, 'Ordered'>;
 
 const renderScene = SceneMap({
   allorder: Order,
@@ -22,7 +27,7 @@ const renderScene = SceneMap({
   cancelled: Order,
 });
 
-export default function OrderedScreen() {
+export default function OrderedScreen({navigation}: OrderedScreenProps) {
   const insets = useSafeAreaInsets();
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
@@ -70,8 +75,10 @@ export default function OrderedScreen() {
         },
       ]}>
       <View style={styles.header}>
-        <TouchableOpacity style={common.position_left}>
-          <Image source={back} style={styles.headerIcon} />
+        <TouchableOpacity
+          style={common.position_left}
+          onPress={() => navigation.goBack()}>
+          <Icon icon={back} size={25} />
         </TouchableOpacity>
 
         <Text style={common.headerTitle}>My ordered</Text>
@@ -79,7 +86,7 @@ export default function OrderedScreen() {
 
       <View style={styles.searchContainer}>
         <View style={styles.search}>
-          <Image source={search_gray} style={styles.searchIcon} />
+          <Icon size={20} icon={search_gray} />
           <Text style={common.text_gray}>Search products</Text>
         </View>
       </View>
@@ -105,11 +112,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
     paddingHorizontal: 16,
-    marginTop: 16,
-  },
-  headerIcon: {
-    width: 25,
-    height: 25,
+    marginTop: 8,
   },
   container: {
     flex: 1,
@@ -127,10 +130,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-  },
-  searchIcon: {
-    width: 20,
-    height: 20,
   },
   indicatorStyle: {
     backgroundColor: color.secondary,

@@ -7,13 +7,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import HrVertical from './ui/hrVertical';
-import {fakeData} from '../utils/contants';
-import {common, flex} from '../UIkit/styles';
-import OrHr from './ui/or-hr';
 import {color} from '../UIkit/palette';
-import Tag from './ui/tag';
+import {common, flex} from '../UIkit/styles';
 import {pen} from '../assets';
+import {fakeData} from '../utils/contants';
+import HrVertical from './ui/hrVertical';
+import {Icon} from './ui/icon';
+import OrHr from './ui/or-hr';
+import Tag from './ui/tag';
 
 export default function Order() {
   return (
@@ -44,7 +45,7 @@ export default function Order() {
                       <View style={flex.between}>
                         <Text>Yonex</Text>
                         <TouchableOpacity style={styles.editContainer}>
-                          <Image source={pen} style={styles.editIcon} />
+                          <Icon size={20} icon={pen} />
                           <Text style={common.text_link}>Review</Text>
                         </TouchableOpacity>
                       </View>
@@ -93,7 +94,7 @@ export default function Order() {
                       <View style={flex.between}>
                         <Text>Yonex</Text>
                         <TouchableOpacity style={styles.editContainer}>
-                          <Image source={pen} style={styles.editIcon} />
+                          <Icon size={20} icon={pen} />
                           <Text style={common.text_link}>Review</Text>
                         </TouchableOpacity>
                       </View>
@@ -179,10 +180,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-  },
-  editIcon: {
-    width: 20,
-    height: 20,
   },
   end: {
     alignSelf: 'center',

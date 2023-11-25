@@ -7,7 +7,7 @@ import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, spec} from '../UIkit/styles';
 import {icon, wellcome} from '../assets';
-import {RootStackProps} from '../types/stack';
+import {RootStackProps} from '../types/route';
 
 export default function WellcomeScreen() {
   const navigation =

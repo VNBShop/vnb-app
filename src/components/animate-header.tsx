@@ -1,14 +1,30 @@
 /* eslint-disable react/react-in-jsx-scope */
-import {Animated, Image, StyleSheet, Text, View} from 'react-native';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {
+  Animated,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {color} from '../UIkit/palette';
 import {common} from '../UIkit/styles';
 import {banner, cart, icon, messenger, order, search} from '../assets';
+import {RootStackProps} from '../types/route';
+import {Icon} from './ui/icon';
 
 export const HEADER_HEIGHT = 200;
-export default function AnimateHeader({animateValue}: any) {
+export default function AnimateHeader({
+  animateValue,
+}: {
+  animateValue: Animated.Value;
+}) {
   const insets = useSafeAreaInsets();
+
+  const navigator = useNavigation<NavigationProp<RootStackProps>>();
 
   const headerHeight = animateValue.interpolate({
     inputRange: [0, HEADER_HEIGHT + insets.top],
@@ -66,21 +82,21 @@ export default function AnimateHeader({animateValue}: any) {
           },
         ]}>
         <View style={styles.specialContainerInline}>
-          <View>
+          <TouchableOpacity onPress={() => navigator.navigate('Ordered')}>
             <View style={styles.specialItemContainer}>
-              <Image source={order} style={styles.specialContainerItemImg} />
+              <Icon size={25} icon={order} />
               <Text style={common.text_base}>Ordered</Text>
             </View>
             <Text style={[common.text_gray, styles.mt]}>Find your order</Text>
-          </View>
+          </TouchableOpacity>
 
-          <View>
+          <TouchableOpacity onPress={() => navigator.navigate('Cart')}>
             <View style={styles.specialItemContainer}>
-              <Image source={cart} style={styles.specialContainerItemImg} />
+              <Icon size={25} icon={cart} />
               <Text style={common.text_base}>Cart</Text>
             </View>
-            <Text style={[common.text_gray, styles.mt]}>Empty your now</Text>
-          </View>
+            <Text style={[common.text_gray, styles.mt]}>Empty cart now</Text>
+          </TouchableOpacity>
         </View>
       </Animated.View>
     </Animated.View>
@@ -138,10 +154,6 @@ const styles = StyleSheet.create({
     bottom: -16,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  specialContainerItemImg: {
-    width: 25,
-    height: 25,
   },
   specialItemContainer: {
     flexDirection: 'row',

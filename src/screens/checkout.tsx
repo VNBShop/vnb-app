@@ -13,18 +13,25 @@ import {color} from '../UIkit/palette';
 import {WIDTH_DEVICE, common, flex} from '../UIkit/styles';
 import {back, forwardGray, location, voucher} from '../assets';
 import HrVertical from '../components/ui/hrVertical';
+import {Icon} from '../components/ui/icon';
 import OrHr from '../components/ui/or-hr';
 import RadioCard from '../components/ui/radio-card';
 import {fakeData, paymentMethod} from '../utils/contants';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackProps} from '../types/route';
 
-export default function CheckoutScreen() {
+type CheckoutScreenProps = NativeStackScreenProps<RootStackProps, 'Checkout'>;
+
+export default function CheckoutScreen({navigation}: CheckoutScreenProps) {
   const [paymentM, setPaymentM] = React.useState(0);
 
   return (
     <SafeArea>
       <View style={styles.header}>
-        <TouchableOpacity style={common.position_left}>
-          <Image source={back} style={styles.headerIcon} />
+        <TouchableOpacity
+          style={common.position_left}
+          onPress={() => navigation.goBack()}>
+          <Icon icon={back} size={25} />
         </TouchableOpacity>
 
         <Text style={common.headerTitle}>Checkout confirm</Text>
@@ -35,7 +42,7 @@ export default function CheckoutScreen() {
           <View style={styles.locationContainer}>
             <View>
               <View style={styles.locationContainerLeft}>
-                <Image source={location} style={styles.locationImg} />
+                <Icon icon={location} size={20} />
 
                 <View style={styles.contactInfo}>
                   <Text>Minh Dzung</Text>
@@ -48,7 +55,7 @@ export default function CheckoutScreen() {
               </Text>
             </View>
 
-            <Image source={forwardGray} style={styles.locationImg} />
+            <Icon icon={forwardGray} size={20} />
           </View>
 
           <View style={styles.cartContainer}>
@@ -162,13 +169,13 @@ export default function CheckoutScreen() {
       <View style={styles.footer}>
         <View style={styles.footerAction}>
           <View style={styles.footerActionInline}>
-            <Image source={voucher} style={styles.locationImg} />
+            <Icon icon={voucher} size={20} />
             <Text style={common.text_gray}>Voucher</Text>
           </View>
 
           <View style={styles.footerActionInline}>
             <Text style={common.text_gray}>Fill or choose voucher</Text>
-            <Image source={forwardGray} style={styles.locationImg} />
+            <Icon icon={forwardGray} size={20} />
           </View>
         </View>
 
@@ -183,7 +190,9 @@ export default function CheckoutScreen() {
                 .toLocaleString()}
             </Text>
           </View>
-          <TouchableOpacity style={styles.checkoutBtn}>
+          <TouchableOpacity
+            style={styles.checkoutBtn}
+            onPress={() => navigation.navigate('Ordered')}>
             <Text style={styles.checkoutText}>Order</Text>
           </TouchableOpacity>
         </View>
@@ -197,11 +206,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
     paddingHorizontal: 16,
-    marginTop: 16,
-  },
-  headerIcon: {
-    width: 25,
-    height: 25,
+    marginTop: 8,
   },
   container: {
     flex: 1,
@@ -232,10 +237,6 @@ const styles = StyleSheet.create({
   location: {
     color: color.gray,
     marginLeft: 4,
-  },
-  locationImg: {
-    width: 20,
-    height: 20,
   },
   cartContainer: {
     marginTop: 32,

@@ -1,24 +1,29 @@
 import * as React from 'react';
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import HomeScreen from '../screens/home';
-import {tabOption} from './tab-options';
-import CartScreen from '../screens/cart';
 import ForumScreen from '../screens/forum';
+import HomeScreen from '../screens/home';
 import NotificationScreen from '../screens/notification';
 import PersonalScreen from '../screens/personal';
+import ProductScreen from '../screens/products';
+import {BottomTabProps} from '../types/route';
+import {tabOption} from './tab-options';
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<BottomTabProps>();
 
 export default function TabNavigation() {
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarShowLabel: false,
+        tabBarActiveTintColor: '#000000',
       }}>
       <Tab.Screen options={tabOption.home} name="Home" component={HomeScreen} />
-      <Tab.Screen options={tabOption.cart} name="Cart" component={CartScreen} />
+      <Tab.Screen
+        options={tabOption.cart}
+        name="Product"
+        component={ProductScreen}
+      />
       <Tab.Screen
         options={tabOption.forum}
         name="Forum"

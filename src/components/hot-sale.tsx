@@ -10,14 +10,27 @@ import {
 import {common, spec} from '../UIkit/styles';
 import {fakeData} from '../utils/contants';
 import {color} from '../UIkit/palette';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {BottomTabProps, RootStackProps} from '../types/route';
 
 export default function HotSale() {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackProps, 'Root'>>();
+
+  const bottomNav =
+    useNavigation<NativeStackNavigationProp<BottomTabProps, 'Home'>>();
+
   return (
     <View style={[spec.space_horizontal, styles.container]}>
       <View style={styles.header}>
         <Text style={styles.title}>Hot sales</Text>
         <TouchableOpacity>
-          <Text style={common.text_link}>See all</Text>
+          <Text
+            style={common.text_link}
+            onPress={() => bottomNav.navigate('Product')}>
+            See all
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -26,7 +39,10 @@ export default function HotSale() {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.productContainer}>
         {fakeData.map(item => (
-          <View key={item.id} style={styles.item}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ProductDetail')}
+            key={item.id}
+            style={styles.item}>
             <View>
               <Image source={item.image} style={styles.image} />
               <Text style={common.text_gray}>{item.name}</Text>
@@ -36,7 +52,7 @@ export default function HotSale() {
             <View style={styles.sale}>
               <Text style={styles.textSale}>-35%</Text>
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
     </View>

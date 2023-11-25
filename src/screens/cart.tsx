@@ -14,13 +14,21 @@ import {back, forwardGray, location} from '../assets';
 import {color} from '../UIkit/palette';
 import {fakeData} from '../utils/contants';
 import OrHr from '../components/ui/or-hr';
+import {Icon} from '../components/ui/icon';
+import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackProps} from '../types/route';
 
-export default function CartScreen() {
+type CartScreenProps = NativeStackScreenProps<RootStackProps, 'Cart'>;
+
+export default function CartScreen({navigation}: CartScreenProps) {
   return (
     <SafeArea>
       <View style={styles.header}>
-        <TouchableOpacity style={common.position_left}>
-          <Image source={back} style={styles.headerIcon} />
+        <TouchableOpacity
+          style={common.position_left}
+          onPress={() => navigation.goBack()}>
+          <Icon size={25} icon={back} />
         </TouchableOpacity>
 
         <Text style={common.headerTitle}>Cart</Text>
@@ -30,13 +38,13 @@ export default function CartScreen() {
         <ScrollView>
           <View style={styles.locationContainer}>
             <View style={styles.locationContainerLeft}>
-              <Image source={location} style={styles.locationImg} />
+              <Icon size={20} icon={location} />
               <Text style={styles.location}>
                 172 Nguyen Thi Thap, 7 District, Ho Chi Minh
               </Text>
             </View>
 
-            <Image source={forwardGray} style={styles.locationImg} />
+            <Icon size={20} icon={forwardGray} />
           </View>
 
           <View style={styles.cartContainer}>
@@ -73,10 +81,12 @@ export default function CartScreen() {
                   </View>
                 </View>
 
-                <OrHr />
+                {fakeData[fakeData.length - 1] !== item && <OrHr />}
               </View>
             ))}
           </View>
+
+          <BottomSafeArea />
         </ScrollView>
       </View>
 
@@ -90,7 +100,9 @@ export default function CartScreen() {
           </Text>
         </View>
 
-        <TouchableOpacity style={styles.checkoutBtn}>
+        <TouchableOpacity
+          style={styles.checkoutBtn}
+          onPress={() => navigation.navigate('Checkout')}>
           <Text style={styles.checkoutText}>Checkout</Text>
         </TouchableOpacity>
       </View>
@@ -103,11 +115,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
     paddingHorizontal: 16,
-    marginTop: 16,
-  },
-  headerIcon: {
-    width: 25,
-    height: 25,
+    marginTop: 8,
   },
   container: {
     flex: 1,
@@ -127,10 +135,6 @@ const styles = StyleSheet.create({
   },
   location: {
     color: color.gray,
-  },
-  locationImg: {
-    width: 20,
-    height: 20,
   },
   cartContainer: {
     marginTop: 32,

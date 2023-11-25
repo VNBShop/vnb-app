@@ -1,19 +1,20 @@
-import * as React from 'react';
 import {BottomTabNavigationOptions} from '@react-navigation/bottom-tabs';
-import {Icon} from '../components/ui/icon';
+import LottieView from 'lottie-react-native';
+import * as React from 'react';
+import {Platform, StyleSheet, View} from 'react-native';
+import {color} from '../UIkit/palette';
 import {
   bell,
   bellOutline,
-  cartIcon,
-  cartIconOutline,
-  forum,
   home,
   homeOutline,
+  plane,
+  planeOutline,
   user,
   userOutline,
 } from '../assets';
-import {Platform, StyleSheet, View} from 'react-native';
-import {color} from '../UIkit/palette';
+import {chatLottie} from '../components/lottie';
+import {Icon} from '../components/ui/icon';
 
 export const tabOption = {
   home: {
@@ -28,19 +29,22 @@ export const tabOption = {
   cart: {
     tabBarIcon: ({focused}) => {
       return focused ? (
-        <Icon icon={cartIcon} size={25} />
+        <Icon icon={plane} size={22} />
       ) : (
-        <Icon icon={cartIconOutline} size={25} />
+        <Icon icon={planeOutline} size={22} />
       );
     },
   } as BottomTabNavigationOptions,
   forum: {
-    tabBarIcon: () => {
+    tabBarIcon: ({focused}) => {
       return (
-        <View style={styles.forumWrapper}>
-          <View style={styles.forum}>
-            <Icon icon={forum} size={30} />
-          </View>
+        <View style={styles.forum}>
+          <LottieView
+            source={chatLottie}
+            autoPlay={!focused}
+            loop
+            style={styles.icon}
+          />
         </View>
       );
     },
@@ -66,21 +70,21 @@ export const tabOption = {
 };
 
 const styles = StyleSheet.create({
-  forumWrapper: {
-    top: Platform.OS === 'ios' ? -20 : -20,
-    borderColor: color.divider,
+  forum: {
+    top: Platform.OS === 'ios' ? -12 : -20,
+    borderColor: '#ff9fb5',
     borderWidth: 1,
     borderBottomColor: 'tranparent',
     borderBottomWidth: 0,
     backgroundColor: color.white,
-    borderRadius: 199,
-    padding: 8,
-  },
-  forum: {
-    width: Platform.OS === 'ios' ? 50 : 60,
-    height: Platform.OS === 'ios' ? 50 : 60,
+    width: 60,
+    height: 60,
     borderRadius: 9999,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  icon: {
+    width: 40,
+    height: 40,
   },
 });

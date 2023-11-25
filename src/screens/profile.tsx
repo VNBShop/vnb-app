@@ -17,8 +17,12 @@ import Tag from '../components/ui/tag';
 import Post from '../components/ui/post';
 import {Modalize} from 'react-native-modalize';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackProps} from '../types/route';
 
-export default function ProfileScreen() {
+type ProfileScreenProps = NativeStackScreenProps<RootStackProps, 'Profile'>;
+
+export default function ProfileScreen({navigation}: ProfileScreenProps) {
   const insets = useSafeAreaInsets();
   const commentModalRef = React.useRef<Modalize>(null);
 
@@ -44,7 +48,7 @@ export default function ProfileScreen() {
       </Modalize>
       <SafeArea>
         <View style={styles.header}>
-          <Icon size={25} icon={back} />
+          <Icon size={25} icon={back} onPress={() => navigation.goBack()} />
           <Text style={styles.headerUsername}>Dzung</Text>
           <IconOutline size={35} icon={search_gray} />
         </View>

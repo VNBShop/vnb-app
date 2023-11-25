@@ -1,3 +1,4 @@
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 import * as React from 'react';
 import {
   FlatList,
@@ -12,12 +13,13 @@ import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {WIDTH_DEVICE, common} from '../UIkit/styles';
 import {
-  back,
   cart_gray,
-  search_gray,
   filter as filterIcon,
   new as newIcon,
+  search_gray,
 } from '../assets';
+import {Icon} from '../components/ui/icon';
+import {RootStackProps} from '../types/route';
 import {fakeData} from '../utils/contants';
 
 export const filters = [
@@ -57,22 +59,23 @@ export const filters = [
 
 export default function ProductScreen() {
   const [filter, setFilter] = React.useState('');
+
+  const stackNavigator =
+    useNavigation<NavigationProp<RootStackProps, 'ProductDetail'>>();
+
   return (
     <SafeArea>
       <View style={styles.container}>
         <View style={styles.header}>
+          <Text style={common.titleLeft}>Products</Text>
           <TouchableOpacity>
-            <Image style={styles.headerIcon} source={back} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Products</Text>
-          <TouchableOpacity>
-            <Image style={styles.headerIcon} source={cart_gray} />
+            <Icon icon={cart_gray} size={25} />
           </TouchableOpacity>
         </View>
 
         <View style={styles.actionContainer}>
           <View style={styles.search}>
-            <Image style={styles.headerIcon} source={search_gray} />
+            <Icon icon={search_gray} size={20} />
             <Text style={[common.text_gray, common.text_base]}>Search</Text>
           </View>
           <TouchableOpacity style={styles.filterIcon}>
@@ -108,7 +111,9 @@ export default function ProductScreen() {
         <View style={styles.flatContainer}>
           <FlatList
             renderItem={({item}) => (
-              <TouchableOpacity style={styles.productItem}>
+              <TouchableOpacity
+                style={styles.productItem}
+                onPress={() => stackNavigator.navigate('ProductDetail')}>
                 <Image source={item.image} style={styles.productImg} />
                 <View style={styles.productInfo}>
                   <Text style={common.text_gray}>{item.name}</Text>
@@ -142,21 +147,17 @@ export default function ProductScreen() {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
-    paddingTop: 8,
     flex: 1,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: 8,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-  },
-  headerIcon: {
-    width: 27,
-    height: 27,
   },
   actionContainer: {
     flexDirection: 'row',

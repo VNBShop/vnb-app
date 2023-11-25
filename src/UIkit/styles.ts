@@ -27,6 +27,7 @@ export const flex = StyleSheet.create({
   flex_row: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 8,
   },
   center: {
     flexDirection: 'row',
@@ -102,5 +103,12 @@ export const common = StyleSheet.create({
   },
   fz13: {
     fontSize: 13,
+  },
+  titleLeft: {
+    fontSize: 22,
+    fontWeight: '600',
+  },
+  fontBase: {
+    fontWeight: '500',
   },
 });

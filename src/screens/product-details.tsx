@@ -16,17 +16,27 @@ import CommentCard from '../components/ui/comment-card';
 import OrHr from '../components/ui/or-hr';
 import ProductDescription from '../components/product-description';
 import Tag from '../components/ui/tag';
+import {Icon} from '../components/ui/icon';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackProps} from '../types/route';
 
-export default function ProductDetailScreen() {
+type ProductDetailScreenProps = NativeStackScreenProps<
+  RootStackProps,
+  'ProductDetail'
+>;
+
+export default function ProductDetailScreen({
+  navigation,
+}: ProductDetailScreenProps) {
   return (
     <SafeArea>
       <View style={styles.header}>
-        <TouchableOpacity>
-          <Image source={back} style={styles.headerIcon} />
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon size={25} icon={back} />
         </TouchableOpacity>
 
-        <TouchableOpacity>
-          <Image source={cart_gray} style={styles.headerIcon} />
+        <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
+          <Icon size={25} icon={cart_gray} />
         </TouchableOpacity>
       </View>
 
@@ -57,10 +67,10 @@ export default function ProductDetailScreen() {
               <AirbnbRating isDisabled showRating={false} size={18} />
               <View style={styles.footerAction}>
                 <TouchableOpacity>
-                  <Image source={share} style={styles.shareIcon} />
+                  <Icon size={28} icon={share} />
                 </TouchableOpacity>
                 <TouchableOpacity>
-                  <Image source={heartOutline} style={styles.heartIcon} />
+                  <Icon size={25} icon={heartOutline} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -79,10 +89,12 @@ export default function ProductDetailScreen() {
 
       <View style={styles.action}>
         <TouchableOpacity>
-          <Image source={cartPlus} style={styles.addCartImg} />
+          <Icon size={30} icon={cartPlus} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.buyBtn}>
+        <TouchableOpacity
+          style={styles.buyBtn}
+          onPress={() => navigation.navigate('Cart')}>
           <Text style={styles.buyText}>Buying now</Text>
         </TouchableOpacity>
       </View>
@@ -96,11 +108,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginTop: 8,
   },
-  headerIcon: {
-    width: 25,
-    height: 25,
-  },
+
   container: {
     flex: 1,
   },
@@ -146,14 +156,6 @@ const styles = StyleSheet.create({
     gap: 16,
     alignItems: 'center',
   },
-  shareIcon: {
-    width: 30,
-    height: 30,
-  },
-  heartIcon: {
-    width: 25,
-    height: 25,
-  },
   action: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -161,10 +163,6 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 16,
     paddingVertical: 8,
-  },
-  addCartImg: {
-    width: 30,
-    height: 30,
   },
   buyBtn: {
     width: 120,

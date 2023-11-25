@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   Image,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -15,14 +16,20 @@ import Avatar from '../components/ui/avatar';
 import {Icon, IconOutline} from '../components/ui/icon';
 import OrHr from '../components/ui/or-hr';
 import {actionOption, navPerson} from '../utils/contants';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackProps} from '../types/route';
 
 export default function PersonalScreen() {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackProps, 'Root'>>();
+
   return (
     <SafeArea color={color.superDivider}>
       <View style={styles.container}>
         <ScrollView>
           <View style={flex.between}>
-            <Text style={styles.title}>Account</Text>
+            <Text style={common.titleLeft}>Account</Text>
 
             <View style={styles.headerAction}>
               <IconOutline icon={setting} size={32} />
@@ -30,7 +37,9 @@ export default function PersonalScreen() {
             </View>
           </View>
 
-          <View style={styles.info}>
+          <Pressable
+            style={styles.info}
+            onPress={() => navigation.navigate('Profile')}>
             <View style={styles.infoL}>
               <Avatar
                 source={
@@ -47,7 +56,7 @@ export default function PersonalScreen() {
             </View>
 
             <Icon icon={forwardGray} size={22} />
-          </View>
+          </Pressable>
 
           <View style={styles.navContainer}>
             {navPerson.map(nav => (
@@ -98,10 +107,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: '600',
   },
   info: {
     flexDirection: 'row',

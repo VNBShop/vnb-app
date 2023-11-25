@@ -2,24 +2,28 @@ import * as React from 'react';
 
 import {
   Animated,
-  Image,
   NativeScrollEvent,
   NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {WIDTH_DEVICE, common} from '../UIkit/styles';
 import AnimateHeader, {HEADER_HEIGHT} from '../components/animate-header';
 import HotSale from '../components/hot-sale';
 import Popular from '../components/popular';
+import {Icon} from '../components/ui/icon';
 import {navList} from '../utils/contants';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {BottomTabProps} from '../types/route';
 
-export default function HomeScreen() {
+type HomeScreenProps = NativeStackScreenProps<BottomTabProps, 'Home'>;
+export default function HomeScreen({navigation}: HomeScreenProps) {
   const offset = React.useRef(new Animated.Value(0)).current;
   const scrollViewRef = React.useRef<ScrollView | null>(null);
   const insets = useSafeAreaInsets();
@@ -69,6 +73,7 @@ export default function HomeScreen() {
       }, 1300);
     }
   };
+
   return (
     <SafeArea>
       <AnimateHeader animateValue={offset} />
@@ -86,10 +91,13 @@ export default function HomeScreen() {
         )}>
         <View style={styles.navContainer}>
           {navList.map(item => (
-            <View key={item.id} style={styles.navItem}>
-              <Image source={item.icon} style={styles.icon} />
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Product')}
+              key={item.id}
+              style={styles.navItem}>
+              <Icon icon={item.icon} size={30} />
               <Text style={common.text_gray}>{item.label}</Text>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
 
@@ -123,11 +131,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: WIDTH_DEVICE / 4 - 18,
-  },
-  icon: {
-    width: 32,
-    height: 32,
-    marginBottom: 4,
-    objectFit: 'contain',
+    gap: 6,
   },
 });

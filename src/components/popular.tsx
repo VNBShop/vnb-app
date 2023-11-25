@@ -4,20 +4,31 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {WIDTH_DEVICE, common} from '../UIkit/styles';
 import {heartOutline} from '../assets';
 import {fakeData} from '../utils/contants';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {BottomTabProps, RootStackProps} from '../types/route';
 
 export default function Popular() {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackProps, 'Root'>>();
+
+  const bottomNav =
+    useNavigation<NativeStackNavigationProp<BottomTabProps, 'Home'>>();
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Popular</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => bottomNav.navigate('Product')}>
           <Text style={common.text_link}>See all</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.productContainer}>
         {fakeData.map(item => (
-          <View key={item.id} style={styles.item}>
+          <TouchableOpacity
+            key={item.id}
+            style={styles.item}
+            onPress={() => navigation.navigate('ProductDetail')}>
             <Image source={item.image} style={styles.itemImg} />
             <View style={styles.body}>
               <Text style={common.text_gray}>{item.name}</Text>
@@ -30,7 +41,7 @@ export default function Popular() {
                 </TouchableOpacity>
               </View>
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
       </View>
     </View>
