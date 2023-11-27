@@ -14,8 +14,13 @@ import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, flex, spec} from '../UIkit/styles';
 import {icon} from '../assets';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackProps} from '../types/route';
+import {useAuth} from '../components/auth-provider';
 
-export default function LoginScreen() {
+type LoginScreenProps = NativeStackScreenProps<RootStackProps, 'Login'>;
+
+export default function LoginScreen({navigation}: LoginScreenProps) {
   // const [email, setEmail] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
@@ -37,13 +42,17 @@ export default function LoginScreen() {
     return () => keyboardDidHideListener.remove();
   }, [isInputFocus]);
 
+  const {setAuth} = useAuth();
+
   return (
     <SafeArea color="#ffffff">
       <KeyboardShift>
         <View style={styles.container}>
           <View style={spec.space_horizontal}>
             <View style={flex.center}>
-              <TouchableOpacity style={common.position_left}>
+              <TouchableOpacity
+                style={common.position_left}
+                onPress={() => navigation.goBack()}>
                 <Text style={[common.text_base, common.text_gray]}>Cancel</Text>
               </TouchableOpacity>
               <Image style={common.logo_center} source={icon} />
@@ -90,11 +99,17 @@ export default function LoginScreen() {
           </View>
 
           <View style={[styles.footer]}>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                setAuth(true);
+                navigation.navigate('Wellcome');
+              }}>
               <Text style={[common.text_base, common.text_white]}>Login</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ForgotPassword')}>
               <Text style={common.text_base}>Forgot password?</Text>
             </TouchableOpacity>
           </View>

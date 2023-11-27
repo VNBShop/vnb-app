@@ -74,7 +74,7 @@ export const common = StyleSheet.create({
   },
   position_left: {
     position: 'absolute',
-    left: 16,
+    left: 0,
   },
   text_base: {
     fontSize: 16,

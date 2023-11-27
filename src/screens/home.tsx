@@ -5,6 +5,7 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -76,6 +77,11 @@ export default function HomeScreen({navigation}: HomeScreenProps) {
 
   return (
     <SafeArea>
+      <StatusBar
+        translucent={true}
+        barStyle={'dark-content'}
+        backgroundColor={'transparent'}
+      />
       <AnimateHeader animateValue={offset} />
 
       <ScrollView

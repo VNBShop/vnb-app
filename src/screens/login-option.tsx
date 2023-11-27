@@ -5,13 +5,24 @@ import {color} from '../UIkit/palette';
 import {common, flex, spec} from '../UIkit/styles';
 import {google, icon} from '../assets';
 import OrHr from '../components/ui/or-hr';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackProps} from '../types/route';
 
-export default function LoginOptionScreen() {
+type LoginOptionScreenProps = NativeStackScreenProps<
+  RootStackProps,
+  'LoginOption'
+>;
+
+export default function LoginOptionScreen({
+  navigation,
+}: LoginOptionScreenProps) {
   return (
     <SafeArea>
       <View style={[spec.space_horizontal, common.flex_full]}>
         <View style={flex.center}>
-          <TouchableOpacity style={common.position_left}>
+          <TouchableOpacity
+            style={common.position_left}
+            onPress={() => navigation.goBack()}>
             <Text style={[common.text_base, common.text_gray]}>Cancel</Text>
           </TouchableOpacity>
           <Image style={common.logo_center} source={icon} />
@@ -29,14 +40,16 @@ export default function LoginOptionScreen() {
 
           <OrHr isText />
 
-          <TouchableOpacity style={[styles.button, styles.button_primary]}>
+          <TouchableOpacity
+            style={[styles.button, styles.button_primary]}
+            onPress={() => navigation.navigate('Login')}>
             <Text style={[common.text_white, styles.button_text]}>Log in</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.footer}>
           <Text style={common.text_gray}>Don't have account?</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('SignupOption')}>
             <Text style={common.text_link}>Sign up</Text>
           </TouchableOpacity>
         </View>

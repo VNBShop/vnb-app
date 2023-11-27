@@ -13,15 +13,26 @@ import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, flex, spec} from '../UIkit/styles';
 import {icon} from '../assets';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackProps} from '../types/route';
 
-export default function ForgotPasswordScreen() {
+type ForgotPasswordScreenProps = NativeStackScreenProps<
+  RootStackProps,
+  'ForgotPassword'
+>;
+
+export default function ForgotPasswordScreen({
+  navigation,
+}: ForgotPasswordScreenProps) {
   return (
     <SafeArea color="#ffffff">
       <KeyboardShift>
         <View style={styles.container}>
           <View style={spec.space_horizontal}>
             <View style={flex.center}>
-              <TouchableOpacity style={common.position_left}>
+              <TouchableOpacity
+                style={common.position_left}
+                onPress={() => navigation.goBack()}>
                 <Text style={[common.text_base, common.text_gray]}>Cancel</Text>
               </TouchableOpacity>
               <Image style={common.logo_center} source={icon} />
@@ -48,7 +59,9 @@ export default function ForgotPasswordScreen() {
           </View>
 
           <View style={[styles.footer]}>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate('Identify')}>
               <Text style={[common.text_base, common.text_white]}>Next</Text>
             </TouchableOpacity>
           </View>

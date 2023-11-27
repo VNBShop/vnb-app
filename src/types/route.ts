@@ -5,6 +5,15 @@ export type RootStackProps = {
   Checkout: undefined;
   ProductDetail: undefined;
   Profile: undefined;
+  Login: undefined;
+  LoginOption: undefined;
+  Wellcome: undefined;
+  SignupOption: undefined;
+  Signup: undefined;
+  ForgotPassword: undefined;
+  OTP: undefined;
+  ChangePassword: undefined;
+  Identify: undefined;
 };
 
 export type BottomTabProps = {

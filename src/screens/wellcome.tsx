@@ -1,25 +1,38 @@
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import * as React from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Image,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, spec} from '../UIkit/styles';
 import {icon, wellcome} from '../assets';
 import {RootStackProps} from '../types/route';
+import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 
 export default function WellcomeScreen() {
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackProps, 'Login'>>();
+    useNavigation<NativeStackNavigationProp<RootStackProps, 'LoginOption'>>();
 
   return (
     <SafeArea>
+      <StatusBar
+        barStyle={'dark-content'}
+        backgroundColor={'transparent'}
+        translucent={true}
+      />
       <View style={[spec.space_horizontal]}>
         <Image source={icon} style={common.logo} />
       </View>
 
-      <View style={[spec.space_horizontal, styles.paragraph]}>
+      <View style={[spec.space_horizontal]}>
         <Text style={styles.title}>Enjoy shopping with</Text>
         <Text style={styles.spec}>VNB Shop</Text>
 
@@ -27,6 +40,12 @@ export default function WellcomeScreen() {
           VNB Shop is a platform that helps you to buy and sell your products
           online
         </Text>
+
+        <TouchableOpacity
+          onPress={() => navigation.navigate('LoginOption')}
+          style={styles.button}>
+          <Text style={styles.button_text}>Go to shopping</Text>
+        </TouchableOpacity>
 
         <View style={styles.container}>
           <View style={styles.circle_1} />
@@ -39,15 +58,10 @@ export default function WellcomeScreen() {
               source={wellcome}
               style={styles.image}
             />
-
-            <TouchableOpacity onPress={() => navigation.push('Login')}>
-              <View style={styles.button}>
-                <Text style={styles.button_text}>Go to shopping</Text>
-              </View>
-            </TouchableOpacity>
           </View>
         </View>
       </View>
+      <BottomSafeArea />
     </SafeArea>
   );
 }
@@ -101,8 +115,10 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: color.primary,
     paddingVertical: 16,
-    paddingHorizontal: 60,
+    paddingHorizontal: 30,
     borderRadius: 55,
+    alignSelf: 'flex-start',
+    marginTop: 32,
   },
   button_text: {
     color: '#ffffff',

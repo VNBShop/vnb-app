@@ -13,11 +13,7 @@ import {
   TouchableWithoutFeedback,
   ViewStyle,
 } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import {useSharedValue, withTiming} from 'react-native-reanimated';
 
 export type KeyboardShiftProps = {
   children: React.ReactNode;
@@ -77,17 +73,17 @@ export default function KeyboardShift({
     });
   };
 
-  const animate = useAnimatedStyle(() => {
-    return {paddingBottom: shift.value};
-  });
+  // const animate = useAnimatedStyle(() => {
+  //   return {paddingBottom: shift.value};
+  // });
 
-  if (Platform.OS === 'android') {
-    return (
-      <Animated.View style={(styles.container, style, animate)}>
-        {children}
-      </Animated.View>
-    );
-  }
+  // if (Platform.OS === 'android') {
+  //   return (
+  //     <Animated.View style={(styles.container, style, animate)}>
+  //       {children}
+  //     </Animated.View>
+  //   );
+  // }
 
   return (
     <KeyboardAvoidingView
