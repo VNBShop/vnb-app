@@ -54,3 +54,4 @@ export {default as user} from './user.png';
 export {default as userOutline} from './userOutline.png';
 export {default as forumP} from './forumP.png';
 export {default as photo} from './photo.png';
+export {default as create} from './create.png';

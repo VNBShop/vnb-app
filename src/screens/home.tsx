@@ -1,11 +1,11 @@
 import * as React from 'react';
 
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {
   Animated,
   NativeScrollEvent,
   NativeSyntheticEvent,
   ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -19,9 +19,8 @@ import AnimateHeader, {HEADER_HEIGHT} from '../components/animate-header';
 import HotSale from '../components/hot-sale';
 import Popular from '../components/popular';
 import {Icon} from '../components/ui/icon';
-import {navList} from '../utils/contants';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {BottomTabProps} from '../types/route';
+import {navList} from '../utils/contants';
 
 type HomeScreenProps = NativeStackScreenProps<BottomTabProps, 'Home'>;
 export default function HomeScreen({navigation}: HomeScreenProps) {
@@ -77,11 +76,6 @@ export default function HomeScreen({navigation}: HomeScreenProps) {
 
   return (
     <SafeArea>
-      <StatusBar
-        translucent={true}
-        barStyle={'dark-content'}
-        backgroundColor={'transparent'}
-      />
       <AnimateHeader animateValue={offset} />
 
       <ScrollView

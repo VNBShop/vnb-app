@@ -13,7 +13,7 @@ import {
   user,
   userOutline,
 } from '../assets';
-import {chatLottie} from '../components/lottie';
+import {chatLottie} from '../lottie';
 import {Icon} from '../components/ui/icon';
 
 export const tabOption = {

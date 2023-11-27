@@ -62,12 +62,16 @@ export default function AnimateHeader({
         <Image source={icon} style={styles.logo} />
 
         <View style={styles.actionContainer}>
-          <View style={styles.iconItem}>
+          <TouchableOpacity
+            style={styles.iconItem}
+            onPress={() => navigator.navigate('Search')}>
             <Image source={search} style={styles.icon} />
-          </View>
-          <View style={styles.iconItem}>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.iconItem}
+            onPress={() => navigator.navigate('ConversationList')}>
             <Image source={messenger} style={styles.icon} />
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
       <Animated.Image

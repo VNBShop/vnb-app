@@ -66,6 +66,7 @@ export const common = StyleSheet.create({
   },
   flex_full: {
     flex: 1,
+    marginTop: 16,
   },
   logo_center: {
     width: 40,

@@ -14,6 +14,8 @@ export type RootStackProps = {
   OTP: undefined;
   ChangePassword: undefined;
   Identify: undefined;
+  ConversationList: undefined;
+  Search: undefined;
 };
 
 export type BottomTabProps = {

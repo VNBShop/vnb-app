@@ -1,37 +1,32 @@
-import * as React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import TabNavigation from './tab';
-import OrderedScreen from '../screens/order';
-import {RootStackProps} from '../types/route';
+import * as React from 'react';
 import CartScreen from '../screens/cart';
+import ChangePasswordScreen from '../screens/change-password';
 import CheckoutScreen from '../screens/checkout';
-import ProductDetailScreen from '../screens/product-details';
-import ProfileScreen from '../screens/profile';
-import {useAuth} from '../components/auth-provider';
+import ForgotPasswordScreen from '../screens/forgot-password';
+import IdentifyScreen from '../screens/identify';
 import LoginScreen from '../screens/login';
 import LoginOptionScreen from '../screens/login-option';
-import WellcomeScreen from '../screens/wellcome';
-import SignupOptionScreen from '../screens/signup-option';
+import OrderedScreen from '../screens/order';
+import ProductDetailScreen from '../screens/product-details';
+import ProfileScreen from '../screens/profile';
 import SignupScreen from '../screens/signup';
-import ForgotPasswordScreen from '../screens/forgot-password';
-import ChangePasswordScreen from '../screens/change-password';
-import IdentifyScreen from '../screens/identify';
+import SignupOptionScreen from '../screens/signup-option';
+import WellcomeScreen from '../screens/wellcome';
+import {RootStackProps} from '../types/route';
+import TabNavigation from './tab';
+import SearchScreen from '../screens/search';
+import ConversationListScreen from '../screens/conversation-list';
 
 const Stack = createNativeStackNavigator<RootStackProps>();
 export default function StackNavigation() {
-  const {auth} = useAuth();
-
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
       }}>
-      {auth ? (
-        <Stack.Screen name="Root" component={TabNavigation} />
-      ) : (
-        <Stack.Screen name="Wellcome" component={WellcomeScreen} />
-      )}
-
+      <Stack.Screen name="Root" component={TabNavigation} />
+      <Stack.Screen name="Wellcome" component={WellcomeScreen} />
       <Stack.Screen name="Ordered" component={OrderedScreen} />
       <Stack.Screen name="Cart" component={CartScreen} />
       <Stack.Screen name="Checkout" component={CheckoutScreen} />
@@ -44,6 +39,11 @@ export default function StackNavigation() {
       <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
       <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
       <Stack.Screen name="Identify" component={IdentifyScreen} />
+      <Stack.Screen name="Search" component={SearchScreen} />
+      <Stack.Screen
+        name="ConversationList"
+        component={ConversationListScreen}
+      />
     </Stack.Navigator>
   );
 }
