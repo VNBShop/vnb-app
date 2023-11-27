@@ -29,7 +29,7 @@ export default function CheckoutScreen({navigation}: CheckoutScreenProps) {
     <SafeArea>
       <View style={styles.header}>
         <TouchableOpacity
-          style={common.position_left}
+          style={common.positionLeftBase}
           onPress={() => navigation.goBack()}>
           <Icon icon={back} size={25} />
         </TouchableOpacity>

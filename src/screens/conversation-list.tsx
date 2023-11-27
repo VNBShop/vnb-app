@@ -9,12 +9,21 @@ import ActiveUserList from '../components/active-user-list';
 import ConversationListCard, {
   ConversationListCardProps,
 } from '../components/conversation-list';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackProps} from '../types/route';
 
-export default function ConversationListScreen() {
+type ConversationListScreenProps = NativeStackScreenProps<
+  RootStackProps,
+  'ConversationList'
+>;
+
+export default function ConversationListScreen({
+  navigation,
+}: ConversationListScreenProps) {
   return (
     <SafeArea>
       <View style={styles.header}>
-        <Icon size={25} icon={back} />
+        <Icon size={25} icon={back} onPress={() => navigation.goBack()} />
         <Text style={common.headerTitle}>Conversations</Text>
 
         <Icon icon={create} size={25} />

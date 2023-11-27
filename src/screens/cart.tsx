@@ -26,7 +26,7 @@ export default function CartScreen({navigation}: CartScreenProps) {
     <SafeArea>
       <View style={styles.header}>
         <TouchableOpacity
-          style={common.position_left}
+          style={common.positionLeftBase}
           onPress={() => navigation.goBack()}>
           <Icon size={25} icon={back} />
         </TouchableOpacity>

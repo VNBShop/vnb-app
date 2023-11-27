@@ -59,14 +59,13 @@ export const common = StyleSheet.create({
   },
   inset: {
     position: 'absolute',
-    top: 0,
+    top: 8,
     left: 0,
     bottom: 0,
     right: 0,
   },
   flex_full: {
     flex: 1,
-    marginTop: 16,
   },
   logo_center: {
     width: 40,
@@ -76,6 +75,10 @@ export const common = StyleSheet.create({
   position_left: {
     position: 'absolute',
     left: 0,
+  },
+  positionLeftBase: {
+    position: 'absolute',
+    left: 16,
   },
   text_base: {
     fontSize: 16,

@@ -60,7 +60,10 @@ export default function PersonalScreen() {
 
           <View style={styles.navContainer}>
             {navPerson.map(nav => (
-              <TouchableOpacity key={nav.id} style={styles.navItem}>
+              <TouchableOpacity
+                key={nav.id}
+                style={styles.navItem}
+                onPress={() => navigation.navigate('Wellcome')}>
                 <View style={styles.navIcon}>
                   <Icon icon={nav.logo} size={24} />
                 </View>

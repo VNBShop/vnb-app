@@ -9,9 +9,9 @@ import React, {useState} from 'react';
 import {StatusBar} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {common} from './src/UIkit/styles';
 import {AuthContext} from './src/components/auth-provider';
 import Navigation from './src/routes';
-import {common} from './src/UIkit/styles';
 
 function App() {
   const [auth, setAuth] = useState(false);
