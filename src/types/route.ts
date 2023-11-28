@@ -16,6 +16,7 @@ export type RootStackProps = {
   Identify: undefined;
   ConversationList: undefined;
   Search: undefined;
+  ConversationDetail: undefined;
 };
 
 export type BottomTabProps = {

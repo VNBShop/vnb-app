@@ -29,7 +29,7 @@ export default function ConversationListScreen({
         <Icon icon={create} size={25} />
       </View>
 
-      <View style={[common.flex_full, spec.space_horizontal]}>
+      <View style={[common.flex_full, spec.space_horizontal, spec.mt_xl]}>
         <ScrollView nestedScrollEnabled>
           <View style={styles.search}>
             <Icon size={20} icon={search_gray} />

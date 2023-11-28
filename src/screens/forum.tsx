@@ -2,18 +2,20 @@
 import * as React from 'react';
 
 import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Modalize} from 'react-native-modalize';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {HEIGHT_DEVICE, common, flex} from '../UIkit/styles';
 import {forumP, messenger, photo, search} from '../assets';
-import {Icon, IconOutline} from '../components/ui/icon';
 import Avatar from '../components/ui/avatar';
+import {Icon, IconOutline} from '../components/ui/icon';
 import Post from '../components/ui/post';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {Modalize} from 'react-native-modalize';
-import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
+import {Portal} from 'react-native-portalize';
 
 export default function ForumScreen() {
   const insets = useSafeAreaInsets();
+
   const commentModalRef = React.useRef<Modalize>(null);
   return (
     <>
@@ -53,24 +55,25 @@ export default function ForumScreen() {
         </ScrollView>
       </SafeArea>
 
-      <Modalize
-        useNativeDriver
-        panGestureEnabled
-        modalHeight={HEIGHT_DEVICE - insets.top}
-        ref={commentModalRef}
-        handlePosition="inside"
-        HeaderComponent={
-          <View style={styles.commentHeader}>
-            <Text style={styles.commentTitle}>Comments</Text>
-          </View>
-        }>
-        <Text style={{textAlign: 'center', fontSize: 20, marginBottom: 8}}>
-          No comment yet
-        </Text>
-        <Text style={{textAlign: 'center', marginBottom: 8}}>
-          Be the first comment
-        </Text>
-      </Modalize>
+      <Portal>
+        <Modalize
+          useNativeDriver
+          panGestureEnabled
+          modalHeight={HEIGHT_DEVICE - insets.top}
+          ref={commentModalRef}
+          HeaderComponent={
+            <View style={styles.commentHeader}>
+              <Text style={styles.commentTitle}>Comments</Text>
+            </View>
+          }>
+          <Text style={{textAlign: 'center', fontSize: 20, marginBottom: 8}}>
+            No comment yet
+          </Text>
+          <Text style={{textAlign: 'center', marginBottom: 8}}>
+            Be the first comment
+          </Text>
+        </Modalize>
+      </Portal>
     </>
   );
 }

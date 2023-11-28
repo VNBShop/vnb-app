@@ -3,6 +3,8 @@ import * as React from 'react';
 import CartScreen from '../screens/cart';
 import ChangePasswordScreen from '../screens/change-password';
 import CheckoutScreen from '../screens/checkout';
+import ConversationDetailScreen from '../screens/conversation-details';
+import ConversationListScreen from '../screens/conversation-list';
 import ForgotPasswordScreen from '../screens/forgot-password';
 import IdentifyScreen from '../screens/identify';
 import LoginScreen from '../screens/login';
@@ -10,13 +12,12 @@ import LoginOptionScreen from '../screens/login-option';
 import OrderedScreen from '../screens/order';
 import ProductDetailScreen from '../screens/product-details';
 import ProfileScreen from '../screens/profile';
+import SearchScreen from '../screens/search';
 import SignupScreen from '../screens/signup';
 import SignupOptionScreen from '../screens/signup-option';
 import WellcomeScreen from '../screens/wellcome';
 import {RootStackProps} from '../types/route';
 import TabNavigation from './tab';
-import SearchScreen from '../screens/search';
-import ConversationListScreen from '../screens/conversation-list';
 
 const Stack = createNativeStackNavigator<RootStackProps>();
 export default function StackNavigation() {
@@ -43,6 +44,10 @@ export default function StackNavigation() {
       <Stack.Screen
         name="ConversationList"
         component={ConversationListScreen}
+      />
+      <Stack.Screen
+        name="ConversationDetail"
+        component={ConversationDetailScreen}
       />
     </Stack.Navigator>
   );
