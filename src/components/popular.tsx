@@ -3,7 +3,7 @@ import {Image, StyleSheet, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {WIDTH_DEVICE, common} from '../UIkit/styles';
 import {heartOutline} from '../assets';
-import {fakeData} from '../utils/contants';
+import {fakeData} from '../libs/contants';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {BottomTabProps, RootStackProps} from '../types/route';

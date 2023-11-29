@@ -10,7 +10,7 @@ import {
 import {color} from '../UIkit/palette';
 import {common, flex} from '../UIkit/styles';
 import {pen} from '../assets';
-import {fakeData} from '../utils/contants';
+import {fakeData} from '../libs/contants';
 import HrVertical from './ui/hrVertical';
 import {Icon} from './ui/icon';
 import OrHr from './ui/or-hr';

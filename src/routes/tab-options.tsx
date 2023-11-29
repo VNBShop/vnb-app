@@ -5,13 +5,13 @@ import {Platform, StyleSheet, View} from 'react-native';
 import {color} from '../UIkit/palette';
 import {
   bell,
-  bellOutline,
+  bellGray,
   home,
-  homeOutline,
-  plane,
-  planeOutline,
+  homeGray,
+  store,
+  storeGray,
   user,
-  userOutline,
+  userGray,
 } from '../assets';
 import {chatLottie} from '../lottie';
 import {Icon} from '../components/ui/icon';
@@ -22,16 +22,16 @@ export const tabOption = {
       return focused ? (
         <Icon icon={home} size={25} />
       ) : (
-        <Icon icon={homeOutline} size={25} />
+        <Icon icon={homeGray} size={25} />
       );
     },
   } as BottomTabNavigationOptions,
   cart: {
     tabBarIcon: ({focused}) => {
       return focused ? (
-        <Icon icon={plane} size={22} />
+        <Icon icon={store} size={22} />
       ) : (
-        <Icon icon={planeOutline} size={22} />
+        <Icon icon={storeGray} size={22} />
       );
     },
   } as BottomTabNavigationOptions,
@@ -54,7 +54,7 @@ export const tabOption = {
       return focused ? (
         <Icon icon={bell} size={28} />
       ) : (
-        <Icon icon={bellOutline} size={28} />
+        <Icon icon={bellGray} size={28} />
       );
     },
   } as BottomTabNavigationOptions,
@@ -63,7 +63,7 @@ export const tabOption = {
       return focused ? (
         <Icon icon={user} size={25} />
       ) : (
-        <Icon icon={userOutline} size={25} />
+        <Icon icon={userGray} size={25} />
       );
     },
   } as BottomTabNavigationOptions,

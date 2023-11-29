@@ -15,7 +15,7 @@ import {forwardGray, search, setting} from '../assets';
 import Avatar from '../components/ui/avatar';
 import {Icon, IconOutline} from '../components/ui/icon';
 import OrHr from '../components/ui/or-hr';
-import {actionOption, navPerson} from '../utils/contants';
+import {actionOption, navPerson} from '../libs/contants';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackProps} from '../types/route';

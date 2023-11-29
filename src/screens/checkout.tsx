@@ -16,7 +16,7 @@ import HrVertical from '../components/ui/hrVertical';
 import {Icon} from '../components/ui/icon';
 import OrHr from '../components/ui/or-hr';
 import RadioCard from '../components/ui/radio-card';
-import {fakeData, paymentMethod} from '../utils/contants';
+import {fakeData, paymentMethod} from '../libs/contants';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackProps} from '../types/route';
 

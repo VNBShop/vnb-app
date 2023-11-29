@@ -12,7 +12,7 @@ import SafeArea from '../UIkit/layouts/safe-area';
 import {common} from '../UIkit/styles';
 import {back, forwardGray, location} from '../assets';
 import {color} from '../UIkit/palette';
-import {fakeData} from '../utils/contants';
+import {fakeData} from '../libs/contants';
 import OrHr from '../components/ui/or-hr';
 import {Icon} from '../components/ui/icon';
 import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';

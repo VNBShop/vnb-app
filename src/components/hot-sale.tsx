@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import {common, spec} from '../UIkit/styles';
-import {fakeData} from '../utils/contants';
+import {fakeData} from '../libs/contants';
 import {color} from '../UIkit/palette';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';

@@ -1,6 +1,14 @@
 import * as React from 'react';
 import {useState} from 'react';
-import {Image, ImageProps, StyleSheet, Text, View} from 'react-native';
+import {
+  Image,
+  ImageProps,
+  StyleProp,
+  StyleSheet,
+  Text,
+  View,
+  ViewStyle,
+} from 'react-native';
 import {color} from '../../UIkit/palette';
 
 export type AvatarProps = {
@@ -8,25 +16,27 @@ export type AvatarProps = {
   size: number;
   username: string;
   isActive?: boolean;
+  style?: StyleProp<ViewStyle>;
 };
 export default function Avatar({
   source,
   size,
   username,
   isActive,
+  style,
 }: AvatarProps) {
   const [error, setError] = useState(false);
 
   if (error) {
     return (
-      <View style={[styles.avtFallback, {width: size, height: size}]}>
+      <View style={[styles.avtFallback, {width: size, height: size}, style]}>
         <Text style={styles.username}>{username}</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, style]}>
       <Image
         source={typeof source === 'string' ? {uri: source} : source}
         style={[styles.avatar, {width: size, height: size}]}

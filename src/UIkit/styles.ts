@@ -21,6 +21,9 @@ export const spec = StyleSheet.create({
   marginVerticalBase: {
     marginVertical: 16,
   },
+  mrBase: {
+    marginRight: 8,
+  },
 });
 
 export const flex = StyleSheet.create({

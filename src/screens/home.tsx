@@ -20,7 +20,7 @@ import HotSale from '../components/hot-sale';
 import Popular from '../components/popular';
 import {Icon} from '../components/ui/icon';
 import {BottomTabProps} from '../types/route';
-import {navList} from '../utils/contants';
+import {navList} from '../libs/contants';
 
 type HomeScreenProps = NativeStackScreenProps<BottomTabProps, 'Home'>;
 export default function HomeScreen({navigation}: HomeScreenProps) {

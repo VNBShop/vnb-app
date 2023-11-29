@@ -20,7 +20,7 @@ import {
 } from '../assets';
 import {Icon} from '../components/ui/icon';
 import {RootStackProps} from '../types/route';
-import {fakeData} from '../utils/contants';
+import {fakeData} from '../libs/contants';
 
 export const filters = [
   {
