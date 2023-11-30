@@ -20,14 +20,24 @@ export default function ConversationDetailScreen({
 }: ConversationDetailScreenProps) {
   const [chats, setChats] = React.useState(chatlists);
 
+  const [chatVal, setChatVal] = React.useState('');
+
   const scrollViewRef = React.useRef<ScrollView>(null);
 
-  React.useEffect(() => {
-    // Scroll to the end of the ScrollView when chats change
+  const scrollToBottom = () => {
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollToEnd({animated: true});
     }
-  }, [chats]);
+  };
+
+  const onLayout = () => {
+    scrollToBottom();
+  };
+
+  const onContentSizeChange = () => {
+    scrollToBottom();
+  };
+
   return (
     <KeyboardShift>
       <SafeArea>
@@ -50,15 +60,37 @@ export default function ConversationDetailScreen({
         </View>
 
         <View style={styles.messContainer}>
-          <ScrollView contentContainerStyle={styles.chats} ref={scrollViewRef}>
+          <ScrollView
+            contentContainerStyle={styles.chats}
+            ref={scrollViewRef}
+            onLayout={onLayout}
+            onContentSizeChange={onContentSizeChange}>
             <Chat chats={chats} />
           </ScrollView>
         </View>
 
         <View style={styles.footer}>
           <Icon size={32} icon={photo} />
-          <TextInput style={styles.textInput} placeholder="Aa" />
-          <Icon size={30} icon={heart} />
+          <TextInput
+            style={styles.textInput}
+            placeholder="Aa"
+            value={chatVal}
+            onChangeText={setChatVal}
+          />
+          <Icon
+            size={30}
+            icon={heart}
+            onPress={() => {
+              setChats(prev => [
+                ...prev,
+                {
+                  sender: 1,
+                  receiver: 2,
+                  content: chatVal,
+                },
+              ]);
+            }}
+          />
         </View>
       </SafeArea>
     </KeyboardShift>
