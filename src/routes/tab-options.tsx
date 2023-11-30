@@ -71,7 +71,7 @@ export const tabOption = {
 
 const styles = StyleSheet.create({
   forum: {
-    top: Platform.OS === 'ios' ? -12 : -20,
+    top: Platform.OS === 'ios' ? -16 : -20,
     borderColor: '#ff9fb5',
     borderWidth: 1,
     borderBottomColor: 'tranparent',
@@ -82,6 +82,9 @@ const styles = StyleSheet.create({
     borderRadius: 9999,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: color.secondary,
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
   },
   icon: {
     width: 40,

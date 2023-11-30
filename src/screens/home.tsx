@@ -21,6 +21,8 @@ import Popular from '../components/popular';
 import {Icon} from '../components/ui/icon';
 import {BottomTabProps} from '../types/route';
 import {navList} from '../libs/contants';
+import LottieView from 'lottie-react-native';
+import {ballLottie} from '../lottie';
 
 type HomeScreenProps = NativeStackScreenProps<BottomTabProps, 'Home'>;
 export default function HomeScreen({navigation}: HomeScreenProps) {
@@ -99,6 +101,17 @@ export default function HomeScreen({navigation}: HomeScreenProps) {
               <Text style={common.text_gray}>{item.label}</Text>
             </TouchableOpacity>
           ))}
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Product')}
+            style={styles.navItem}>
+            <LottieView
+              source={ballLottie}
+              autoPlay
+              loop
+              style={styles.lottie}
+            />
+            <Text style={common.text_gray}>Other</Text>
+          </TouchableOpacity>
         </View>
 
         <HotSale />
@@ -132,5 +145,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: WIDTH_DEVICE / 4 - 18,
     gap: 6,
+  },
+  lottie: {
+    width: 30,
+    height: 30,
   },
 });

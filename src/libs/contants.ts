@@ -1,5 +1,4 @@
 import {
-  accessorie,
   backpack,
   badminton,
   bag,
@@ -56,11 +55,6 @@ export const navList = [
     id: 7,
     label: 'Backpack',
     icon: backpack,
-  },
-  {
-    id: 8,
-    label: 'Other',
-    icon: accessorie,
   },
 ];
 
