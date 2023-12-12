@@ -23,6 +23,8 @@ import {BottomTabProps} from '../types/route';
 import {navList} from '../libs/contants';
 import LottieView from 'lottie-react-native';
 import {ballLottie} from '../lottie';
+import useAuth from '../_store/useAuth';
+import env from './../libs/env';
 
 type HomeScreenProps = NativeStackScreenProps<BottomTabProps, 'Home'>;
 export default function HomeScreen({navigation}: HomeScreenProps) {
@@ -76,6 +78,8 @@ export default function HomeScreen({navigation}: HomeScreenProps) {
     }
   };
 
+  const {name, setName} = useAuth(state => state);
+
   return (
     <SafeArea>
       <AnimateHeader animateValue={offset} />
@@ -113,6 +117,12 @@ export default function HomeScreen({navigation}: HomeScreenProps) {
             <Text style={common.text_gray}>Other</Text>
           </TouchableOpacity>
         </View>
+
+        <Text>{env.API_URL}</Text>
+
+        <TouchableOpacity onPress={setName}>
+          <Text>Add</Text>
+        </TouchableOpacity>
 
         <HotSale />
 

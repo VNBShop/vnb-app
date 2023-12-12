@@ -30,7 +30,7 @@ export default function ConversationListScreen({
       </View>
 
       <View style={[common.flex_full, spec.space_horizontal, spec.mt_xl]}>
-        <ScrollView nestedScrollEnabled>
+        <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false}>
           <View style={styles.search}>
             <Icon size={20} icon={search_gray} />
             <Text style={[common.text_gray, common.text_base]}>Search</Text>
