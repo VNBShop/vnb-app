@@ -19,11 +19,13 @@ import {actionOption, navPerson} from '../libs/contants';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackProps} from '../types/route';
+import useAuth from '../_store/useAuth';
 
 export default function PersonalScreen() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackProps, 'Root'>>();
 
+  const {reset} = useAuth(state => state);
   return (
     <SafeArea color={color.superDivider}>
       <View style={styles.container}>
@@ -75,7 +77,11 @@ export default function PersonalScreen() {
           <View style={styles.actionContainer}>
             {actionOption.map(item => (
               <React.Fragment key={item.id}>
-                <TouchableOpacity style={styles.actionItem}>
+                <TouchableOpacity
+                  style={styles.actionItem}
+                  onPress={() => {
+                    item.label === 'Logout' ? reset() : null;
+                  }}>
                   <View style={styles.actionItemL}>
                     <View
                       style={[

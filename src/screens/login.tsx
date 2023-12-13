@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-  Keyboard,
   StyleSheet,
   Text,
   TextInput,
@@ -8,41 +7,49 @@ import {
   View,
 } from 'react-native';
 
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {Controller, useForm} from 'react-hook-form';
 import {Image} from 'react-native-animatable';
 import KeyboardShift from '../UIkit/layouts/keyboard-shift';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, flex, spec} from '../UIkit/styles';
-import {icon} from '../assets';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import useAuth from '../_store/useAuth';
+import {icon, password} from '../assets';
 import {RootStackProps} from '../types/route';
-import {useAuth} from '../components/auth-provider';
+import {z} from 'zod';
+import {loginSchema} from '../libs/validatetions/auth';
+import {zodResolver} from '@hookform/resolvers/zod';
 
 type LoginScreenProps = NativeStackScreenProps<RootStackProps, 'Login'>;
 
+type Inputs = z.infer<typeof loginSchema>;
+
 export default function LoginScreen({navigation}: LoginScreenProps) {
-  // const [email, setEmail] = React.useState<string>('');
-  const [password, setPassword] = React.useState<string>('');
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
-  const [isInputFocus, setIsInputFocus] = React.useState<string | null>(null);
 
   const emailRef = React.useRef<TextInput>(null);
   const passwordRef = React.useRef<TextInput>(null);
 
-  React.useEffect(() => {
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        if (!isInputFocus) {
-          Keyboard.dismiss();
-        }
-      },
-    );
+  const {
+    control,
+    formState: {errors},
+    handleSubmit,
+  } = useForm<Inputs>({
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+    resolver: zodResolver(loginSchema),
+  });
 
-    return () => keyboardDidHideListener.remove();
-  }, [isInputFocus]);
+  const {login} = useAuth(state => state);
 
-  const {setAuth} = useAuth();
+  const onLogin = (values: Inputs) => {
+    console.log('values >>', values);
+
+    login();
+  };
 
   return (
     <SafeArea color="#ffffff">
@@ -63,48 +70,70 @@ export default function LoginScreen({navigation}: LoginScreenProps) {
             </Text>
 
             <View style={styles.form}>
-              <TextInput
-                ref={emailRef}
-                onFocus={() => setIsInputFocus('email')}
-                onBlur={() => setIsInputFocus(null)}
-                // onChangeText={setEmail}
-                placeholder="Username"
-                autoCapitalize="none"
-                style={styles.input}
+              <Controller
+                control={control}
+                name="email"
+                render={({field: {onChange, value, onBlur}}) => (
+                  <View>
+                    <TextInput
+                      ref={emailRef}
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      // onChangeText={setEmail}
+                      placeholder="Username"
+                      autoCapitalize="none"
+                      style={styles.input}
+                    />
+                    {!!errors?.email?.message && (
+                      <Text style={styles.error}>{errors?.email?.message}</Text>
+                    )}
+                  </View>
+                )}
               />
 
-              <View>
-                <TextInput
-                  ref={passwordRef}
-                  secureTextEntry={!showPassword}
-                  onChangeText={setPassword}
-                  onFocus={() => setIsInputFocus('password')}
-                  onBlur={() => setIsInputFocus(null)}
-                  autoCapitalize="none"
-                  style={styles.input}
-                  placeholder="Password"
-                />
-                {password && password.length > 0 && (
-                  <TouchableOpacity
-                    onPress={() => setShowPassword(prev => !prev)}>
-                    {/* {showPassword ? (
-                              <Icon name="eye" size={24} color="black" />
-                            ) : (
-                              <Icon name="eye-off" size={24} color="black" />
-                            )} */}
-                  </TouchableOpacity>
+              <Controller
+                control={control}
+                name="password"
+                render={({field: {onChange, value, onBlur}}) => (
+                  <View>
+                    <View>
+                      <TextInput
+                        ref={passwordRef}
+                        value={value}
+                        secureTextEntry={!showPassword}
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        autoCapitalize="none"
+                        style={styles.input}
+                        placeholder="Password"
+                      />
+                      {password && password.length > 0 && (
+                        <TouchableOpacity
+                          onPress={() => setShowPassword(prev => !prev)}>
+                          {/* {showPassword ? (
+                                <Icon name="eye" size={24} color="black" />
+                              ) : (
+                                <Icon name="eye-off" size={24} color="black" />
+                              )} */}
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                    {!!errors?.password?.message && (
+                      <Text style={styles.error}>
+                        {errors?.password?.message}
+                      </Text>
+                    )}
+                  </View>
                 )}
-              </View>
+              />
             </View>
           </View>
 
           <View style={[styles.footer]}>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => {
-                setAuth(true);
-                navigation.navigate('Wellcome');
-              }}>
+              onPress={handleSubmit(onLogin)}>
               <Text style={[common.text_base, common.text_white]}>Login</Text>
             </TouchableOpacity>
 
@@ -157,5 +186,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     width: '100%',
+  },
+  error: {
+    color: color.danger,
+    marginTop: 8,
   },
 });

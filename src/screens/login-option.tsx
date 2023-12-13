@@ -20,11 +20,6 @@ export default function LoginOptionScreen({
     <SafeArea>
       <View style={[spec.space_horizontal, common.flex_full]}>
         <View style={flex.center}>
-          <TouchableOpacity
-            style={common.position_left}
-            onPress={() => navigation.goBack()}>
-            <Text style={[common.text_base, common.text_gray]}>Cancel</Text>
-          </TouchableOpacity>
           <Image style={common.logo_center} source={icon} />
         </View>
 

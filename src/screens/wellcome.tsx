@@ -1,5 +1,3 @@
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import * as React from 'react';
 import {
   Image,
@@ -10,16 +8,18 @@ import {
   View,
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
+import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, spec} from '../UIkit/styles';
+import useAuth from '../_store/useAuth';
 import {icon, wellcome} from '../assets';
-import {RootStackProps} from '../types/route';
-import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 
 export default function WellcomeScreen() {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackProps, 'LoginOption'>>();
+  // const navigation =
+  //   useNavigation<NativeStackNavigationProp<RootStackProps, 'LoginOption'>>();
+
+  const {accessApp} = useAuth(state => state);
 
   return (
     <SafeArea>
@@ -41,9 +41,7 @@ export default function WellcomeScreen() {
           online
         </Text>
 
-        <TouchableOpacity
-          onPress={() => navigation.navigate('LoginOption')}
-          style={styles.button}>
+        <TouchableOpacity onPress={accessApp} style={styles.button}>
           <Text style={styles.button_text}>Go to shopping</Text>
         </TouchableOpacity>
 

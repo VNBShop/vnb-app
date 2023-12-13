@@ -16,7 +16,6 @@ import {common, flex, spec} from '../UIkit/styles';
 import {icon} from '../assets';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackProps} from '../types/route';
-import {useAuth} from '../components/auth-provider';
 
 type SignupScreenProps = NativeStackScreenProps<RootStackProps, 'Signup'>;
 export default function SignupScreen({navigation}: SignupScreenProps) {
@@ -40,8 +39,6 @@ export default function SignupScreen({navigation}: SignupScreenProps) {
 
     return () => keyboardDidHideListener.remove();
   }, [isInputFocus]);
-
-  const {setAuth} = useAuth();
 
   return (
     <SafeArea color="#ffffff">
@@ -109,7 +106,6 @@ export default function SignupScreen({navigation}: SignupScreenProps) {
             <TouchableOpacity
               style={styles.button}
               onPress={() => {
-                setAuth(true);
                 navigation.navigate('Root');
               }}>
               <Text style={[common.text_base, common.text_white]}>
