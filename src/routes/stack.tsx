@@ -22,7 +22,7 @@ import useAuth from '../_store/useAuth';
 
 const Stack = createNativeStackNavigator<RootStackProps>();
 export default function StackNavigation() {
-  const {isFirstApp, accessToken} = useAuth(state => state);
+  const {isFirstApp, data} = useAuth(state => state);
 
   return (
     <Stack.Navigator
@@ -31,7 +31,7 @@ export default function StackNavigation() {
       }}>
       {isFirstApp ? (
         <Stack.Screen name="Wellcome" component={WellcomeScreen} />
-      ) : accessToken ? (
+      ) : data?.accessToken ? (
         <Stack.Group>
           <Stack.Screen name="Root" component={TabNavigation} />
           <Stack.Screen name="Ordered" component={OrderedScreen} />
@@ -65,6 +65,7 @@ export default function StackNavigation() {
             name="ChangePassword"
             component={ChangePasswordScreen}
           />
+          {/* <Stack.Screen name='OTP' component={OTP} /> */}
         </Stack.Group>
       )}
     </Stack.Navigator>

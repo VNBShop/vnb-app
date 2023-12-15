@@ -167,18 +167,18 @@ export const actionOption = [
     id: 1,
     label: 'Change password',
     icon: password,
-    bgColor: '#FFC60B',
+    bgColor: '#FFC0D9',
   },
   {
     id: 2,
     label: 'Save',
     icon: save,
-    bgColor: '#1394e4',
+    bgColor: '#4FC0D0',
   },
   {
     id: 3,
     label: 'Logout',
-    bgColor: '#85A389',
+    bgColor: '#C1AEFC',
     icon: logout,
   },
 ];

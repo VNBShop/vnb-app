@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
-  Keyboard,
+  ActivityIndicator,
+  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -8,114 +9,234 @@ import {
   View,
 } from 'react-native';
 
+import {zodResolver} from '@hookform/resolvers/zod';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {useMutation} from '@tanstack/react-query';
+import {Controller, useForm} from 'react-hook-form';
 import {Image} from 'react-native-animatable';
+import {Modalize} from 'react-native-modalize';
+import {Portal} from 'react-native-portalize';
+import {z} from 'zod';
+import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import KeyboardShift from '../UIkit/layouts/keyboard-shift';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, flex, spec} from '../UIkit/styles';
+import {OTPPayloadProps, confirmOTP} from '../api/auth/otp';
+import signUp from '../api/auth/signup';
 import {icon} from '../assets';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {InputOtp} from '../components/ui/input-otp';
+import {signUpSchema} from '../libs/validatetions/auth';
+import {DataError, DataResponse} from '../types/auth';
 import {RootStackProps} from '../types/route';
 
 type SignupScreenProps = NativeStackScreenProps<RootStackProps, 'Signup'>;
+
+type Inputs = z.infer<typeof signUpSchema>;
 export default function SignupScreen({navigation}: SignupScreenProps) {
-  // const [email, setEmail] = React.useState<string>('');
-  const [password, setPassword] = React.useState<string>('');
-  const [showPassword, setShowPassword] = React.useState<boolean>(false);
-  const [isInputFocus, setIsInputFocus] = React.useState<string | null>(null);
+  const verifyModalRef = React.useRef<Modalize>(null);
 
-  const emailRef = React.useRef<TextInput>(null);
-  const passwordRef = React.useRef<TextInput>(null);
+  const {
+    control,
+    formState: {errors},
+    reset,
+    getValues,
+    handleSubmit,
+  } = useForm<Inputs>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
 
-  React.useEffect(() => {
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        if (!isInputFocus) {
-          Keyboard.dismiss();
-        }
-      },
-    );
+  const mutationSignIn = useMutation<DataResponse, DataError, Inputs, unknown>({
+    mutationFn: signUp,
+    onSuccess(res) {
+      if (res.data.success) {
+        verifyModalRef.current?.open();
+      }
+    },
+    onError(error) {
+      Alert.alert('Error', error?.response?.data?.metadata?.message ?? '', [
+        {
+          text: 'Try again',
+          style: 'cancel',
+        },
+      ]);
+    },
+  });
 
-    return () => keyboardDidHideListener.remove();
-  }, [isInputFocus]);
+  const mutationVerify = useMutation<
+    DataResponse,
+    DataError,
+    OTPPayloadProps,
+    unknown
+  >({
+    mutationFn: confirmOTP,
+    onSuccess: response => {
+      if (response.data.success) {
+        verifyModalRef.current?.close();
+        Alert.alert('Success', 'Create account successfully!', [
+          {
+            text: 'Login',
+            style: 'default',
+            onPress: () => {
+              reset();
+              navigation.navigate('Login');
+            },
+          },
+        ]);
+      }
+    },
+    onError: error => {
+      Alert.alert('Error', error?.response?.data?.metadata?.message ?? '', [
+        {
+          text: 'Try again',
+          style: 'cancel',
+        },
+      ]);
+    },
+  });
+
+  const onSubmit = (values: Inputs) => {
+    mutationSignIn.mutate(values);
+  };
+
+  const onSubmitVerify = (otp: string) => {
+    const payload: OTPPayloadProps = {
+      email: getValues('email'),
+      otpCode: otp,
+      type: 'REGISTER',
+    };
+
+    mutationVerify.mutate(payload);
+  };
 
   return (
-    <SafeArea color="#ffffff">
-      <KeyboardShift>
-        <View style={styles.container}>
-          <View style={spec.space_horizontal}>
-            <View style={flex.center}>
-              <TouchableOpacity
-                style={common.position_left}
-                onPress={() => navigation.goBack()}>
-                <Text style={[common.text_base, common.text_gray]}>Cancel</Text>
-              </TouchableOpacity>
-              <Image style={common.logo_center} source={icon} />
-            </View>
+    <>
+      <SafeArea color="#ffffff">
+        <KeyboardShift>
+          <View style={styles.container}>
+            <View style={spec.space_horizontal}>
+              <View style={flex.center}>
+                <TouchableOpacity
+                  style={common.position_left}
+                  onPress={() => navigation.goBack()}>
+                  <Text style={[common.text_base, common.text_gray]}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                <Image style={common.logo_center} source={icon} />
+              </View>
 
-            <Text style={styles.tip}>Create your account</Text>
+              <Text style={styles.tip}>Create your account</Text>
 
-            <View style={styles.form}>
-              <TextInput
-                ref={emailRef}
-                onFocus={() => setIsInputFocus('email')}
-                onBlur={() => setIsInputFocus(null)}
-                // onChangeText={setEmail}
-                placeholder="Username"
-                autoCapitalize="none"
-                style={styles.input}
-              />
-
-              <TextInput
-                ref={emailRef}
-                onFocus={() => setIsInputFocus('email')}
-                onBlur={() => setIsInputFocus(null)}
-                // onChangeText={setEmail}
-                placeholder="Phone number or email address"
-                autoCapitalize="none"
-                style={styles.input}
-              />
-
-              <View>
-                <TextInput
-                  ref={passwordRef}
-                  secureTextEntry={!showPassword}
-                  onChangeText={setPassword}
-                  onFocus={() => setIsInputFocus('password')}
-                  onBlur={() => setIsInputFocus(null)}
-                  autoCapitalize="none"
-                  style={styles.input}
-                  placeholder="Password"
+              <View style={styles.form}>
+                <Controller
+                  control={control}
+                  name="email"
+                  render={({field: {onChange, value}}) => (
+                    <View>
+                      <TextInput
+                        value={value}
+                        onChangeText={onChange}
+                        placeholder="Email"
+                        autoCapitalize="none"
+                        style={styles.input}
+                      />
+                      <Text style={styles.error}>{errors?.email?.message}</Text>
+                    </View>
+                  )}
                 />
-                {password && password.length > 0 && (
-                  <TouchableOpacity
-                    onPress={() => setShowPassword(prev => !prev)}>
-                    {/* {showPassword ? (
-                              <Icon name="eye" size={24} color="black" />
-                            ) : (
-                              <Icon name="eye-off" size={24} color="black" />
-                            )} */}
-                  </TouchableOpacity>
-                )}
+
+                <Controller
+                  control={control}
+                  name="password"
+                  render={({field: {onChange, value}}) => (
+                    <View>
+                      <TextInput
+                        value={value}
+                        onChangeText={onChange}
+                        placeholder="Password"
+                        autoCapitalize="none"
+                        style={styles.input}
+                      />
+                      <Text style={styles.error}>
+                        {errors?.password?.message}
+                      </Text>
+                    </View>
+                  )}
+                />
+
+                <Controller
+                  control={control}
+                  name="confirmPassword"
+                  render={({field: {onChange, value}}) => (
+                    <View>
+                      <TextInput
+                        value={value}
+                        onChangeText={onChange}
+                        placeholder="Retype password"
+                        autoCapitalize="none"
+                        style={styles.input}
+                      />
+                      <Text style={styles.error}>
+                        {errors?.confirmPassword?.message}
+                      </Text>
+                    </View>
+                  )}
+                />
               </View>
             </View>
-          </View>
 
-          <View style={[styles.footer]}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                navigation.navigate('Root');
-              }}>
-              <Text style={[common.text_base, common.text_white]}>
-                Create account
-              </Text>
-            </TouchableOpacity>
+            <View style={[styles.footer]}>
+              <TouchableOpacity
+                disabled={mutationSignIn.isPending}
+                style={styles.button}
+                onPress={handleSubmit(onSubmit)}>
+                {mutationSignIn.isPending && <ActivityIndicator />}
+                <Text style={[common.text_base, common.text_white]}>
+                  Create account
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </KeyboardShift>
-    </SafeArea>
+        </KeyboardShift>
+      </SafeArea>
+
+      <Portal>
+        <Modalize
+          useNativeDriver
+          panGestureEnabled
+          closeOnOverlayTap={false}
+          adjustToContentHeight
+          // modalHeight={270}
+          ref={verifyModalRef}
+          HeaderComponent={
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Verify account</Text>
+
+              <Text style={styles.modalTip}>
+                We just sent OTP to{' '}
+                <Text style={styles.modalEmail}>{getValues('email')}</Text>
+              </Text>
+            </View>
+          }>
+          <View style={styles.otpContainer}>
+            <View style={styles.loading}>
+              {mutationVerify.isPending && (
+                <ActivityIndicator color={color.secondary} />
+              )}
+            </View>
+            <InputOtp onSubmit={onSubmitVerify} />
+
+            <BottomSafeArea />
+          </View>
+        </Modalize>
+      </Portal>
+    </>
   );
 }
 
@@ -157,5 +278,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  error: {
+    marginTop: 8,
+    color: color.danger,
+  },
+  modalHeader: {
+    marginTop: 16,
+    paddingHorizontal: 16,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+  },
+  modalTip: {
+    marginTop: 16,
+    color: color.gray,
+  },
+  modalEmail: {
+    color: color.secondary,
+  },
+  otpContainer: {
+    paddingHorizontal: 16,
+    marginTop: 32,
+  },
+  loading: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginBottom: 8,
+    paddingRight: 8,
   },
 });

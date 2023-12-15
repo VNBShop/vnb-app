@@ -1,5 +1,7 @@
 import * as React from 'react';
 import {
+  ActivityIndicator,
+  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -15,59 +17,207 @@ import {common, flex, spec} from '../UIkit/styles';
 import {icon} from '../assets';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackProps} from '../types/route';
+import {Controller, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {forgotPassSchema} from '../libs/validatetions/auth';
+import {useMutation} from '@tanstack/react-query';
+import {forgotPassword} from '../api/auth/forgot-password';
+import {DataResponse, DataError} from '../types/auth';
+import {z} from 'zod';
+import {InputOtp} from '../components/ui/input-otp';
+import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
+import {Modalize} from 'react-native-modalize';
+import {Portal} from 'react-native-portalize';
+import {OTPPayloadProps, confirmOTP} from '../api/auth/otp';
 
 type ForgotPasswordScreenProps = NativeStackScreenProps<
   RootStackProps,
   'ForgotPassword'
 >;
 
+type Inputs = z.infer<typeof forgotPassSchema>;
+
 export default function ForgotPasswordScreen({
   navigation,
 }: ForgotPasswordScreenProps) {
+  const verifyModalRef = React.useRef<Modalize>(null);
+
+  const {
+    getValues,
+    formState: {errors},
+    control,
+    handleSubmit,
+  } = useForm<Inputs>({
+    resolver: zodResolver(forgotPassSchema),
+    defaultValues: {
+      email: '',
+    },
+  });
+
+  const mutationFindAccount = useMutation<
+    DataResponse,
+    DataError,
+    Inputs,
+    unknown
+  >({
+    mutationFn: forgotPassword,
+    onSuccess: response => {
+      if (response.data.success) {
+        verifyModalRef.current?.open?.();
+      }
+    },
+    onError: error => {
+      Alert.alert('Error', error?.response?.data?.metadata?.message ?? '', [
+        {
+          text: 'Try again',
+          style: 'cancel',
+        },
+      ]);
+    },
+  });
+
+  const mutationVerify = useMutation<
+    DataResponse,
+    DataError,
+    OTPPayloadProps,
+    unknown
+  >({
+    mutationFn: confirmOTP,
+    onSuccess: response => {
+      if (response.data.success) {
+        verifyModalRef.current?.close();
+        Alert.alert('Success', 'Verify account successfully!', [
+          {
+            text: 'Change password',
+            style: 'default',
+            onPress: () => {},
+          },
+        ]);
+      }
+    },
+    onError: error => {
+      Alert.alert('Error', error?.response?.data?.metadata?.message ?? '', [
+        {
+          text: 'Try again',
+          style: 'cancel',
+        },
+      ]);
+    },
+  });
+
+  const onSubmit = (values: Inputs) => {
+    mutationFindAccount.mutate(values);
+  };
+
+  const onSubmitVerify = (otp: string) => {
+    const payload: OTPPayloadProps = {
+      email: getValues('email'),
+      otpCode: otp,
+      type: 'RESET_PASSWORD',
+    };
+
+    mutationVerify.mutate(payload);
+  };
+
   return (
-    <SafeArea color="#ffffff">
-      <KeyboardShift>
-        <View style={styles.container}>
-          <View style={spec.space_horizontal}>
-            <View style={flex.center}>
+    <>
+      <SafeArea color="#ffffff">
+        <KeyboardShift>
+          <View style={styles.container}>
+            <View style={spec.space_horizontal}>
+              <View style={flex.center}>
+                <TouchableOpacity
+                  style={common.position_left}
+                  onPress={() => navigation.goBack()}>
+                  <Text style={[common.text_base, common.text_gray]}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                <Image style={common.logo_center} source={icon} />
+              </View>
+
+              <Text style={styles.tip}>Find your VNB account</Text>
+
+              <Text
+                style={[common.text_gray, spec.mt_xl, common.des_lineheight]}>
+                Enter your email address with your account to change your
+                password
+              </Text>
+
+              <View style={styles.form}>
+                <Controller
+                  control={control}
+                  name="email"
+                  render={({field: {onChange, value, onBlur}}) => (
+                    <View>
+                      <TextInput
+                        value={value}
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        placeholder="Email address"
+                        autoCapitalize="none"
+                        style={styles.input}
+                      />
+                      {!!errors?.email?.message && (
+                        <Text style={styles.error}>
+                          {errors?.email?.message}
+                        </Text>
+                      )}
+                    </View>
+                  )}
+                />
+              </View>
+            </View>
+
+            <View style={[styles.footer]}>
               <TouchableOpacity
-                style={common.position_left}
-                onPress={() => navigation.goBack()}>
-                <Text style={[common.text_base, common.text_gray]}>Cancel</Text>
+                disabled={mutationFindAccount.isPending}
+                style={styles.button}
+                onPress={handleSubmit(onSubmit)}>
+                {mutationFindAccount.isPending ? (
+                  <ActivityIndicator />
+                ) : (
+                  <Text style={[common.text_base, common.text_white]}>
+                    Next
+                  </Text>
+                )}
               </TouchableOpacity>
-              <Image style={common.logo_center} source={icon} />
-            </View>
-
-            <Text style={styles.tip}>Find your VNB account</Text>
-
-            <Text style={[common.text_gray, spec.mt_xl, common.des_lineheight]}>
-              Enter your username, phone number or email address with your
-              account to change your password
-            </Text>
-
-            <View style={styles.form}>
-              <TextInput
-                // ref={emailRef}
-                // onFocus={() => setIsInputFocus('email')}
-                // onBlur={() => setIsInputFocus(null)}
-                // onChangeText={setEmail}
-                placeholder="Username, phone number or email address"
-                autoCapitalize="none"
-                style={styles.input}
-              />
             </View>
           </View>
+        </KeyboardShift>
+      </SafeArea>
 
-          <View style={[styles.footer]}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => navigation.navigate('Identify')}>
-              <Text style={[common.text_base, common.text_white]}>Next</Text>
-            </TouchableOpacity>
+      <Portal>
+        <Modalize
+          useNativeDriver
+          panGestureEnabled
+          closeOnOverlayTap={false}
+          adjustToContentHeight
+          // modalHeight={270}
+          ref={verifyModalRef}
+          HeaderComponent={
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Verify account</Text>
+
+              <Text style={styles.modalTip}>
+                We just sent OTP to{' '}
+                <Text style={styles.modalEmail}>{getValues('email')}</Text>
+              </Text>
+            </View>
+          }>
+          <View style={styles.otpContainer}>
+            <View style={styles.loading}>
+              {mutationVerify.isPending && (
+                <ActivityIndicator color={color.secondary} />
+              )}
+            </View>
+            <InputOtp onSubmit={onSubmitVerify} />
+
+            <BottomSafeArea />
           </View>
-        </View>
-      </KeyboardShift>
-    </SafeArea>
+        </Modalize>
+      </Portal>
+    </>
   );
 }
 
@@ -107,5 +257,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 12,
     paddingVertical: 8,
+  },
+  error: {
+    color: color.danger,
+    marginTop: 8,
+  },
+  modalHeader: {
+    marginTop: 16,
+    paddingHorizontal: 16,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+  },
+  modalTip: {
+    marginTop: 16,
+    color: color.gray,
+  },
+  modalEmail: {
+    color: color.secondary,
+  },
+  otpContainer: {
+    paddingHorizontal: 16,
+    marginTop: 32,
+  },
+  loading: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginBottom: 8,
+    paddingRight: 8,
   },
 });

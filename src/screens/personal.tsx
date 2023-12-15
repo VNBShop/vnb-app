@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  Alert,
   Image,
   Pressable,
   ScrollView,
@@ -25,7 +26,22 @@ export default function PersonalScreen() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackProps, 'Root'>>();
 
-  const {reset} = useAuth(state => state);
+  const {logout} = useAuth(state => state);
+
+  const onLogout = () => {
+    Alert.alert('Logout of your account?', '', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Logout',
+        onPress: () => logout(),
+        style: 'destructive',
+      },
+    ]);
+  };
+
   return (
     <SafeArea color={color.superDivider}>
       <View style={styles.container}>
@@ -80,7 +96,7 @@ export default function PersonalScreen() {
                 <TouchableOpacity
                   style={styles.actionItem}
                   onPress={() => {
-                    item.label === 'Logout' ? reset() : null;
+                    item.label === 'Logout' ? onLogout() : null;
                   }}>
                   <View style={styles.actionItemL}>
                     <View
@@ -116,6 +132,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    marginTop: 8,
   },
   info: {
     flexDirection: 'row',

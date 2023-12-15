@@ -33,7 +33,7 @@ export type InputOtpRefProps = {
 
 export type InputOtpProps = {
   isSecurity?: boolean;
-  onSubmit: (params: unknown) => void;
+  onSubmit: (params: string) => void;
   errorMessage?: string;
   numOfCell?: number;
   autoSubmit?: boolean;

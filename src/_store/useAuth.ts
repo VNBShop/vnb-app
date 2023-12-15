@@ -4,39 +4,33 @@ import {create} from 'zustand';
 import {createJSONStorage, persist} from 'zustand/middleware';
 import {AuthProps} from '../types/auth';
 
-type useAuthProps = AuthProps & {
+type useAuthProps = {
   isFirstApp: boolean;
   accessApp: () => void;
-  login: () => void;
-  reset: () => void;
+  login: (metadata: AuthProps) => void;
+  logout: () => void;
+  data: AuthProps;
 };
 
 const useAuth = create<useAuthProps>()(
   persist(
     (set, get) => ({
-      accessToken: '',
-      avatar: '',
-      fullName: '',
-      refreshToken: '',
+      data: {} as AuthProps,
       isFirstApp: true,
-      login: () =>
+      login: (metadata: AuthProps) =>
         set(state => ({
           ...state,
-          accessToken: '121231312',
-          refreshToken: '212122',
+          data: metadata,
         })),
       accessApp: () =>
         set(state => ({
           ...state,
           isFirstApp: false,
         })),
-      reset: () =>
+      logout: () =>
         set(state => ({
-          accessToken: '',
-          avatar: '',
-          fullName: '',
-          refreshToken: '',
-          isFirstApp: true,
+          ...state,
+          data: {} as AuthProps,
         })),
     }),
     {
