@@ -83,14 +83,17 @@ export default function ForgotPasswordScreen({
     unknown
   >({
     mutationFn: confirmOTP,
-    onSuccess: response => {
+    onSuccess: (response, data) => {
       if (response.data.success) {
         verifyModalRef.current?.close();
-        Alert.alert('Success', 'Verify account successfully!', [
+        Alert.alert('Verify account successfully!', '', [
           {
-            text: 'Change password',
+            text: 'Reset password',
             style: 'default',
-            onPress: () => {},
+            onPress: () =>
+              navigation.navigate('ResetPassword', {
+                email: data.email,
+              }),
           },
         ]);
       }

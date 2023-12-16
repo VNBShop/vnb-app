@@ -19,6 +19,7 @@ import WellcomeScreen from '../screens/wellcome';
 import {RootStackProps} from '../types/route';
 import TabNavigation from './tab';
 import useAuth from '../_store/useAuth';
+import ResetPasswordScreen from '../screens/reset-password';
 
 const Stack = createNativeStackNavigator<RootStackProps>();
 export default function StackNavigation() {
@@ -50,6 +51,10 @@ export default function StackNavigation() {
             name="ConversationDetail"
             component={ConversationDetailScreen}
           />
+          <Stack.Screen
+            name="ChangePassword"
+            component={ChangePasswordScreen}
+          />
         </Stack.Group>
       ) : (
         <Stack.Group>
@@ -61,11 +66,7 @@ export default function StackNavigation() {
             name="ForgotPassword"
             component={ForgotPasswordScreen}
           />
-          <Stack.Screen
-            name="ChangePassword"
-            component={ChangePasswordScreen}
-          />
-          {/* <Stack.Screen name='OTP' component={OTP} /> */}
+          <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
         </Stack.Group>
       )}
     </Stack.Navigator>

@@ -1,20 +1,29 @@
+import {API_URL} from '@env';
 import * as React from 'react';
 import {
-  Keyboard,
+  ActivityIndicator,
+  Alert,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 
+import {zodResolver} from '@hookform/resolvers/zod';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {useMutation} from '@tanstack/react-query';
+import {Controller, useForm} from 'react-hook-form';
 import {Image} from 'react-native-animatable';
+import {z} from 'zod';
 import KeyboardShift from '../UIkit/layouts/keyboard-shift';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, flex, spec} from '../UIkit/styles';
+import useAxiosPrivate from '../api/private/hook/useAxiosPrivate';
 import {icon} from '../assets';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import InputPassword from '../components/ui/input-password';
+import {changePasswordSchema} from '../libs/validatetions/auth';
+import {DataError, DataResponse} from '../types/auth';
 import {RootStackProps} from '../types/route';
 
 type ChangePasswordScreenProps = NativeStackScreenProps<
@@ -22,29 +31,60 @@ type ChangePasswordScreenProps = NativeStackScreenProps<
   'ChangePassword'
 >;
 
+type Inputs = z.infer<typeof changePasswordSchema>;
+
 export default function ChangePasswordScreen({
   navigation,
 }: ChangePasswordScreenProps) {
-  // const [email, setEmail] = React.useState<string>('');
-  const [password, setPassword] = React.useState<string>('');
-  const [showPassword, setShowPassword] = React.useState<boolean>(false);
-  const [isInputFocus, setIsInputFocus] = React.useState<string | null>(null);
+  const axios = useAxiosPrivate();
 
-  const emailRef = React.useRef<TextInput>(null);
-  const passwordRef = React.useRef<TextInput>(null);
+  const {
+    control,
+    formState: {errors},
+    handleSubmit,
+  } = useForm<Inputs>({
+    resolver: zodResolver(changePasswordSchema),
+    defaultValues: {
+      oldPassword: '',
+      newPassword: '',
+      confirmNewPassword: '',
+    },
+  });
 
-  React.useEffect(() => {
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        if (!isInputFocus) {
-          Keyboard.dismiss();
-        }
-      },
-    );
+  const {isPending, mutate} = useMutation<
+    DataResponse,
+    DataError,
+    Inputs,
+    unknown
+  >({
+    mutationFn: payload => {
+      const res = axios.put(`${API_URL}/account/change-password`, payload);
+      return res;
+    },
+    onSuccess: response => {
+      if (response.data.success) {
+        Alert.alert('Change password successfully!', '', [
+          {
+            text: 'Done',
+            style: 'default',
+            onPress: () => navigation.goBack(),
+          },
+        ]);
+      }
+    },
+    onError: error => {
+      Alert.alert('Error', error?.response?.data?.metadata?.message ?? '', [
+        {
+          text: 'Try again',
+          style: 'cancel',
+        },
+      ]);
+    },
+  });
 
-    return () => keyboardDidHideListener.remove();
-  }, [isInputFocus]);
+  const onSubmit = (values: Inputs) => {
+    mutate(values);
+  };
 
   return (
     <SafeArea color="#ffffff">
@@ -63,48 +103,77 @@ export default function ChangePasswordScreen({
             <Text style={styles.tip}>Change password</Text>
 
             <View style={styles.form}>
-              <TextInput
-                ref={emailRef}
-                onFocus={() => setIsInputFocus('email')}
-                onBlur={() => setIsInputFocus(null)}
-                // onChangeText={setEmail}
-                placeholder="New password"
-                autoCapitalize="none"
-                style={styles.input}
+              <Controller
+                control={control}
+                name="oldPassword"
+                render={({field: {onChange, value}}) => (
+                  <View>
+                    <InputPassword
+                      value={value}
+                      onChangeText={onChange}
+                      placeholder="Current password"
+                      autoCapitalize="none"
+                      style={styles.input}
+                    />
+                    <Text style={styles.error}>
+                      {errors?.oldPassword?.message}
+                    </Text>
+                  </View>
+                )}
               />
 
-              <View>
-                <TextInput
-                  ref={passwordRef}
-                  secureTextEntry={!showPassword}
-                  onChangeText={setPassword}
-                  onFocus={() => setIsInputFocus('password')}
-                  onBlur={() => setIsInputFocus(null)}
-                  autoCapitalize="none"
-                  style={styles.input}
-                  placeholder="Confirm new password"
-                />
-                {password && password.length > 0 && (
-                  <TouchableOpacity
-                    onPress={() => setShowPassword(prev => !prev)}>
-                    {/* {showPassword ? (
-                              <Icon name="eye" size={24} color="black" />
-                            ) : (
-                              <Icon name="eye-off" size={24} color="black" />
-                            )} */}
-                  </TouchableOpacity>
+              <Controller
+                control={control}
+                name="newPassword"
+                render={({field: {onChange, value}}) => (
+                  <View>
+                    <InputPassword
+                      value={value}
+                      onChangeText={onChange}
+                      placeholder="New password"
+                      autoCapitalize="none"
+                      style={styles.input}
+                    />
+                    <Text style={styles.error}>
+                      {errors?.newPassword?.message}
+                    </Text>
+                  </View>
                 )}
-              </View>
+              />
+
+              <Controller
+                control={control}
+                name="confirmNewPassword"
+                render={({field: {onChange, value}}) => (
+                  <View>
+                    <InputPassword
+                      value={value}
+                      onChangeText={onChange}
+                      placeholder="Retype new password"
+                      autoCapitalize="none"
+                      style={styles.input}
+                    />
+                    <Text style={styles.error}>
+                      {errors?.confirmNewPassword?.message}
+                    </Text>
+                  </View>
+                )}
+              />
             </View>
           </View>
 
           <View style={[styles.footer]}>
             <TouchableOpacity
+              disabled={isPending}
               style={styles.button}
-              onPress={() => {
-                navigation.navigate('Root');
-              }}>
-              <Text style={[common.text_base, common.text_white]}>Confirm</Text>
+              onPress={handleSubmit(onSubmit)}>
+              {isPending ? (
+                <ActivityIndicator />
+              ) : (
+                <Text style={[common.text_base, common.text_white]}>
+                  Change password
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>
@@ -151,5 +220,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     width: '100%',
+  },
+  error: {
+    color: color.danger,
+    marginTop: 8,
   },
 });

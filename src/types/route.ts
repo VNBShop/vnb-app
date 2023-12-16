@@ -11,7 +11,7 @@ export type RootStackProps = {
   SignupOption: undefined;
   Signup: undefined;
   ForgotPassword: undefined;
-  OTP: {
+  ResetPassword: {
     email: string;
   };
   ChangePassword: undefined;

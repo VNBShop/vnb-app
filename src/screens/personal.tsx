@@ -96,7 +96,9 @@ export default function PersonalScreen() {
                 <TouchableOpacity
                   style={styles.actionItem}
                   onPress={() => {
-                    item.label === 'Logout' ? onLogout() : null;
+                    item.label === 'Logout'
+                      ? onLogout()
+                      : navigation.navigate(item.redirect as any);
                   }}>
                   <View style={styles.actionItemL}>
                     <View
@@ -113,7 +115,9 @@ export default function PersonalScreen() {
                   <Icon icon={forwardGray} size={20} />
                 </TouchableOpacity>
 
-                {actionOption[actionOption.length - 1] !== item && <OrHr />}
+                {actionOption[actionOption.length - 1] !== item && (
+                  <OrHr style={styles.orHr} />
+                )}
               </React.Fragment>
             ))}
           </View>
@@ -214,5 +218,9 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
+  },
+  orHr: {
+    paddingHorizontal: 0,
+    paddingLeft: 50,
   },
 });

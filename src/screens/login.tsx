@@ -30,6 +30,7 @@ import {Portal} from 'react-native-portalize';
 import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import {InputOtp} from '../components/ui/input-otp';
 import {OTPPayloadProps, confirmOTP} from '../api/auth/otp';
+import InputPassword from '../components/ui/input-password';
 
 type LoginScreenProps = NativeStackScreenProps<RootStackProps, 'Login'>;
 
@@ -189,7 +190,7 @@ export default function LoginScreen({navigation}: LoginScreenProps) {
                   render={({field: {onChange, value, onBlur}}) => (
                     <View>
                       <View>
-                        <TextInput
+                        <InputPassword
                           value={value}
                           onChangeText={onChange}
                           onBlur={onBlur}
@@ -214,8 +215,13 @@ export default function LoginScreen({navigation}: LoginScreenProps) {
                 disabled={mutationLogin.isPending}
                 style={styles.button}
                 onPress={handleSubmit(onLogin)}>
-                {mutationLogin.isPending && <ActivityIndicator />}
-                <Text style={[common.text_base, common.text_white]}>Login</Text>
+                {mutationLogin.isPending ? (
+                  <ActivityIndicator />
+                ) : (
+                  <Text style={[common.text_base, common.text_white]}>
+                    Login
+                  </Text>
+                )}
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -276,6 +282,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'space-between',
     flex: 1,
+    marginTop: 8,
   },
   input: {
     paddingVertical: 8,

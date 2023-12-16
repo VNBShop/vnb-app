@@ -10,6 +10,7 @@ export async function forgotPassword(
     `${API_URL}/account/send-otp-mail-reset-password`,
     payload,
   );
+
   return res;
 }
 

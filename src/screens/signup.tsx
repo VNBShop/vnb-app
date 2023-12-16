@@ -29,6 +29,7 @@ import {InputOtp} from '../components/ui/input-otp';
 import {signUpSchema} from '../libs/validatetions/auth';
 import {DataError, DataResponse} from '../types/auth';
 import {RootStackProps} from '../types/route';
+import InputPassword from '../components/ui/input-password';
 
 type SignupScreenProps = NativeStackScreenProps<RootStackProps, 'Signup'>;
 
@@ -156,7 +157,7 @@ export default function SignupScreen({navigation}: SignupScreenProps) {
                   name="password"
                   render={({field: {onChange, value}}) => (
                     <View>
-                      <TextInput
+                      <InputPassword
                         value={value}
                         onChangeText={onChange}
                         placeholder="Password"
@@ -175,7 +176,7 @@ export default function SignupScreen({navigation}: SignupScreenProps) {
                   name="confirmPassword"
                   render={({field: {onChange, value}}) => (
                     <View>
-                      <TextInput
+                      <InputPassword
                         value={value}
                         onChangeText={onChange}
                         placeholder="Retype password"
@@ -196,10 +197,13 @@ export default function SignupScreen({navigation}: SignupScreenProps) {
                 disabled={mutationSignIn.isPending}
                 style={styles.button}
                 onPress={handleSubmit(onSubmit)}>
-                {mutationSignIn.isPending && <ActivityIndicator />}
-                <Text style={[common.text_base, common.text_white]}>
-                  Create account
-                </Text>
+                {mutationSignIn.isPending ? (
+                  <ActivityIndicator />
+                ) : (
+                  <Text style={[common.text_base, common.text_white]}>
+                    Create account
+                  </Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>
