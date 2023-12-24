@@ -1,12 +1,15 @@
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useQuery} from '@tanstack/react-query';
 import * as React from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {Products} from '../../types/product';
 import {WIDTH_DEVICE, common} from '../UIkit/styles';
+import {getProducts} from '../api/public/product';
 import {heartOutline} from '../assets';
-import {fakeData} from '../libs/contants';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {BottomTabProps, RootStackProps} from '../types/route';
+import ProductsSkeleton from './skeleton/products-skeleton';
 
 export default function Popular() {
   const navigation =
@@ -14,6 +17,21 @@ export default function Popular() {
 
   const bottomNav =
     useNavigation<NativeStackNavigationProp<BottomTabProps, 'Home'>>();
+
+  const {data, isError, isLoading} = useQuery<Products[]>({
+    queryKey: ['products'],
+    queryFn: () => getProducts({currentPage: 1}),
+    refetchOnWindowFocus: false,
+  });
+
+  if (isError) {
+    return;
+  }
+
+  if (isLoading) {
+    return <ProductsSkeleton />;
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -24,17 +42,25 @@ export default function Popular() {
       </View>
 
       <View style={styles.productContainer}>
-        {fakeData.map(item => (
+        {data!.map(item => (
           <TouchableOpacity
-            key={item.id}
+            key={item.productId}
             style={styles.item}
-            onPress={() => navigation.navigate('ProductDetail')}>
-            <Image source={item.image} style={styles.itemImg} />
+            onPress={() =>
+              navigation.navigate('ProductDetail', {productId: item.productId})
+            }>
+            <Image
+              source={{uri: item?.productImages[0]}}
+              style={styles.itemImg}
+            />
             <View style={styles.body}>
-              <Text style={common.text_gray}>{item.name}</Text>
+              <Text style={common.text_gray}>{item?.productName}</Text>
               <View style={styles.footer}>
                 <Text style={common.text_secondary}>
-                  {item.price.toLocaleString()}
+                  {item?.productPrice?.toLocaleString('en-EN', {
+                    style: 'currency',
+                    currency: 'USD',
+                  })}
                 </Text>
                 <TouchableOpacity>
                   <Image source={heartOutline} style={styles.heartIcon} />

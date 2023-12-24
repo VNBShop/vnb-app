@@ -3,7 +3,9 @@ export type RootStackProps = {
   Ordered: undefined;
   Cart: undefined;
   Checkout: undefined;
-  ProductDetail: undefined;
+  ProductDetail: {
+    productId: number;
+  };
   Profile: undefined;
   Login: undefined;
   LoginOption: undefined;

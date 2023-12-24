@@ -1,26 +1,34 @@
 import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {useInfiniteQuery} from '@tanstack/react-query';
+import LottieView from 'lottie-react-native';
 import * as React from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   Image,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import {Products} from '../../types/product';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {WIDTH_DEVICE, common} from '../UIkit/styles';
+import {getProducts} from '../api/public/product';
 import {
   cart_gray,
   filter as filterIcon,
   new as newIcon,
   search_gray,
 } from '../assets';
+import ProductsSkeleton from '../components/skeleton/products-skeleton';
 import {Icon} from '../components/ui/icon';
+import {notFoundLottie} from '../lottie';
 import {RootStackProps} from '../types/route';
-import {fakeData} from '../libs/contants';
+import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 
 export const filters = [
   {
@@ -63,12 +71,32 @@ export default function ProductScreen() {
   const stackNavigator =
     useNavigation<NavigationProp<RootStackProps, 'ProductDetail'>>();
 
+  const {
+    data,
+    isPending,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isError,
+    isLoading,
+    refetch,
+  } = useInfiniteQuery<Products[]>({
+    queryKey: ['products', filter],
+    queryFn: ({pageParam, queryKey}) =>
+      getProducts({currentPage: pageParam as number, filter: queryKey[1]}),
+    initialPageParam: 1,
+    refetchOnWindowFocus: false,
+    getNextPageParam: (lastPage, allPage) => allPage?.length + 1,
+  });
+
+  const flatData = data?.pages ? data?.pages?.flatMap(page => page) : [];
+
   return (
     <SafeArea>
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={common.titleLeft}>Products</Text>
-          <TouchableOpacity>
+          <TouchableOpacity disabled={isLoading}>
             <Icon icon={cart_gray} size={25} />
           </TouchableOpacity>
         </View>
@@ -108,37 +136,86 @@ export default function ProductScreen() {
           </ScrollView>
         </View>
 
-        <View style={styles.flatContainer}>
-          <FlatList
-            renderItem={({item}) => (
-              <TouchableOpacity
-                style={styles.productItem}
-                onPress={() => stackNavigator.navigate('ProductDetail')}>
-                <Image source={item.image} style={styles.productImg} />
-                <View style={styles.productInfo}>
-                  <Text style={common.text_gray}>{item.name}</Text>
+        {flatData?.length && !isLoading ? (
+          <View style={styles.flatContainer}>
+            <FlatList
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  style={styles.productItem}
+                  onPress={() =>
+                    stackNavigator.navigate('ProductDetail', {
+                      productId: item.productId,
+                    })
+                  }>
+                  <Image
+                    source={{uri: item.productImages[0]}}
+                    style={styles.productImg}
+                  />
+                  <View style={styles.productInfo}>
+                    <Text style={common.text_gray}>{item.productName}</Text>
 
-                  <Text style={styles.productPrice}>
-                    {item.price.toLocaleString()}
-                  </Text>
-                </View>
-
-                <View style={styles.benefit}>
-                  <View style={styles.discount}>
-                    <Text style={styles.discountText}>-15%</Text>
+                    <Text style={styles.productPrice}>
+                      {item.productPrice.toLocaleString('en-EN', {
+                        currency: 'USD',
+                        style: 'currency',
+                      })}
+                    </Text>
                   </View>
-                  <Image source={newIcon} style={styles.newImg} />
-                </View>
-              </TouchableOpacity>
-            )}
-            data={fakeData}
+
+                  <View style={styles.benefit}>
+                    <View style={styles.discount}>
+                      <Text style={styles.discountText}>-15%</Text>
+                    </View>
+                    <Image source={newIcon} style={styles.newImg} />
+                  </View>
+                </TouchableOpacity>
+              )}
+              data={flatData}
+              showsVerticalScrollIndicator={false}
+              numColumns={2}
+              contentContainerStyle={styles.gap}
+              columnWrapperStyle={styles.gap}
+              keyExtractor={item => item.productId.toLocaleString()}
+              ListFooterComponent={
+                isPending || isFetchingNextPage ? (
+                  <ActivityIndicator />
+                ) : (
+                  <BottomSafeArea />
+                )
+              }
+              onEndReachedThreshold={0.1}
+              onEndReached={() => {
+                if (hasNextPage) {
+                  fetchNextPage();
+                }
+              }}
+              refreshControl={
+                <RefreshControl refreshing={isPending} onRefresh={refetch} />
+              }
+            />
+          </View>
+        ) : null}
+
+        {isLoading ? <ProductsSkeleton /> : null}
+
+        {isError && !isPending && !isLoading ? (
+          <ScrollView
+            refreshControl={
+              <RefreshControl refreshing={isPending} onRefresh={refetch} />
+            }
             showsVerticalScrollIndicator={false}
-            numColumns={2}
-            contentContainerStyle={styles.gap}
-            columnWrapperStyle={styles.gap}
-            keyExtractor={item => item.id.toLocaleString()}
-          />
-        </View>
+            contentContainerStyle={styles.notFoundContainer}>
+            <LottieView
+              source={notFoundLottie}
+              autoPlay
+              loop
+              style={styles.notFound}
+            />
+            <Text style={[common.text_base, common.text_gray]}>
+              No thing to see!
+            </Text>
+          </ScrollView>
+        ) : null}
       </View>
     </SafeArea>
   );
@@ -177,7 +254,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: color.divider,
     padding: 16,
-    paddingVertical: 6,
+    paddingVertical: 8,
     borderRadius: 9999,
     flexDirection: 'row',
     alignItems: 'center',
@@ -257,5 +334,15 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     objectFit: 'cover',
+  },
+  notFoundContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -100,
+  },
+  notFound: {
+    width: 200,
+    height: 200,
   },
 });

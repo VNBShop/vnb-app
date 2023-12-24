@@ -1,3 +1,7 @@
+/* eslint-disable react-native/no-inline-styles */
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useQuery} from '@tanstack/react-query';
 import * as React from 'react';
 import {
   Image,
@@ -7,11 +11,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {common, spec} from '../UIkit/styles';
-import {fakeData} from '../libs/contants';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import {Products} from '../../types/product';
 import {color} from '../UIkit/palette';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {common, spec} from '../UIkit/styles';
+import {getProducts} from '../api/public/product';
 import {BottomTabProps, RootStackProps} from '../types/route';
 
 export default function HotSale() {
@@ -20,6 +24,59 @@ export default function HotSale() {
 
   const bottomNav =
     useNavigation<NativeStackNavigationProp<BottomTabProps, 'Home'>>();
+
+  const {data, isError, isLoading} = useQuery<Products[]>({
+    queryKey: ['products'],
+    queryFn: () => getProducts({currentPage: 1}),
+    refetchOnWindowFocus: false,
+  });
+
+  if (isError) {
+    return;
+  }
+
+  if (isLoading) {
+    return (
+      <View style={{marginTop: 32, paddingHorizontal: 16}}>
+        <Text style={styles.title}>Hot sales</Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.productContainer}>
+          {Array.from('123456').map((_, index) => (
+            <View key={index} style={styles.item}>
+              <View>
+                <SkeletonPlaceholder>
+                  <View style={styles.image} />
+                </SkeletonPlaceholder>
+                <SkeletonPlaceholder>
+                  <View
+                    style={{
+                      width: '90%',
+                      height: 16,
+                      marginTop: 8,
+                      borderRadius: 9999,
+                    }}
+                  />
+                </SkeletonPlaceholder>
+
+                <SkeletonPlaceholder>
+                  <View
+                    style={{
+                      width: '40%',
+                      height: 16,
+                      marginTop: 8,
+                      borderRadius: 9999,
+                    }}
+                  />
+                </SkeletonPlaceholder>
+              </View>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
+    );
+  }
 
   return (
     <View style={[spec.space_horizontal, styles.container]}>
@@ -38,16 +95,26 @@ export default function HotSale() {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.productContainer}>
-        {fakeData.map(item => (
+        {data!.map(item => (
           <TouchableOpacity
-            onPress={() => navigation.navigate('ProductDetail')}
-            key={item.id}
+            onPress={() =>
+              navigation.navigate('ProductDetail', {productId: item.productId})
+            }
+            key={item.productId}
             style={styles.item}>
             <View>
-              <Image source={item.image} style={styles.image} />
-              <Text style={common.text_gray}>{item.name}</Text>
+              <Image
+                source={{uri: item.productImages[0]}}
+                style={styles.image}
+              />
+              <Text style={common.text_gray}>{item.productName}</Text>
             </View>
-            <Text style={styles.price}>{item.price.toLocaleString()}</Text>
+            <Text style={styles.price}>
+              {item?.productPrice?.toLocaleString('en-EN', {
+                currency: 'USD',
+                style: 'currency',
+              })}
+            </Text>
 
             <View style={styles.sale}>
               <Text style={styles.textSale}>-35%</Text>
@@ -87,6 +154,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 140,
     objectFit: 'contain',
+    borderRadius: 8,
   },
   price: {
     color: color.secondary,

@@ -2,39 +2,32 @@ import * as React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Text} from 'react-native-animatable';
 import {color} from '../../UIkit/palette';
+import {ProductDetail} from '../../../types/product';
+import Avatar from './avatar';
 
-export default function CommentCard() {
+type CommentProductProps = {
+  comments: ProductDetail['productComments'];
+};
+
+export default function CommentProduct({comments}: CommentProductProps) {
   return (
     <>
-      <View style={styles.container}>
-        <View style={styles.avt}>
-          <Text style={styles.textAvt}>D</Text>
-        </View>
+      {comments.map((comment, index) => (
+        <View style={styles.container} key={index}>
+          <View style={styles.avt}>
+            <Avatar
+              source={comment?.commenterAvatar}
+              size={40}
+              username={comment?.commenterName}
+            />
+          </View>
 
-        <View style={styles.content}>
-          <Text style={styles.auth}>Dzung</Text>
-          <Text style={styles.comment}>
-            This is the best racket I ever used
-          </Text>
-        </View>
-      </View>
-
-      <View style={styles.container}>
-        <View style={styles.avt}>
-          <Text style={styles.textAvt}>D</Text>
-        </View>
-
-        <View style={styles.containerContent}>
           <View style={styles.content}>
-            <Text style={styles.auth}>Khang Leo</Text>
-            <Text style={styles.comment}>
-              In publishing and graphic design, Lorem ipsum is a placeholder
-              text commonly used to demonstrate the visual form of a document or
-              a typeface without relying on meaningful content.
-            </Text>
+            <Text style={styles.auth}>{comment?.commenterName}</Text>
+            <Text style={styles.comment}>{comment?.comment}</Text>
           </View>
         </View>
-      </View>
+      ))}
     </>
   );
 }

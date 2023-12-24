@@ -3,6 +3,7 @@ import * as React from 'react';
 import {
   ActivityIndicator,
   Alert,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -89,78 +90,84 @@ export default function ChangePasswordScreen({
   return (
     <SafeArea color="#ffffff">
       <KeyboardShift>
-        <View style={styles.container}>
-          <View style={spec.space_horizontal}>
-            <View style={flex.center}>
-              <TouchableOpacity
-                style={common.position_left}
-                onPress={() => navigation.goBack()}>
-                <Text style={[common.text_base, common.text_gray]}>Cancel</Text>
-              </TouchableOpacity>
-              <Image style={common.logo_center} source={icon} />
+        <View style={{flex: 1}}>
+          <ScrollView style={{flex: 1}} keyboardShouldPersistTaps="always">
+            <View style={styles.container}>
+              <View style={spec.space_horizontal}>
+                <View style={flex.center}>
+                  <TouchableOpacity
+                    style={common.position_left}
+                    onPress={() => navigation.goBack()}>
+                    <Text style={[common.text_base, common.text_gray]}>
+                      Cancel
+                    </Text>
+                  </TouchableOpacity>
+                  <Image style={common.logo_center} source={icon} />
+                </View>
+
+                <Text style={styles.tip}>Change password</Text>
+
+                <View style={styles.form}>
+                  <Controller
+                    control={control}
+                    name="oldPassword"
+                    render={({field: {onChange, value}}) => (
+                      <View>
+                        <InputPassword
+                          value={value}
+                          onChangeText={onChange}
+                          placeholder="Current password"
+                          autoCapitalize="none"
+                          style={styles.input}
+                        />
+                        <Text style={styles.error}>
+                          {errors?.oldPassword?.message}
+                        </Text>
+                      </View>
+                    )}
+                  />
+
+                  <Controller
+                    control={control}
+                    name="newPassword"
+                    render={({field: {onChange, value}}) => (
+                      <View>
+                        <InputPassword
+                          value={value}
+                          onChangeText={onChange}
+                          placeholder="New password"
+                          autoCapitalize="none"
+                          style={styles.input}
+                        />
+                        <Text style={styles.error}>
+                          {errors?.newPassword?.message}
+                        </Text>
+                      </View>
+                    )}
+                  />
+
+                  <Controller
+                    control={control}
+                    name="confirmNewPassword"
+                    render={({field: {onChange, value}}) => (
+                      <View>
+                        <InputPassword
+                          value={value}
+                          onChangeText={onChange}
+                          placeholder="Retype new password"
+                          autoCapitalize="none"
+                          style={styles.input}
+                        />
+                        <Text style={styles.error}>
+                          {errors?.confirmNewPassword?.message}
+                        </Text>
+                      </View>
+                    )}
+                  />
+                </View>
+              </View>
             </View>
-
-            <Text style={styles.tip}>Change password</Text>
-
-            <View style={styles.form}>
-              <Controller
-                control={control}
-                name="oldPassword"
-                render={({field: {onChange, value}}) => (
-                  <View>
-                    <InputPassword
-                      value={value}
-                      onChangeText={onChange}
-                      placeholder="Current password"
-                      autoCapitalize="none"
-                      style={styles.input}
-                    />
-                    <Text style={styles.error}>
-                      {errors?.oldPassword?.message}
-                    </Text>
-                  </View>
-                )}
-              />
-
-              <Controller
-                control={control}
-                name="newPassword"
-                render={({field: {onChange, value}}) => (
-                  <View>
-                    <InputPassword
-                      value={value}
-                      onChangeText={onChange}
-                      placeholder="New password"
-                      autoCapitalize="none"
-                      style={styles.input}
-                    />
-                    <Text style={styles.error}>
-                      {errors?.newPassword?.message}
-                    </Text>
-                  </View>
-                )}
-              />
-
-              <Controller
-                control={control}
-                name="confirmNewPassword"
-                render={({field: {onChange, value}}) => (
-                  <View>
-                    <InputPassword
-                      value={value}
-                      onChangeText={onChange}
-                      placeholder="Retype new password"
-                      autoCapitalize="none"
-                      style={styles.input}
-                    />
-                    <Text style={styles.error}>
-                      {errors?.confirmNewPassword?.message}
-                    </Text>
-                  </View>
-                )}
-              />
-            </View>
-          </View>
+          </ScrollView>
 
           <View style={[styles.footer]}>
             <TouchableOpacity
@@ -195,7 +202,6 @@ const styles = StyleSheet.create({
   },
   container: {
     display: 'flex',
-    justifyContent: 'space-between',
     flex: 1,
   },
   input: {
@@ -204,10 +210,8 @@ const styles = StyleSheet.create({
     borderBottomColor: color.divider,
   },
   footer: {
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     gap: 24,
+    position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,

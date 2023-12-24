@@ -1,20 +1,22 @@
 import * as React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {color} from '../UIkit/palette';
+import {ProductDetail} from '../../types/product';
 
-export default function ProductDescription() {
+type ProductDescriptionProps = {
+  content: ProductDetail['productDetail'];
+};
+
+export default function ProductDescription({content}: ProductDescriptionProps) {
   return (
     <View>
       <Text style={styles.title}>Product descriptions</Text>
-      <Text style={styles.des}>
-        Mặt vợt: 100in2 {'\n'}
-        Chiều dài: 27in {'\n'}
-        Mật độ lưới: 16 x 19 {'\n'}
-        Điểm cân bằng (chưa cước): 330mm {'\n'}
-        Trọng lượng (chưa cước): 265g {'\n'}
-        Độ cứng: 70 {'\n'}
-        Mức căng 23 - 27kg
-      </Text>
+      {Object.entries(content).map(([key, value], index) => (
+        <View key={index} style={styles.item}>
+          <Text style={styles.des}>{key}:</Text>
+          <Text style={styles.des}>{value}</Text>
+        </View>
+      ))}
     </View>
   );
 }
@@ -24,6 +26,10 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 16,
     marginBottom: 8,
+  },
+  item: {
+    flexDirection: 'row',
+    gap: 6,
   },
   des: {
     lineHeight: 24,
