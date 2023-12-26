@@ -27,8 +27,8 @@ import signUp from '../api/auth/signup';
 import {icon} from '../assets';
 import {InputOtp} from '../components/ui/input-otp';
 import {signUpSchema} from '../libs/validatetions/auth';
-import {DataError, DataResponse} from '../types/auth';
-import {RootStackProps} from '../types/route';
+import {DataError, DataResponse} from '../../types/auth';
+import {RootStackProps} from '../../types/route';
 import InputPassword from '../components/ui/input-password';
 
 type SignupScreenProps = NativeStackScreenProps<RootStackProps, 'Signup'>;

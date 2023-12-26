@@ -18,7 +18,7 @@ import Post from '../components/ui/post';
 import {Modalize} from 'react-native-modalize';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackProps} from '../types/route';
+import {RootStackProps} from '../../types/route';
 
 type ProfileScreenProps = NativeStackScreenProps<RootStackProps, 'Profile'>;
 

@@ -15,7 +15,7 @@ import {WIDTH_DEVICE, common} from '../UIkit/styles';
 import {back, search_gray} from '../assets';
 import Order from '../components/order';
 import {Icon} from '../components/ui/icon';
-import {RootStackProps} from '../types/route';
+import {RootStackProps} from '../../types/route';
 
 type OrderedScreenProps = NativeStackScreenProps<RootStackProps, 'Ordered'>;
 

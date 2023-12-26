@@ -25,7 +25,7 @@ import {Icon} from '../components/ui/icon';
 import OrHr from '../components/ui/or-hr';
 import Tag from '../components/ui/tag';
 import {notFoundLottie} from '../lottie';
-import {RootStackProps} from '../types/route';
+import {RootStackProps} from '../../types/route';
 
 type ProductDetailScreenProps = NativeStackScreenProps<
   RootStackProps,

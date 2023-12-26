@@ -2,7 +2,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {create} from 'zustand';
 import {createJSONStorage, persist} from 'zustand/middleware';
-import {AuthProps} from '../types/auth';
+import {AuthProps} from '../../types/auth';
 
 type useAuthProps = {
   isFirstApp: boolean;

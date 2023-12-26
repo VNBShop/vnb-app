@@ -11,7 +11,7 @@ import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {back} from '../assets';
 import {Icon} from '../components/ui/icon';
-import {RootStackProps} from '../types/route';
+import {RootStackProps} from '../../types/route';
 import LottieView from 'lottie-react-native';
 import {notFoundLottie} from '../lottie';
 import {common} from '../UIkit/styles';

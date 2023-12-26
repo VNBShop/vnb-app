@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {color} from '../UIkit/palette';
 import {common} from '../UIkit/styles';
-import {RootStackProps} from '../types/route';
+import {RootStackProps} from '../../types/route';
 import Avatar from './ui/avatar';
 
 export type ConversationListCardProps = {

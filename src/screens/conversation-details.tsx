@@ -8,7 +8,7 @@ import Avatar from '../components/ui/avatar';
 import {color} from '../UIkit/palette';
 import KeyboardShift from '../UIkit/layouts/keyboard-shift';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackProps} from '../types/route';
+import {RootStackProps} from '../../types/route';
 import Chat from '../components/chat';
 
 type ConversationDetailScreenProps = NativeStackScreenProps<

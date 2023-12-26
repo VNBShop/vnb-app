@@ -10,7 +10,7 @@ import ConversationListCard, {
   ConversationListCardProps,
 } from '../components/conversation-list';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackProps} from '../types/route';
+import {RootStackProps} from '../../types/route';
 
 type ConversationListScreenProps = NativeStackScreenProps<
   RootStackProps,

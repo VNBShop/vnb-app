@@ -6,7 +6,7 @@ import HomeScreen from '../screens/home';
 import NotificationScreen from '../screens/notification';
 import PersonalScreen from '../screens/personal';
 import ProductScreen from '../screens/products';
-import {BottomTabProps} from '../types/route';
+import {BottomTabProps} from '../../types/route';
 import {tabOption} from './tab-options';
 
 const Tab = createBottomTabNavigator<BottomTabProps>();

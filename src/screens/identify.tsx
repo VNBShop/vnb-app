@@ -9,7 +9,7 @@ import {common, flex, spec} from '../UIkit/styles';
 import {icon} from '../assets';
 import {InputOtp} from '../components/ui/input-otp';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackProps} from '../types/route';
+import {RootStackProps} from '../../types/route';
 
 type IdentifyScreenProps = NativeStackScreenProps<RootStackProps, 'Identify'>;
 

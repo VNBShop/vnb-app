@@ -24,8 +24,8 @@ import useAxiosPrivate from '../api/private/hook/useAxiosPrivate';
 import {icon} from '../assets';
 import InputPassword from '../components/ui/input-password';
 import {changePasswordSchema} from '../libs/validatetions/auth';
-import {DataError, DataResponse} from '../types/auth';
-import {RootStackProps} from '../types/route';
+import {DataError, DataResponse} from '../../types/auth';
+import {RootStackProps} from '../../types/route';
 
 type ChangePasswordScreenProps = NativeStackScreenProps<
   RootStackProps,

@@ -22,8 +22,8 @@ import {resetPassword} from '../api/auth/forgot-password';
 import {icon} from '../assets';
 import InputPassword from '../components/ui/input-password';
 import {resetPasswordSchema, signUpSchema} from '../libs/validatetions/auth';
-import {DataError, DataResponse} from '../types/auth';
-import {RootStackProps} from '../types/route';
+import {DataError, DataResponse} from '../../types/auth';
+import {RootStackProps} from '../../types/route';
 
 type ResetPasswordScreen = NativeStackScreenProps<
   RootStackProps,

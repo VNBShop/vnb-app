@@ -22,7 +22,7 @@ import Popular from '../components/popular';
 import {Icon} from '../components/ui/icon';
 import {navList} from '../libs/contants';
 import {ballLottie} from '../lottie';
-import {BottomTabProps} from '../types/route';
+import {BottomTabProps} from '../../types/route';
 
 type HomeScreenProps = NativeStackScreenProps<BottomTabProps, 'Home'>;
 export default function HomeScreen({navigation}: HomeScreenProps) {

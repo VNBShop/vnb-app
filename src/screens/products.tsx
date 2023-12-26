@@ -27,7 +27,7 @@ import {
 import ProductsSkeleton from '../components/skeleton/products-skeleton';
 import {Icon} from '../components/ui/icon';
 import {notFoundLottie} from '../lottie';
-import {RootStackProps} from '../types/route';
+import {RootStackProps} from '../../types/route';
 import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 
 export const filters = [

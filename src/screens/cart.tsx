@@ -17,7 +17,7 @@ import OrHr from '../components/ui/or-hr';
 import {Icon} from '../components/ui/icon';
 import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackProps} from '../types/route';
+import {RootStackProps} from '../../types/route';
 
 type CartScreenProps = NativeStackScreenProps<RootStackProps, 'Cart'>;
 

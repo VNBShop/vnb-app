@@ -19,7 +19,7 @@ import OrHr from '../components/ui/or-hr';
 import {actionOption, navPerson} from '../libs/contants';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackProps} from '../types/route';
+import {RootStackProps} from '../../types/route';
 import useAuth from '../_store/useAuth';
 
 export default function PersonalScreen() {

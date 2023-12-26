@@ -6,7 +6,7 @@ import {color} from '../UIkit/palette';
 import {common, flex, spec} from '../UIkit/styles';
 import {google, icon} from '../assets';
 import OrHr from '../components/ui/or-hr';
-import {RootStackProps} from '../types/route';
+import {RootStackProps} from '../../types/route';
 
 type SignupOptionScreenProps = NativeStackScreenProps<
   RootStackProps,

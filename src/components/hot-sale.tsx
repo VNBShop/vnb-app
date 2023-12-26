@@ -16,7 +16,7 @@ import {Products} from '../../types/product';
 import {color} from '../UIkit/palette';
 import {common, spec} from '../UIkit/styles';
 import {getProducts} from '../api/public/product';
-import {BottomTabProps, RootStackProps} from '../types/route';
+import {BottomTabProps, RootStackProps} from '../../types/route';
 
 export default function HotSale() {
   const navigation =

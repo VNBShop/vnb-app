@@ -8,7 +8,7 @@ import {Products} from '../../types/product';
 import {WIDTH_DEVICE, common} from '../UIkit/styles';
 import {getProducts} from '../api/public/product';
 import {heartOutline} from '../assets';
-import {BottomTabProps, RootStackProps} from '../types/route';
+import {BottomTabProps, RootStackProps} from '../../types/route';
 import ProductsSkeleton from './skeleton/products-skeleton';
 
 export default function Popular() {

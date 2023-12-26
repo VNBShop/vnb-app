@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "672198533199",
+    "project_id": "vnb-0auth",
+    "storage_bucket": "vnb-0auth.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672198533199:android:789325551e7580a7c8ca3a",
+        "android_client_info": {
+          "package_name": "com.vnbshopapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "672198533199-4luc92sc5t5pvjbrbfovii47lqdqvncu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vnbshopapp",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "672198533199-182s3dm1ic6jisavtto3kbfkivmm6dm1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5HFqUtcqOeBJrqkHPpnkhf1CXxLNc4pU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "672198533199-182s3dm1ic6jisavtto3kbfkivmm6dm1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "672198533199-oicpiifgsnlnksvmvqoo2g7t9plmfmvh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.dacntt2.VNBShopApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

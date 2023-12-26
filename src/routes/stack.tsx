@@ -16,7 +16,7 @@ import SearchScreen from '../screens/search';
 import SignupScreen from '../screens/signup';
 import SignupOptionScreen from '../screens/signup-option';
 import WellcomeScreen from '../screens/wellcome';
-import {RootStackProps} from '../types/route';
+import {RootStackProps} from '../../types/route';
 import TabNavigation from './tab';
 import useAuth from '../_store/useAuth';
 import ResetPasswordScreen from '../screens/reset-password';
@@ -32,7 +32,7 @@ export default function StackNavigation() {
       }}>
       {isFirstApp ? (
         <Stack.Screen name="Wellcome" component={WellcomeScreen} />
-      ) : data?.accessToken ? (
+      ) : !data?.accessToken ? (
         <Stack.Group>
           <Stack.Screen name="Root" component={TabNavigation} />
           <Stack.Screen name="Ordered" component={OrderedScreen} />

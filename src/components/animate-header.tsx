@@ -13,7 +13,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {color} from '../UIkit/palette';
 import {common} from '../UIkit/styles';
 import {banner, cart, icon, messenger, order, search} from '../assets';
-import {RootStackProps} from '../types/route';
+import {RootStackProps} from '../../types/route';
 import {Icon} from './ui/icon';
 
 export const HEADER_HEIGHT = 200;

@@ -18,7 +18,7 @@ import OrHr from '../components/ui/or-hr';
 import RadioCard from '../components/ui/radio-card';
 import {fakeData, paymentMethod} from '../libs/contants';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackProps} from '../types/route';
+import {RootStackProps} from '../../types/route';
 
 type CheckoutScreenProps = NativeStackScreenProps<RootStackProps, 'Checkout'>;
 
