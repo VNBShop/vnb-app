@@ -95,32 +95,36 @@ export default function HotSale() {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.productContainer}>
-        {data!.map(item => (
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('ProductDetail', {productId: item.productId})
-            }
-            key={item.productId}
-            style={styles.item}>
-            <View>
-              <Image
-                source={{uri: item.productImages[0]}}
-                style={styles.image}
-              />
-              <Text style={common.text_gray}>{item.productName}</Text>
-            </View>
-            <Text style={styles.price}>
-              {item?.productPrice?.toLocaleString('en-EN', {
-                currency: 'USD',
-                style: 'currency',
-              })}
-            </Text>
+        {data?.length
+          ? data.map(item => (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('ProductDetail', {
+                    productId: item.productId,
+                  })
+                }
+                key={item.productId}
+                style={styles.item}>
+                <View>
+                  <Image
+                    source={{uri: item.productImages[0]}}
+                    style={styles.image}
+                  />
+                  <Text style={common.text_gray}>{item.productName}</Text>
+                </View>
+                <Text style={styles.price}>
+                  {item?.productPrice?.toLocaleString('en-EN', {
+                    currency: 'USD',
+                    style: 'currency',
+                  })}
+                </Text>
 
-            <View style={styles.sale}>
-              <Text style={styles.textSale}>-35%</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
+                <View style={styles.sale}>
+                  <Text style={styles.textSale}>-35%</Text>
+                </View>
+              </TouchableOpacity>
+            ))
+          : null}
       </ScrollView>
     </View>
   );

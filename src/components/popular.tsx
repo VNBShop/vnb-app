@@ -29,7 +29,11 @@ export default function Popular() {
   }
 
   if (isLoading) {
-    return <ProductsSkeleton />;
+    return (
+      <View style={styles.container}>
+        <ProductsSkeleton />
+      </View>
+    );
   }
 
   return (
@@ -42,33 +46,37 @@ export default function Popular() {
       </View>
 
       <View style={styles.productContainer}>
-        {data!.map(item => (
-          <TouchableOpacity
-            key={item.productId}
-            style={styles.item}
-            onPress={() =>
-              navigation.navigate('ProductDetail', {productId: item.productId})
-            }>
-            <Image
-              source={{uri: item?.productImages[0]}}
-              style={styles.itemImg}
-            />
-            <View style={styles.body}>
-              <Text style={common.text_gray}>{item?.productName}</Text>
-              <View style={styles.footer}>
-                <Text style={common.text_secondary}>
-                  {item?.productPrice?.toLocaleString('en-EN', {
-                    style: 'currency',
-                    currency: 'USD',
-                  })}
-                </Text>
-                <TouchableOpacity>
-                  <Image source={heartOutline} style={styles.heartIcon} />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </TouchableOpacity>
-        ))}
+        {data?.length
+          ? data.map(item => (
+              <TouchableOpacity
+                key={item.productId}
+                style={styles.item}
+                onPress={() =>
+                  navigation.navigate('ProductDetail', {
+                    productId: item.productId,
+                  })
+                }>
+                <Image
+                  source={{uri: item?.productImages[0]}}
+                  style={styles.itemImg}
+                />
+                <View style={styles.body}>
+                  <Text style={common.text_gray}>{item?.productName}</Text>
+                  <View style={styles.footer}>
+                    <Text style={common.text_secondary}>
+                      {item?.productPrice?.toLocaleString('en-EN', {
+                        style: 'currency',
+                        currency: 'USD',
+                      })}
+                    </Text>
+                    <TouchableOpacity>
+                      <Image source={heartOutline} style={styles.heartIcon} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))
+          : null}
       </View>
     </View>
   );
