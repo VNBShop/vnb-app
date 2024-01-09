@@ -3,9 +3,11 @@ import {axiosProduct} from '../axios/axios-product';
 
 export async function getProducts({
   currentPage = 1,
+  pageSize = 10,
   filter,
 }: {
   currentPage?: number;
+  pageSize?: number;
   filter?: any;
 }) {
   if (filter?.price_range) {
@@ -20,10 +22,10 @@ export async function getProducts({
     delete filter.price_range;
   }
 
-  const res = await axiosProduct.get('/product', {
+  const res = await axiosProduct.get('/products', {
     params: {
       currentPage,
-      pageSize: 10,
+      pageSize: pageSize,
       ...filter,
     },
   });
@@ -36,7 +38,7 @@ export async function getProducts({
 }
 
 export async function getProductDetail(productId: any) {
-  const res = await axiosProduct.get(`/product/${productId}`);
+  const res = await axiosProduct.get(`/products/${productId}`);
 
   if (res?.data?.success) {
     return res?.data?.metadata as ProductDetail;

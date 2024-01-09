@@ -32,8 +32,8 @@ export type ProductComment = {
 };
 
 export type BrandProps = {
-  id: number;
-  name: string;
+  brandId: number;
+  brandName: string;
 };
 
 export type ProductStore = {

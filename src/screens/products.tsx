@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {useInfiniteQuery} from '@tanstack/react-query';
 import LottieView from 'lottie-react-native';
@@ -29,44 +30,53 @@ import {Icon} from '../components/ui/icon';
 import {notFoundLottie} from '../lottie';
 import {RootStackProps} from '../../types/route';
 import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
+import {Drawer} from 'react-native-drawer-layout';
+import {brands} from '../libs/contants';
+import CheckboxCard from '../components/ui/checkbox-card';
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 
-export const filters = [
+const sorts = [
   {
-    label: 'Racket',
-    value: 'racket',
+    id: 1,
+    label: 'A-Z',
+    value: 'name.asc',
   },
   {
-    label: 'Shoe',
-    value: 'shoe',
+    id: 2,
+    label: 'Z-A',
+    value: 'name.desc',
   },
   {
-    label: 'Shirt',
-    value: 'Shirt',
+    id: 3,
+    label: 'Price increasing',
+    value: 'price.asc',
   },
   {
-    label: 'Skirt',
-    value: 'skirt',
-  },
-  {
-    label: 'Pant',
-    value: 'pant',
-  },
-  {
-    label: 'Bag',
-    value: 'bag',
-  },
-  {
-    label: 'Backpack',
-    value: 'backpack',
-  },
-  {
-    label: 'Accessories',
-    value: 'accessories',
+    id: 4,
+    label: 'Price decreasing',
+    value: 'price.desc',
   },
 ];
 
+type FilterProps = {
+  brandIds?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  sort?: string;
+};
+
 export default function ProductScreen() {
-  const [filter, setFilter] = React.useState('');
+  const [isTransitionPending, startTransition] = React.useTransition();
+
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackProps, 'Root'>>();
+
+  const [filter, setFilter] = React.useState<FilterProps>({});
+  const [filterContainer, setFilterContainer] = React.useState(false);
+  const [brandsFilter, setBrandsFilter] = React.useState<number[]>([]);
 
   const stackNavigator =
     useNavigation<NavigationProp<RootStackProps, 'ProductDetail'>>();
@@ -91,132 +101,200 @@ export default function ProductScreen() {
 
   const flatData = data?.pages ? data?.pages?.flatMap(page => page) : [];
 
+  React.useEffect(() => {
+    if (brandsFilter?.length) {
+      const brandIdsConcat = brandsFilter.join('.');
+      startTransition(() => {
+        setFilter(prev => ({...prev, brandIds: brandIdsConcat}));
+      });
+    } else {
+      startTransition(() => {
+        setFilter(prev => {
+          const {brandIds: _, ...rest} = prev;
+          return {...rest};
+        });
+      });
+    }
+  }, [brandsFilter]);
+
   return (
     <SafeArea>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={common.titleLeft}>Products</Text>
-          <TouchableOpacity disabled={isLoading}>
-            <Icon icon={cart_gray} size={25} />
-          </TouchableOpacity>
-        </View>
+      <Drawer
+        open={filterContainer}
+        onClose={() => setFilterContainer(false)}
+        onOpen={() => setFilterContainer(true)}
+        renderDrawerContent={() => {
+          return (
+            <View style={styles.filterWrapper}>
+              <Text style={styles.filterTitle}>Filters</Text>
 
-        <View style={styles.actionContainer}>
-          <View style={styles.search}>
-            <Icon icon={search_gray} size={20} />
-            <Text style={[common.text_gray, common.text_base]}>Search</Text>
+              <Text style={styles.filterTitleSM}>Brands</Text>
+
+              <View style={styles.brandsFilter}>
+                {brands.map(brand => (
+                  <TouchableOpacity
+                    key={brand.brandId}
+                    onPress={() => {
+                      setBrandsFilter(prev => {
+                        const findIndex = prev.indexOf(brand.brandId);
+
+                        if (findIndex !== -1) {
+                          return prev
+                            .slice(0, findIndex)
+                            .concat(prev.slice(findIndex + 1));
+                        } else {
+                          return [...prev, brand.brandId];
+                        }
+                      });
+                    }}>
+                    <CheckboxCard
+                      isAcive={brandsFilter.includes(brand.brandId)}
+                      label={brand.brandName}
+                    />
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          );
+        }}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={common.titleLeft}>Products</Text>
+            <TouchableOpacity disabled={isLoading}>
+              <Icon icon={cart_gray} size={25} />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.filterIcon}>
-            <Image source={filterIcon} style={styles.filterIconImg} />
-          </TouchableOpacity>
-        </View>
 
-        <View style={styles.filterContainer}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.filterScroll}>
-            {filters.map(item => (
-              <TouchableOpacity
-                style={[
-                  styles.filterItem,
-                  filter === item.value && styles.filterItemActive,
-                ]}
-                key={item.value}
-                onPress={() => setFilter(item.value)}>
-                <Text
-                  style={[
-                    styles.filterText,
-                    filter === item.value && styles.filterTextActive,
-                  ]}>
-                  {item.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
+          <View style={styles.actionContainer}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Search')}
+              style={styles.search}>
+              <Icon icon={search_gray} size={20} />
+              <Text style={[common.text_gray, common.text_base]}>Search</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.filterIcon}
+              onPress={() => setFilterContainer(true)}>
+              <Image source={filterIcon} style={styles.filterIconImg} />
+            </TouchableOpacity>
+          </View>
 
-        {flatData?.length && !isLoading ? (
-          <View style={styles.flatContainer}>
-            <FlatList
-              renderItem={({item}) => (
+          <View style={styles.filterContainer}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.filterScroll}>
+              {sorts.map(item => (
                 <TouchableOpacity
-                  style={styles.productItem}
-                  onPress={() =>
-                    stackNavigator.navigate('ProductDetail', {
-                      productId: item.productId,
-                    })
-                  }>
-                  <Image
-                    source={{uri: item.productImages[0]}}
-                    style={styles.productImg}
-                  />
-                  <View style={styles.productInfo}>
-                    <Text style={common.text_gray}>{item.productName}</Text>
-
-                    <Text style={styles.productPrice}>
-                      {item.productPrice.toLocaleString('en-EN', {
-                        currency: 'USD',
-                        style: 'currency',
-                      })}
-                    </Text>
-                  </View>
-
-                  <View style={styles.benefit}>
-                    <View style={styles.discount}>
-                      <Text style={styles.discountText}>-15%</Text>
-                    </View>
-                    <Image source={newIcon} style={styles.newImg} />
-                  </View>
+                  style={[
+                    styles.filterItem,
+                    filter?.sort === item.value && styles.filterItemActive,
+                  ]}
+                  key={item.value}
+                  onPress={() => {
+                    setFilter(prev => {
+                      if (prev?.sort === item.value) {
+                        const {sort, ...props} = prev;
+                        return {...props};
+                      } else {
+                        return {...prev, sort: item.value};
+                      }
+                    });
+                  }}>
+                  <Text
+                    style={[
+                      styles.filterText,
+                      filter?.sort === item.value && styles.filterTextActive,
+                    ]}>
+                    {item.label}
+                  </Text>
                 </TouchableOpacity>
-              )}
-              data={flatData}
-              showsVerticalScrollIndicator={false}
-              numColumns={2}
-              contentContainerStyle={styles.gap}
-              columnWrapperStyle={styles.gap}
-              keyExtractor={item => item.productId.toLocaleString()}
-              ListFooterComponent={
-                isPending || isFetchingNextPage ? (
-                  <ActivityIndicator />
-                ) : (
-                  <BottomSafeArea />
-                )
-              }
-              onEndReachedThreshold={0.1}
-              onEndReached={() => {
-                if (hasNextPage) {
-                  fetchNextPage();
+              ))}
+            </ScrollView>
+          </View>
+
+          {flatData?.length && !isLoading ? (
+            <View style={styles.flatContainer}>
+              <FlatList
+                renderItem={({item}) => (
+                  <TouchableOpacity
+                    style={styles.productItem}
+                    onPress={() =>
+                      stackNavigator.navigate('ProductDetail', {
+                        productId: item.productId,
+                      })
+                    }>
+                    <Image
+                      source={{uri: item.productImages[0]}}
+                      style={styles.productImg}
+                    />
+                    <View style={styles.productInfo}>
+                      <Text style={common.text_gray}>{item.productName}</Text>
+
+                      <Text style={styles.productPrice}>
+                        {item.productPrice.toLocaleString('en-EN', {
+                          currency: 'USD',
+                          style: 'currency',
+                        })}
+                      </Text>
+                    </View>
+
+                    <View style={styles.benefit}>
+                      <View style={styles.discount}>
+                        <Text style={styles.discountText}>-15%</Text>
+                      </View>
+                      <Image source={newIcon} style={styles.newImg} />
+                    </View>
+                  </TouchableOpacity>
+                )}
+                data={flatData}
+                showsVerticalScrollIndicator={false}
+                numColumns={2}
+                contentContainerStyle={styles.gap}
+                columnWrapperStyle={styles.gap}
+                keyExtractor={item => item.productId.toLocaleString()}
+                ListFooterComponent={
+                  isPending || isFetchingNextPage ? (
+                    <ActivityIndicator />
+                  ) : (
+                    <BottomSafeArea />
+                  )
                 }
-              }}
+                onEndReachedThreshold={0.1}
+                onEndReached={() => {
+                  if (hasNextPage) {
+                    fetchNextPage();
+                  }
+                }}
+                refreshControl={
+                  <RefreshControl refreshing={isPending} onRefresh={refetch} />
+                }
+              />
+            </View>
+          ) : null}
+
+          {isLoading ? <ProductsSkeleton /> : null}
+
+          {isError && !isPending && !isLoading ? (
+            <ScrollView
               refreshControl={
                 <RefreshControl refreshing={isPending} onRefresh={refetch} />
               }
-            />
-          </View>
-        ) : null}
-
-        {isLoading ? <ProductsSkeleton /> : null}
-
-        {isError && !isPending && !isLoading ? (
-          <ScrollView
-            refreshControl={
-              <RefreshControl refreshing={isPending} onRefresh={refetch} />
-            }
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.notFoundContainer}>
-            <LottieView
-              source={notFoundLottie}
-              autoPlay
-              loop
-              style={styles.notFound}
-            />
-            <Text style={[common.text_base, common.text_gray]}>
-              No thing to see!
-            </Text>
-          </ScrollView>
-        ) : null}
-      </View>
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.notFoundContainer}>
+              <LottieView
+                source={notFoundLottie}
+                autoPlay
+                loop
+                style={styles.notFound}
+              />
+              <Text style={[common.text_base, common.text_gray]}>
+                No thing to see!
+              </Text>
+            </ScrollView>
+          ) : null}
+        </View>
+      </Drawer>
     </SafeArea>
   );
 }
@@ -344,5 +422,21 @@ const styles = StyleSheet.create({
   notFound: {
     width: 200,
     height: 200,
+  },
+  filterWrapper: {
+    padding: 16,
+  },
+  filterTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  filterTitleSM: {
+    fontSize: 16,
+    color: color.secondary,
+    marginTop: 16,
+  },
+  brandsFilter: {
+    marginTop: 12,
+    rowGap: 14,
   },
 });

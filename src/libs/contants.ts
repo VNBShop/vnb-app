@@ -1,3 +1,4 @@
+import {BrandProps} from '../../types/product';
 import {
   backpack,
   badminton,
@@ -180,5 +181,56 @@ export const actionOption = [
     label: 'Logout',
     bgColor: '#C1AEFC',
     icon: logout,
+  },
+];
+
+export const brands: BrandProps[] = [
+  {
+    brandId: 1,
+    brandName: 'Victor',
+  },
+  {
+    brandId: 2,
+    brandName: 'Yonex',
+  },
+  {
+    brandId: 3,
+    brandName: 'RSL',
+  },
+  {
+    brandId: 4,
+    brandName: 'Carlton',
+  },
+  {
+    brandId: 5,
+    brandName: 'Bad M',
+  },
+  {
+    brandId: 6,
+    brandName: 'Fz Forza',
+  },
+  {
+    brandId: 7,
+    brandName: 'Dunlop',
+  },
+  {
+    brandId: 8,
+    brandName: 'Babolat',
+  },
+  {
+    brandId: 9,
+    brandName: 'Adidas',
+  },
+  {
+    brandId: 10,
+    brandName: 'Slazenger',
+  },
+  {
+    brandId: 12,
+    brandName: 'Badminton Nederland',
+  },
+  {
+    brandId: 13,
+    brandName: 'Kawasaki',
   },
 ];

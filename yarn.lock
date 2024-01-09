@@ -5740,10 +5740,17 @@ react-native-dotenv@^3.4.9:
   dependencies:
     dotenv "^16.3.1"
 
-react-native-gesture-handler@^2.13.4:
-  version "2.13.4"
-  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.13.4.tgz#6a99384330278c4488bcfc7f1814be3e0d7401fd"
-  integrity sha512-smpYOVbvWABpq2H+lmDnfOLCTH934aUPO1w2/pQXvm1j+M/vmGQmvgRDJOpXcks17HLtNNKXD6tcODf3aPqDfA==
+react-native-drawer-layout@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/react-native-drawer-layout/-/react-native-drawer-layout-3.2.2.tgz#ceee2f1fe362522b1391435e2c0d095c18d5d1f2"
+  integrity sha512-t28FVAhtrEJluIOpDpVNBWG74ij9ZguBC+FLmv/+lewhWTgZQ6rTw5GgQ9sUxmHx+ertcWG/uH0Jye7gbbm9jg==
+  dependencies:
+    use-latest-callback "^0.1.5"
+
+react-native-gesture-handler@^2.14.0:
+  version "2.14.0"
+  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.14.0.tgz#d6aec0d8b2e55c67557fd6107e828c0a1a248be8"
+  integrity sha512-cOmdaqbpzjWrOLUpX3hdSjsMby5wq3PIEdMq7okJeg9DmCzanysHSrktw1cXWNc/B5MAgxAn9J7Km0/4UIqKAQ==
   dependencies:
     "@egjs/hammerjs" "^2.0.17"
     hoist-non-react-statics "^3.3.0"
@@ -5784,9 +5791,9 @@ react-native-ratings@^8.1.0:
     lodash "^4.17.15"
 
 react-native-reanimated@^3.5.4:
-  version "3.5.4"
-  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.5.4.tgz#a6c2b0c43b6dad246f5d276213974afedb8e3fc7"
-  integrity sha512-8we9LLDO1o4Oj9/DICeEJ2K1tjfqkJagqQUglxeUAkol/HcEJ6PGxIrpBcNryLqCDYEcu6FZWld/FzizBIw6bg==
+  version "3.6.1"
+  resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-3.6.1.tgz#5add41efafac6d0befd9786e752e7f26dbe903b7"
+  integrity sha512-F4vG9Yf9PKmE3GaWtVGUpzj3SM6YY2cx1yRHCwiMd1uY7W0gU017LfcVUorboJnj0y5QZqEriEK1Usq2Y8YZqg==
   dependencies:
     "@babel/plugin-transform-object-assign" "^7.16.7"
     "@babel/preset-typescript" "^7.16.7"

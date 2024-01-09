@@ -59,3 +59,4 @@ export {default as photo} from './photo.png';
 export {default as create} from './create.png';
 export {default as eyeHide} from './eye-hide.png';
 export {default as eyeView} from './eye-view.png';
+export {default as checkWhite} from './check-white.png';
