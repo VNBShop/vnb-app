@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.6,
     borderColor: color.border_input,
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 7,
     borderRadius: 9999,
     backgroundColor: color.white,
     fontSize: 14,

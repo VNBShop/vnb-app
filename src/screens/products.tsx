@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {useInfiniteQuery} from '@tanstack/react-query';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
 import LottieView from 'lottie-react-native';
 import * as React from 'react';
 import {
@@ -14,7 +15,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Products} from '../../types/product';
+import {Drawer} from 'react-native-drawer-layout';
+import {ProductStore, Products} from '../../types/product';
+import {RootStackProps} from '../../types/route';
+import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {WIDTH_DEVICE, common} from '../UIkit/styles';
@@ -26,17 +30,11 @@ import {
   search_gray,
 } from '../assets';
 import ProductsSkeleton from '../components/skeleton/products-skeleton';
-import {Icon} from '../components/ui/icon';
-import {notFoundLottie} from '../lottie';
-import {RootStackProps} from '../../types/route';
-import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
-import {Drawer} from 'react-native-drawer-layout';
-import {brands} from '../libs/contants';
 import CheckboxCard from '../components/ui/checkbox-card';
-import {
-  NativeStackNavigationProp,
-  NativeStackScreenProps,
-} from '@react-navigation/native-stack';
+import {Icon} from '../components/ui/icon';
+import {brands} from '../libs/contants';
+import {notFoundLottie} from '../lottie';
+import getStores from '../api/public/stores';
 
 const sorts = [
   {
@@ -63,6 +61,7 @@ const sorts = [
 
 type FilterProps = {
   brandIds?: string;
+  storeIds?: string;
   minPrice?: number;
   maxPrice?: number;
   sort?: string;
@@ -77,6 +76,7 @@ export default function ProductScreen() {
   const [filter, setFilter] = React.useState<FilterProps>({});
   const [filterContainer, setFilterContainer] = React.useState(false);
   const [brandsFilter, setBrandsFilter] = React.useState<number[]>([]);
+  const [storesFilter, setStoresFilter] = React.useState<number[]>([]);
 
   const stackNavigator =
     useNavigation<NavigationProp<RootStackProps, 'ProductDetail'>>();
@@ -117,6 +117,30 @@ export default function ProductScreen() {
     }
   }, [brandsFilter]);
 
+  React.useEffect(() => {
+    if (storesFilter?.length) {
+      const storeIdsConcat = storesFilter.join('.');
+      startTransition(() => {
+        setFilter(prev => ({...prev, storeIds: storeIdsConcat}));
+      });
+    } else {
+      startTransition(() => {
+        setFilter(prev => {
+          const {storeIds: _, ...rest} = prev;
+          return {...rest};
+        });
+      });
+    }
+  }, [storesFilter]);
+
+  const {data: dataStores} = useQuery({
+    queryKey: ['stores'],
+    queryFn: getStores,
+    refetchOnWindowFocus: false,
+  });
+
+  const stores = (dataStores?.data?.metadata as ProductStore[]) ?? [];
+
   return (
     <SafeArea>
       <Drawer
@@ -125,7 +149,7 @@ export default function ProductScreen() {
         onOpen={() => setFilterContainer(true)}
         renderDrawerContent={() => {
           return (
-            <View style={styles.filterWrapper}>
+            <ScrollView style={styles.filterWrapper}>
               <Text style={styles.filterTitle}>Filters</Text>
 
               <Text style={styles.filterTitleSM}>Brands</Text>
@@ -154,7 +178,38 @@ export default function ProductScreen() {
                   </TouchableOpacity>
                 ))}
               </View>
-            </View>
+
+              {stores?.length ? (
+                <>
+                  <Text style={styles.filterTitleSM}>Stores</Text>
+
+                  <View style={styles.brandsFilter}>
+                    {stores.map(store => (
+                      <TouchableOpacity
+                        key={store.storeId}
+                        onPress={() => {
+                          setStoresFilter(prev => {
+                            const findIndex = prev.indexOf(store.storeId);
+
+                            if (findIndex !== -1) {
+                              return prev
+                                .slice(0, findIndex)
+                                .concat(prev.slice(findIndex + 1));
+                            } else {
+                              return [...prev, store.storeId];
+                            }
+                          });
+                        }}>
+                        <CheckboxCard
+                          isAcive={storesFilter.includes(store.storeId)}
+                          label={store.storeName}
+                        />
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </>
+              ) : null}
+            </ScrollView>
           );
         }}>
         <View style={styles.container}>

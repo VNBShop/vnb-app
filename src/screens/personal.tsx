@@ -40,7 +40,10 @@ export default function PersonalScreen() {
     unknown
   >({
     mutationFn: async () => {
+      console.log('run >>');
+
       const res = await axios.post('/user-service/api/v1/account/logout');
+      console.log('res >>', res);
 
       return res;
     },
@@ -50,7 +53,7 @@ export default function PersonalScreen() {
       }
     },
     onError: error => {
-      console.log(error.response.data.metadata.message);
+      console.log('error >>', error.response.data.metadata.message);
     },
   });
 
