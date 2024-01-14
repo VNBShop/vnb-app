@@ -1,20 +1,31 @@
-import * as React from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity} from 'react-native';
-import {color} from '../UIkit/palette';
-import {google} from '../assets';
 import {WEB_CLIENT_ID} from '@env';
 import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
+import * as React from 'react';
+import {Image, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {color} from '../UIkit/palette';
+import {googleLogin} from '../api/auth/login';
+import {google} from '../assets';
+import useAuth from '../_store/useAuth';
 
 export default function GooogleSigninButton() {
+  const {login: setLogin} = useAuth(state => state);
   const signIn = async () => {
     try {
       await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
       const userInfo = await GoogleSignin.signIn();
 
-      console.log('user info', userInfo);
+      const verifyWithBE = await googleLogin({
+        idToken: userInfo?.idToken ?? '',
+        platform: 'WEB',
+      });
+
+      if (verifyWithBE?.data?.success) {
+        setLogin(verifyWithBE?.data?.metadata);
+        return;
+      }
     } catch (error: any) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow

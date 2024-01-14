@@ -25,6 +25,8 @@ export default function Avatar({
   isActive,
   style,
 }: AvatarProps) {
+  console.log('sourece', source);
+
   const [error, setError] = useState(false);
 
   if (error) {

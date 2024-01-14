@@ -1,10 +1,12 @@
 export type AuthProps = {
-  isFirstLogin?: boolean;
+  isFirstLogin: boolean;
   accessToken: string;
   refreshToken: string;
-  fullName: string;
+  firstName: string;
+  lastName: string;
   avatar: string;
-  username: string;
+  email: string;
+  provider: 'LOCAL' | 'GOOGLE';
 };
 
 export type DataResponse<TData = unknown> = {

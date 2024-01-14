@@ -16,15 +16,15 @@ export default function CommentProduct({comments}: CommentProductProps) {
         <View style={styles.container} key={index}>
           <View style={styles.avt}>
             <Avatar
-              source={comment?.commenterAvatar}
+              source={comment?.commentAuthorAvatar}
               size={40}
-              username={comment?.commenterName}
+              username={comment?.commentAuthor}
             />
           </View>
 
           <View style={styles.content}>
-            <Text style={styles.auth}>{comment?.commenterName}</Text>
-            <Text style={styles.comment}>{comment?.comment}</Text>
+            <Text style={styles.auth}>{comment?.commentAuthor}</Text>
+            <Text style={styles.comment}>{comment?.commentContent}</Text>
           </View>
         </View>
       ))}

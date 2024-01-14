@@ -17,21 +17,29 @@ export type ProductsList = {
 export type ProductDetail = Products & {
   productBrand: string;
   productRating: number;
-  productStatus: number;
+  productStatus: boolean;
   productDetail: Record<string, string | undefined | null>;
   productComments: ProductComment[];
   productStores: ProductStore[];
+  productStocks: ProductStock[];
+  productIsHaveSize: boolean;
 };
 
 export type ProductComment = {
-  commenterId: string;
-  comment: string;
-  commenterName: string;
-  commenterAvatar: string;
-  commentedAt: string;
+  commentId: string;
+  commentContent: string;
+  commentAuthor: string;
+  commentAuthorAvatar: string;
+  commentDate: string;
 };
 
-export type BrandProps = {
+export type ProductStock = {
+  productStockId: number;
+  productStockSize: string;
+  productStockQuantity: string;
+};
+
+export type ProductBrand = {
   brandId: number;
   brandName: string;
 };
@@ -39,4 +47,8 @@ export type BrandProps = {
 export type ProductStore = {
   storeId: number;
   storeName: string;
+  storeAddress?: string;
+  storePhone?: string;
+  storeEmail?: string;
+  productSizeIds?: string[];
 };

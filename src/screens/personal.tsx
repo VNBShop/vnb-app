@@ -21,12 +21,38 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackProps} from '../../types/route';
 import useAuth from '../_store/useAuth';
+import {useMutation} from '@tanstack/react-query';
+import {DataError, DataResponse} from '../../types/auth';
+import useAxiosPrivate from '../api/private/hook/useAxiosPrivate';
 
 export default function PersonalScreen() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackProps, 'Root'>>();
 
   const {logout} = useAuth(state => state);
+
+  const axios = useAxiosPrivate();
+
+  const {mutate: logoutFromBE, isPending} = useMutation<
+    DataResponse,
+    DataError,
+    unknown,
+    unknown
+  >({
+    mutationFn: async () => {
+      const res = await axios.post('/user-service/api/v1/account/logout');
+
+      return res;
+    },
+    onSuccess: res => {
+      if (res?.data?.success) {
+        logout();
+      }
+    },
+    onError: error => {
+      console.log(error.response.data.metadata.message);
+    },
+  });
 
   const onLogout = () => {
     Alert.alert('Logout of your account?', '', [
@@ -35,8 +61,8 @@ export default function PersonalScreen() {
         style: 'cancel',
       },
       {
-        text: 'Logout',
-        onPress: () => logout(),
+        text: isPending ? 'Logout...' : 'Logout',
+        onPress: () => logoutFromBE({}),
         style: 'destructive',
       },
     ]);
