@@ -13,8 +13,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		7699B88040F8A987B510C191 /* libPods-VNBShopApp-VNBShopAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-VNBShopApp-VNBShopAppTests.a */; };
-		77B390C32B3ACF9200E4F26D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 77B390C22B3ACF9200E4F26D /* GoogleService-Info.plist */; };
-		77B390C42B3ACF9200E4F26D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 77B390C22B3ACF9200E4F26D /* GoogleService-Info.plist */; };
+		77D996602B54DDDB00F747C6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 77D9965F2B54DDDB00F747C6 /* GoogleService-Info.plist */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
@@ -43,7 +42,7 @@
 		5709B34CF0A7D63546082F79 /* Pods-VNBShopApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VNBShopApp.release.xcconfig"; path = "Target Support Files/Pods-VNBShopApp/Pods-VNBShopApp.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-VNBShopApp-VNBShopAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VNBShopApp-VNBShopAppTests.debug.xcconfig"; path = "Target Support Files/Pods-VNBShopApp-VNBShopAppTests/Pods-VNBShopApp-VNBShopAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-VNBShopApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-VNBShopApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		77B390C22B3ACF9200E4F26D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		77D9965F2B54DDDB00F747C6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "VNBShopApp/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = VNBShopApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-VNBShopApp-VNBShopAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VNBShopApp-VNBShopAppTests.release.xcconfig"; path = "Target Support Files/Pods-VNBShopApp-VNBShopAppTests/Pods-VNBShopApp-VNBShopAppTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -89,7 +88,7 @@
 		13B07FAE1A68108700A75B9A /* VNBShopApp */ = {
 			isa = PBXGroup;
 			children = (
-				77B390C22B3ACF9200E4F26D /* GoogleService-Info.plist */,
+				77D9965F2B54DDDB00F747C6 /* GoogleService-Info.plist */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -239,7 +238,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				77B390C42B3ACF9200E4F26D /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,7 +247,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				77B390C32B3ACF9200E4F26D /* GoogleService-Info.plist in Resources */,
+				77D996602B54DDDB00F747C6 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

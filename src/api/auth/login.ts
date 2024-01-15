@@ -3,7 +3,9 @@ import {loginSchema} from '../../libs/validatetions/auth';
 import {axiosUser} from '../axios/axios-user';
 
 export async function login(payload: z.infer<typeof loginSchema>) {
+  console.log('run >>');
   const res = await axiosUser.post('/account/login', payload);
+  console.log('res >>>', res);
 
   return res;
 }

@@ -40,10 +40,7 @@ export default function PersonalScreen() {
     unknown
   >({
     mutationFn: async () => {
-      console.log('run >>');
-
       const res = await axios.post('/user-service/api/v1/account/logout');
-      console.log('res >>', res);
 
       return res;
     },
@@ -53,7 +50,7 @@ export default function PersonalScreen() {
       }
     },
     onError: error => {
-      console.log('error >>', error.response.data.metadata.message);
+      console.log('error >>', error);
     },
   });
 
@@ -110,7 +107,7 @@ export default function PersonalScreen() {
               <TouchableOpacity
                 key={nav.id}
                 style={styles.navItem}
-                onPress={() => navigation.navigate('Wellcome')}>
+                onPress={() => logout()}>
                 <View style={styles.navIcon}>
                   <Icon icon={nav.logo} size={24} />
                 </View>

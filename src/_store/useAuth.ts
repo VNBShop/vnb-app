@@ -9,6 +9,9 @@ type useAuthProps = {
   accessApp: () => void;
   login: (metadata: AuthProps) => void;
   logout: () => void;
+  onRefreshToken: (
+    payload: Pick<AuthProps, 'accessToken' | 'refreshToken'>,
+  ) => void;
   data: AuthProps;
 };
 
@@ -32,6 +35,16 @@ const useAuth = create<useAuthProps>()(
           ...state,
           data: {} as AuthProps,
         })),
+      onRefreshToken: async payload => {
+        await set(state => ({
+          ...state,
+          data: {
+            ...state.data,
+            accessToken: payload.accessToken,
+            refreshToken: payload.refreshToken,
+          },
+        }));
+      },
     }),
     {
       name: 'authenticate',

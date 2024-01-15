@@ -68,6 +68,8 @@ export default function LoginScreen({navigation}: LoginScreenProps) {
       }
     },
     onError: error => {
+      console.log('errror', error);
+
       if (
         error?.response?.data?.metadata?.message?.includes(
           'Your account must be verify',
