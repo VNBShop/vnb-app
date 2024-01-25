@@ -9,13 +9,17 @@ import {color} from '../UIkit/palette';
 import {googleLogin} from '../api/auth/login';
 import {google} from '../assets';
 import useAuth from '../_store/useAuth';
+import useLoading from '../_store/useLoading';
 
 export default function GooogleSigninButton() {
   const {login: setLogin} = useAuth(state => state);
+  const {setLoading} = useLoading();
   const signIn = async () => {
     try {
       await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+
       const userInfo = await GoogleSignin.signIn();
+      setLoading(true);
 
       const verifyWithBE = await googleLogin({
         idToken: userInfo?.idToken ?? '',
@@ -27,6 +31,7 @@ export default function GooogleSigninButton() {
         return;
       }
     } catch (error: any) {
+      setLoading(false);
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
       } else if (error.code === statusCodes.IN_PROGRESS) {
@@ -36,6 +41,8 @@ export default function GooogleSigninButton() {
       } else {
         // some other error happened
       }
+    } finally {
+      setLoading(false);
     }
   };
 

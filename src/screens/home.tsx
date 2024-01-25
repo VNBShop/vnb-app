@@ -23,6 +23,7 @@ import {Icon} from '../components/ui/icon';
 import {navList} from '../libs/contants';
 import {ballLottie} from '../lottie';
 import {BottomTabProps} from '../../types/route';
+import LoadingScreen from '../components/ui/loading-screen';
 
 type HomeScreenProps = NativeStackScreenProps<BottomTabProps, 'Home'>;
 export default function HomeScreen({navigation}: HomeScreenProps) {
@@ -77,50 +78,53 @@ export default function HomeScreen({navigation}: HomeScreenProps) {
   };
 
   return (
-    <SafeArea>
-      <AnimateHeader animateValue={offset} />
+    <>
+      <LoadingScreen />
+      <SafeArea>
+        <AnimateHeader animateValue={offset} />
 
-      <ScrollView
-        ref={scrollViewRef}
-        style={styles.view}
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-        scrollEventThrottle={16}
-        onScrollEndDrag={handleScrollEnd}
-        onScroll={Animated.event(
-          [{nativeEvent: {contentOffset: {y: offset}}}],
-          {useNativeDriver: false},
-        )}>
-        <View style={styles.navContainer}>
-          {navList.map(item => (
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.view}
+          contentContainerStyle={styles.container}
+          showsVerticalScrollIndicator={false}
+          scrollEventThrottle={16}
+          onScrollEndDrag={handleScrollEnd}
+          onScroll={Animated.event(
+            [{nativeEvent: {contentOffset: {y: offset}}}],
+            {useNativeDriver: false},
+          )}>
+          <View style={styles.navContainer}>
+            {navList.map(item => (
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Product')}
+                key={item.id}
+                style={styles.navItem}>
+                <Icon icon={item.icon} size={30} />
+                <Text style={common.text_gray}>{item.label}</Text>
+              </TouchableOpacity>
+            ))}
             <TouchableOpacity
               onPress={() => navigation.navigate('Product')}
-              key={item.id}
               style={styles.navItem}>
-              <Icon icon={item.icon} size={30} />
-              <Text style={common.text_gray}>{item.label}</Text>
+              <LottieView
+                source={ballLottie}
+                autoPlay
+                loop
+                style={styles.lottie}
+              />
+              <Text style={common.text_gray}>Other</Text>
             </TouchableOpacity>
-          ))}
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Product')}
-            style={styles.navItem}>
-            <LottieView
-              source={ballLottie}
-              autoPlay
-              loop
-              style={styles.lottie}
-            />
-            <Text style={common.text_gray}>Other</Text>
-          </TouchableOpacity>
-        </View>
+          </View>
 
-        <HotSale />
+          <HotSale />
 
-        <Popular />
+          <Popular />
 
-        <BottomSafeArea />
-      </ScrollView>
-    </SafeArea>
+          <BottomSafeArea />
+        </ScrollView>
+      </SafeArea>
+    </>
   );
 }
 

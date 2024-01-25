@@ -12,6 +12,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {common} from './src/UIkit/styles';
 import Navigation from './src/routes';
 import RQProvider from './src/components/provider';
+import LoadingScreen from './src/components/ui/loading-screen';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             backgroundColor={'transparent'}
           />
           <Navigation />
+          <LoadingScreen />
         </RQProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
