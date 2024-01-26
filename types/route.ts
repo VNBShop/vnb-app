@@ -19,7 +19,6 @@ export type RootStackProps = {
   ChangePassword: undefined;
   Identify: undefined;
   ConversationList: undefined;
-  Search: undefined;
   ConversationDetail: undefined;
 };
 

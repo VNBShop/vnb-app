@@ -1,4 +1,3 @@
-/* eslint-disable react/react-in-jsx-scope */
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {
   Animated,
@@ -15,6 +14,8 @@ import {common} from '../UIkit/styles';
 import {banner, cart, icon, messenger, order, search} from '../assets';
 import {RootStackProps} from '../../types/route';
 import {Icon} from './ui/icon';
+import React from 'react';
+import ModalSearch from './modals/modal-search';
 
 export const HEADER_HEIGHT = 200;
 export default function AnimateHeader({
@@ -22,6 +23,8 @@ export default function AnimateHeader({
 }: {
   animateValue: Animated.Value;
 }) {
+  const [modalSearch, setModalSearch] = React.useState(false);
+
   const insets = useSafeAreaInsets();
 
   const navigator = useNavigation<NavigationProp<RootStackProps>>();
@@ -45,65 +48,68 @@ export default function AnimateHeader({
   });
 
   return (
-    <Animated.View
-      style={[
-        styles.container,
-        {
-          height: headerHeight,
-        },
-      ]}>
-      <View
-        style={[
-          styles.header,
-          {height: insets.top + 50, paddingTop: insets.top},
-        ]}>
-        <LinearGradient colors={['#62C3CE', '#fff']} style={common.inset} />
-
-        <Image source={icon} style={styles.logo} />
-
-        <View style={styles.actionContainer}>
-          <TouchableOpacity
-            style={styles.iconItem}
-            onPress={() => navigator.navigate('Search')}>
-            <Image source={search} style={styles.icon} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.iconItem}
-            onPress={() => navigator.navigate('ConversationList')}>
-            <Image source={messenger} style={styles.icon} />
-          </TouchableOpacity>
-        </View>
-      </View>
-      <Animated.Image
-        source={banner}
-        style={[styles.banner, {opacity: bannerAnimation}]}
-      />
+    <>
+      <ModalSearch open={modalSearch} onClose={() => setModalSearch(false)} />
       <Animated.View
         style={[
-          styles.specialContainer,
+          styles.container,
           {
-            opacity: specilaAnimation,
+            height: headerHeight,
           },
         ]}>
-        <View style={styles.specialContainerInline}>
-          <TouchableOpacity onPress={() => navigator.navigate('Ordered')}>
-            <View style={styles.specialItemContainer}>
-              <Icon size={25} icon={order} />
-              <Text style={common.text_base}>Ordered</Text>
-            </View>
-            <Text style={[common.text_gray, styles.mt]}>Find your order</Text>
-          </TouchableOpacity>
+        <View
+          style={[
+            styles.header,
+            {height: insets.top + 50, paddingTop: insets.top},
+          ]}>
+          <LinearGradient colors={['#62C3CE', '#fff']} style={common.inset} />
 
-          <TouchableOpacity onPress={() => navigator.navigate('Cart')}>
-            <View style={styles.specialItemContainer}>
-              <Icon size={25} icon={cart} />
-              <Text style={common.text_base}>Cart</Text>
-            </View>
-            <Text style={[common.text_gray, styles.mt]}>Empty cart now</Text>
-          </TouchableOpacity>
+          <Image source={icon} style={styles.logo} />
+
+          <View style={styles.actionContainer}>
+            <TouchableOpacity
+              style={styles.iconItem}
+              onPress={() => setModalSearch(true)}>
+              <Image source={search} style={styles.icon} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.iconItem}
+              onPress={() => navigator.navigate('ConversationList')}>
+              <Image source={messenger} style={styles.icon} />
+            </TouchableOpacity>
+          </View>
         </View>
+        <Animated.Image
+          source={banner}
+          style={[styles.banner, {opacity: bannerAnimation}]}
+        />
+        <Animated.View
+          style={[
+            styles.specialContainer,
+            {
+              opacity: specilaAnimation,
+            },
+          ]}>
+          <View style={styles.specialContainerInline}>
+            <TouchableOpacity onPress={() => navigator.navigate('Ordered')}>
+              <View style={styles.specialItemContainer}>
+                <Icon size={25} icon={order} />
+                <Text style={common.text_base}>Ordered</Text>
+              </View>
+              <Text style={[common.text_gray, styles.mt]}>Find your order</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => navigator.navigate('Cart')}>
+              <View style={styles.specialItemContainer}>
+                <Icon size={25} icon={cart} />
+                <Text style={common.text_base}>Cart</Text>
+              </View>
+              <Text style={[common.text_gray, styles.mt]}>Empty cart now</Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
       </Animated.View>
-    </Animated.View>
+    </>
   );
 }
 

@@ -13,6 +13,7 @@ import {
   View,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {BottomTabProps} from '../../types/route';
 import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {WIDTH_DEVICE, common} from '../UIkit/styles';
@@ -22,8 +23,6 @@ import Popular from '../components/popular';
 import {Icon} from '../components/ui/icon';
 import {navList} from '../libs/contants';
 import {ballLottie} from '../lottie';
-import {BottomTabProps} from '../../types/route';
-import LoadingScreen from '../components/ui/loading-screen';
 
 type HomeScreenProps = NativeStackScreenProps<BottomTabProps, 'Home'>;
 export default function HomeScreen({navigation}: HomeScreenProps) {
@@ -79,7 +78,6 @@ export default function HomeScreen({navigation}: HomeScreenProps) {
 
   return (
     <>
-      <LoadingScreen />
       <SafeArea>
         <AnimateHeader animateValue={offset} />
 

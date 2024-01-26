@@ -35,6 +35,7 @@ import {Icon} from '../components/ui/icon';
 import {brands} from '../libs/contants';
 import {notFoundLottie} from '../lottie';
 import getStores from '../api/public/stores';
+import ModalSearch from '../components/modals/modal-search';
 
 const sorts = [
   {
@@ -69,6 +70,7 @@ type FilterProps = {
 
 export default function ProductScreen() {
   const [isTransitionPending, startTransition] = React.useTransition();
+  const [searchModal, setSearchModal] = React.useState(false);
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackProps, 'Root'>>();
@@ -142,215 +144,221 @@ export default function ProductScreen() {
   const stores = (dataStores?.data?.metadata as ProductStore[]) ?? [];
 
   return (
-    <SafeArea>
-      <Drawer
-        open={filterContainer}
-        onClose={() => setFilterContainer(false)}
-        onOpen={() => setFilterContainer(true)}
-        renderDrawerContent={() => {
-          return (
-            <ScrollView style={styles.filterWrapper}>
-              <Text style={styles.filterTitle}>Filters</Text>
+    <>
+      <ModalSearch open={searchModal} onClose={() => setSearchModal(false)} />
+      <SafeArea>
+        <Drawer
+          open={filterContainer}
+          onClose={() => setFilterContainer(false)}
+          onOpen={() => setFilterContainer(true)}
+          renderDrawerContent={() => {
+            return (
+              <ScrollView style={styles.filterWrapper}>
+                <Text style={styles.filterTitle}>Filters</Text>
 
-              <Text style={styles.filterTitleSM}>Brands</Text>
+                <Text style={styles.filterTitleSM}>Brands</Text>
 
-              <View style={styles.brandsFilter}>
-                {brands.map(brand => (
+                <View style={styles.brandsFilter}>
+                  {brands.map(brand => (
+                    <TouchableOpacity
+                      key={brand.brandId}
+                      onPress={() => {
+                        setBrandsFilter(prev => {
+                          const findIndex = prev.indexOf(brand.brandId);
+
+                          if (findIndex !== -1) {
+                            return prev
+                              .slice(0, findIndex)
+                              .concat(prev.slice(findIndex + 1));
+                          } else {
+                            return [...prev, brand.brandId];
+                          }
+                        });
+                      }}>
+                      <CheckboxCard
+                        isAcive={brandsFilter.includes(brand.brandId)}
+                        label={brand.brandName}
+                      />
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                {stores?.length ? (
+                  <>
+                    <Text style={styles.filterTitleSM}>Stores</Text>
+
+                    <View style={styles.brandsFilter}>
+                      {stores.map(store => (
+                        <TouchableOpacity
+                          key={store.storeId}
+                          onPress={() => {
+                            setStoresFilter(prev => {
+                              const findIndex = prev.indexOf(store.storeId);
+
+                              if (findIndex !== -1) {
+                                return prev
+                                  .slice(0, findIndex)
+                                  .concat(prev.slice(findIndex + 1));
+                              } else {
+                                return [...prev, store.storeId];
+                              }
+                            });
+                          }}>
+                          <CheckboxCard
+                            isAcive={storesFilter.includes(store.storeId)}
+                            label={store.storeName}
+                          />
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  </>
+                ) : null}
+              </ScrollView>
+            );
+          }}>
+          <View style={styles.container}>
+            <View style={styles.header}>
+              <Text style={common.titleLeft}>Products</Text>
+              <TouchableOpacity disabled={isLoading}>
+                <Icon icon={cart_gray} size={25} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.actionContainer}>
+              <TouchableOpacity
+                onPress={() => setSearchModal(true)}
+                style={styles.search}>
+                <Icon icon={search_gray} size={20} />
+                <Text style={[common.text_gray, common.text_base]}>Search</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.filterIcon}
+                onPress={() => setFilterContainer(true)}>
+                <Image source={filterIcon} style={styles.filterIconImg} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.filterContainer}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.filterScroll}>
+                {sorts.map(item => (
                   <TouchableOpacity
-                    key={brand.brandId}
+                    style={[
+                      styles.filterItem,
+                      filter?.sort === item.value && styles.filterItemActive,
+                    ]}
+                    key={item.value}
                     onPress={() => {
-                      setBrandsFilter(prev => {
-                        const findIndex = prev.indexOf(brand.brandId);
-
-                        if (findIndex !== -1) {
-                          return prev
-                            .slice(0, findIndex)
-                            .concat(prev.slice(findIndex + 1));
+                      setFilter(prev => {
+                        if (prev?.sort === item.value) {
+                          const {sort, ...props} = prev;
+                          return {...props};
                         } else {
-                          return [...prev, brand.brandId];
+                          return {...prev, sort: item.value};
                         }
                       });
                     }}>
-                    <CheckboxCard
-                      isAcive={brandsFilter.includes(brand.brandId)}
-                      label={brand.brandName}
-                    />
+                    <Text
+                      style={[
+                        styles.filterText,
+                        filter?.sort === item.value && styles.filterTextActive,
+                      ]}>
+                      {item.label}
+                    </Text>
                   </TouchableOpacity>
                 ))}
-              </View>
+              </ScrollView>
+            </View>
 
-              {stores?.length ? (
-                <>
-                  <Text style={styles.filterTitleSM}>Stores</Text>
+            {flatData?.length && !isLoading ? (
+              <View style={styles.flatContainer}>
+                <FlatList
+                  renderItem={({item}) => (
+                    <TouchableOpacity
+                      style={styles.productItem}
+                      onPress={() =>
+                        stackNavigator.navigate('ProductDetail', {
+                          productId: item.productId,
+                        })
+                      }>
+                      <Image
+                        source={{uri: item.productImages[0]}}
+                        style={styles.productImg}
+                      />
+                      <View style={styles.productInfo}>
+                        <Text style={common.text_gray}>{item.productName}</Text>
 
-                  <View style={styles.brandsFilter}>
-                    {stores.map(store => (
-                      <TouchableOpacity
-                        key={store.storeId}
-                        onPress={() => {
-                          setStoresFilter(prev => {
-                            const findIndex = prev.indexOf(store.storeId);
-
-                            if (findIndex !== -1) {
-                              return prev
-                                .slice(0, findIndex)
-                                .concat(prev.slice(findIndex + 1));
-                            } else {
-                              return [...prev, store.storeId];
-                            }
-                          });
-                        }}>
-                        <CheckboxCard
-                          isAcive={storesFilter.includes(store.storeId)}
-                          label={store.storeName}
-                        />
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                </>
-              ) : null}
-            </ScrollView>
-          );
-        }}>
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={common.titleLeft}>Products</Text>
-            <TouchableOpacity disabled={isLoading}>
-              <Icon icon={cart_gray} size={25} />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.actionContainer}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Search')}
-              style={styles.search}>
-              <Icon icon={search_gray} size={20} />
-              <Text style={[common.text_gray, common.text_base]}>Search</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.filterIcon}
-              onPress={() => setFilterContainer(true)}>
-              <Image source={filterIcon} style={styles.filterIconImg} />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.filterContainer}>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.filterScroll}>
-              {sorts.map(item => (
-                <TouchableOpacity
-                  style={[
-                    styles.filterItem,
-                    filter?.sort === item.value && styles.filterItemActive,
-                  ]}
-                  key={item.value}
-                  onPress={() => {
-                    setFilter(prev => {
-                      if (prev?.sort === item.value) {
-                        const {sort, ...props} = prev;
-                        return {...props};
-                      } else {
-                        return {...prev, sort: item.value};
-                      }
-                    });
-                  }}>
-                  <Text
-                    style={[
-                      styles.filterText,
-                      filter?.sort === item.value && styles.filterTextActive,
-                    ]}>
-                    {item.label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-
-          {flatData?.length && !isLoading ? (
-            <View style={styles.flatContainer}>
-              <FlatList
-                renderItem={({item}) => (
-                  <TouchableOpacity
-                    style={styles.productItem}
-                    onPress={() =>
-                      stackNavigator.navigate('ProductDetail', {
-                        productId: item.productId,
-                      })
-                    }>
-                    <Image
-                      source={{uri: item.productImages[0]}}
-                      style={styles.productImg}
-                    />
-                    <View style={styles.productInfo}>
-                      <Text style={common.text_gray}>{item.productName}</Text>
-
-                      <Text style={styles.productPrice}>
-                        {item.productPrice.toLocaleString('en-EN', {
-                          currency: 'USD',
-                          style: 'currency',
-                        })}
-                      </Text>
-                    </View>
-
-                    <View style={styles.benefit}>
-                      <View style={styles.discount}>
-                        <Text style={styles.discountText}>-15%</Text>
+                        <Text style={styles.productPrice}>
+                          {item.productPrice.toLocaleString('en-EN', {
+                            currency: 'USD',
+                            style: 'currency',
+                          })}
+                        </Text>
                       </View>
-                      <Image source={newIcon} style={styles.newImg} />
-                    </View>
-                  </TouchableOpacity>
-                )}
-                data={flatData}
-                showsVerticalScrollIndicator={false}
-                numColumns={2}
-                contentContainerStyle={styles.gap}
-                columnWrapperStyle={styles.gap}
-                keyExtractor={item => item.productId.toLocaleString()}
-                ListFooterComponent={
-                  isPending || isFetchingNextPage ? (
-                    <ActivityIndicator />
-                  ) : (
-                    <BottomSafeArea />
-                  )
-                }
-                onEndReachedThreshold={0.1}
-                onEndReached={() => {
-                  if (hasNextPage) {
-                    fetchNextPage();
+
+                      <View style={styles.benefit}>
+                        <View style={styles.discount}>
+                          <Text style={styles.discountText}>-15%</Text>
+                        </View>
+                        <Image source={newIcon} style={styles.newImg} />
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                  data={flatData}
+                  showsVerticalScrollIndicator={false}
+                  numColumns={2}
+                  contentContainerStyle={styles.gap}
+                  columnWrapperStyle={styles.gap}
+                  keyExtractor={item => item.productId.toLocaleString()}
+                  ListFooterComponent={
+                    isPending || isFetchingNextPage ? (
+                      <ActivityIndicator />
+                    ) : (
+                      <BottomSafeArea />
+                    )
                   }
-                }}
+                  onEndReachedThreshold={0.1}
+                  onEndReached={() => {
+                    if (hasNextPage) {
+                      fetchNextPage();
+                    }
+                  }}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={isPending}
+                      onRefresh={refetch}
+                    />
+                  }
+                />
+              </View>
+            ) : null}
+
+            {isLoading ? <ProductsSkeleton /> : null}
+
+            {isError && !isPending && !isLoading ? (
+              <ScrollView
                 refreshControl={
                   <RefreshControl refreshing={isPending} onRefresh={refetch} />
                 }
-              />
-            </View>
-          ) : null}
-
-          {isLoading ? <ProductsSkeleton /> : null}
-
-          {isError && !isPending && !isLoading ? (
-            <ScrollView
-              refreshControl={
-                <RefreshControl refreshing={isPending} onRefresh={refetch} />
-              }
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.notFoundContainer}>
-              <LottieView
-                source={notFoundLottie}
-                autoPlay
-                loop
-                style={styles.notFound}
-              />
-              <Text style={[common.text_base, common.text_gray]}>
-                No thing to see!
-              </Text>
-            </ScrollView>
-          ) : null}
-        </View>
-      </Drawer>
-    </SafeArea>
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.notFoundContainer}>
+                <LottieView
+                  source={notFoundLottie}
+                  autoPlay
+                  loop
+                  style={styles.notFound}
+                />
+                <Text style={[common.text_base, common.text_gray]}>
+                  No thing to see!
+                </Text>
+              </ScrollView>
+            ) : null}
+          </View>
+        </Drawer>
+      </SafeArea>
+    </>
   );
 }
 
