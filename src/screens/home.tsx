@@ -4,8 +4,6 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import LottieView from 'lottie-react-native';
 import {
   Animated,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
   Text,
@@ -17,10 +15,11 @@ import {BottomTabProps} from '../../types/route';
 import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {WIDTH_DEVICE, common} from '../UIkit/styles';
-import AnimateHeader, {HEADER_HEIGHT} from '../components/animate-header';
+import AnimateHeader from '../components/animate-header';
 import HotSale from '../components/hot-sale';
 import Popular from '../components/popular';
 import {Icon} from '../components/ui/icon';
+import {handleScrollEnd} from '../hooks/useAnimationScrollHome';
 import {navList} from '../libs/contants';
 import {ballLottie} from '../lottie';
 
@@ -29,52 +28,7 @@ export default function HomeScreen({navigation}: HomeScreenProps) {
   const offset = React.useRef(new Animated.Value(0)).current;
   const scrollViewRef = React.useRef<ScrollView | null>(null);
   const insets = useSafeAreaInsets();
-
-  let scrollTimeout: NodeJS.Timeout | null = null;
-
-  const handleScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (scrollTimeout) {
-      clearTimeout(scrollTimeout);
-    }
-    const {contentOffset} = event.nativeEvent;
-    if (contentOffset && contentOffset?.y !== undefined) {
-      scrollTimeout = setTimeout(() => {
-        const offsetY = contentOffset.y;
-
-        if (
-          offsetY > (HEADER_HEIGHT + insets.top) / 2 &&
-          offsetY <= HEADER_HEIGHT + insets.top
-        ) {
-          Animated.timing(offset, {
-            toValue: HEADER_HEIGHT + insets.top,
-            duration: 500,
-            useNativeDriver: false,
-          }).start();
-
-          if (!scrollViewRef.current) {
-            return;
-          }
-          scrollViewRef.current.scrollTo({
-            y: HEADER_HEIGHT + insets.top,
-            animated: true,
-          });
-        } else {
-          if (offsetY <= (HEADER_HEIGHT + insets.top) / 2) {
-            Animated.timing(offset, {
-              toValue: 0,
-              duration: 500,
-              useNativeDriver: false,
-            }).start();
-
-            if (!scrollViewRef.current) {
-              return;
-            }
-            scrollViewRef.current.scrollTo({y: 0, animated: true});
-          }
-        }
-      }, 1300);
-    }
-  };
+  const scrollTimeout: NodeJS.Timeout | null = null;
 
   return (
     <>
@@ -87,7 +41,15 @@ export default function HomeScreen({navigation}: HomeScreenProps) {
           contentContainerStyle={styles.container}
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
-          onScrollEndDrag={handleScrollEnd}
+          onScrollEndDrag={event =>
+            handleScrollEnd({
+              event,
+              insets,
+              offset,
+              scrollViewRef,
+              scrollTimeout,
+            })
+          }
           onScroll={Animated.event(
             [{nativeEvent: {contentOffset: {y: offset}}}],
             {useNativeDriver: false},
@@ -132,14 +94,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   container: {
-    paddingTop: 270,
+    paddingTop: 265,
   },
   navContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
     paddingHorizontal: 16,
-    rowGap: 16,
+    rowGap: 24,
     flexWrap: 'wrap',
   },
   navItem: {

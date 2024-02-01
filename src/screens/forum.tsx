@@ -26,8 +26,8 @@ export default function ForumScreen() {
           <Icon size={40} icon={forumP} />
 
           <View style={flex.flex_row}>
-            <IconOutline size={35} icon={search} />
-            <IconOutline size={35} icon={messenger} />
+            <IconOutline size={36} icon={search} />
+            <IconOutline size={36} icon={messenger} />
           </View>
         </View>
 

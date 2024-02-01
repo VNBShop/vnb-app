@@ -2,14 +2,16 @@ import * as React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {color} from '../../UIkit/palette';
 
-export default function HrVertical() {
-  return <View style={styles.hr} />;
+type HrVerticalProps = {
+  height?: number | 'auto';
+};
+export default function HrVertical({height = 'auto'}: HrVerticalProps) {
+  return <View style={[styles.hr, {height: height}]} />;
 }
 
 const styles = StyleSheet.create({
   hr: {
     width: 0.8,
-    height: 20,
     backgroundColor: color.border_input,
   },
 });

@@ -15,8 +15,8 @@ export default function NotificationScreen() {
         <Text style={common.titleLeft}>Notification</Text>
 
         <View style={flex.flex_row}>
-          <IconOutline icon={filter} size={35} />
-          <IconOutline icon={search_gray} size={35} />
+          <IconOutline icon={filter} size={36} />
+          <IconOutline icon={search_gray} size={36} />
         </View>
       </View>
 

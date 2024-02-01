@@ -6,6 +6,8 @@ import {color} from '../UIkit/palette';
 import {
   bell,
   bellGray,
+  forumBlack,
+  forumGray,
   home,
   homeGray,
   store,
@@ -20,18 +22,27 @@ export const tabOption = {
   home: {
     tabBarIcon: ({focused}) => {
       return focused ? (
-        <Icon icon={home} size={25} />
+        <Icon icon={home} size={28} />
       ) : (
-        <Icon icon={homeGray} size={25} />
+        <Icon icon={homeGray} size={28} />
       );
     },
   } as BottomTabNavigationOptions,
   cart: {
     tabBarIcon: ({focused}) => {
       return focused ? (
-        <Icon icon={store} size={22} />
+        <Icon icon={store} size={26} />
       ) : (
-        <Icon icon={storeGray} size={22} />
+        <Icon icon={storeGray} size={26} />
+      );
+    },
+  } as BottomTabNavigationOptions,
+  forumDefault: {
+    tabBarIcon: ({focused}) => {
+      return focused ? (
+        <Icon icon={forumBlack} size={28} />
+      ) : (
+        <Icon icon={forumGray} size={28} />
       );
     },
   } as BottomTabNavigationOptions,
@@ -52,18 +63,18 @@ export const tabOption = {
   notify: {
     tabBarIcon: ({focused}) => {
       return focused ? (
-        <Icon icon={bell} size={28} />
+        <Icon icon={bell} size={30} />
       ) : (
-        <Icon icon={bellGray} size={28} />
+        <Icon icon={bellGray} size={30} />
       );
     },
   } as BottomTabNavigationOptions,
   personal: {
     tabBarIcon: ({focused}) => {
       return focused ? (
-        <Icon icon={user} size={25} />
+        <Icon icon={user} size={28} />
       ) : (
-        <Icon icon={userGray} size={25} />
+        <Icon icon={userGray} size={28} />
       );
     },
   } as BottomTabNavigationOptions,

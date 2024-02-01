@@ -10,12 +10,13 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {color} from '../UIkit/palette';
-import {common} from '../UIkit/styles';
+import {common, flex} from '../UIkit/styles';
 import {banner, cart, icon, messenger, order, search} from '../assets';
 import {RootStackProps} from '../../types/route';
-import {Icon} from './ui/icon';
+import {Icon, IconOutline} from './ui/icon';
 import React from 'react';
 import ModalSearch from './modals/modal-search';
+import HrVertical from './ui/hrVertical';
 
 export const HEADER_HEIGHT = 200;
 export default function AnimateHeader({
@@ -66,19 +67,20 @@ export default function AnimateHeader({
 
           <Image source={icon} style={styles.logo} />
 
-          <View style={styles.actionContainer}>
+          <View style={flex.flex_row}>
             <TouchableOpacity
               style={styles.iconItem}
               onPress={() => setModalSearch(true)}>
-              <Image source={search} style={styles.icon} />
+              <IconOutline icon={search} size={36} />
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.iconItem}
               onPress={() => navigator.navigate('ConversationList')}>
-              <Image source={messenger} style={styles.icon} />
+              <IconOutline icon={messenger} size={36} />
             </TouchableOpacity>
           </View>
         </View>
+
         <Animated.Image
           source={banner}
           style={[styles.banner, {opacity: bannerAnimation}]}
@@ -93,18 +95,20 @@ export default function AnimateHeader({
           <View style={styles.specialContainerInline}>
             <TouchableOpacity onPress={() => navigator.navigate('Ordered')}>
               <View style={styles.specialItemContainer}>
-                <Icon size={25} icon={order} />
+                <Icon size={20} icon={order} />
                 <Text style={common.text_base}>Ordered</Text>
               </View>
               <Text style={[common.text_gray, styles.mt]}>Find your order</Text>
             </TouchableOpacity>
 
+            <HrVertical />
+
             <TouchableOpacity onPress={() => navigator.navigate('Cart')}>
               <View style={styles.specialItemContainer}>
-                <Icon size={25} icon={cart} />
-                <Text style={common.text_base}>Cart</Text>
+                <Icon size={20} icon={cart} />
+                <Text style={common.text_base}>My Cart</Text>
               </View>
-              <Text style={[common.text_gray, styles.mt]}>Empty cart now</Text>
+              <Text style={[common.text_gray, styles.mt]}>Clean cart now</Text>
             </TouchableOpacity>
           </View>
         </Animated.View>
@@ -161,7 +165,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 26,
     position: 'absolute',
-    bottom: -16,
+    bottom: -8,
     justifyContent: 'center',
     alignItems: 'center',
   },

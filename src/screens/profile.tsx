@@ -50,7 +50,7 @@ export default function ProfileScreen({navigation}: ProfileScreenProps) {
         <View style={styles.header}>
           <Icon size={25} icon={back} onPress={() => navigation.goBack()} />
           <Text style={styles.headerUsername}>Dzung</Text>
-          <IconOutline size={35} icon={search_gray} />
+          <IconOutline size={36} icon={search_gray} />
         </View>
 
         <View style={common.flex_full}>

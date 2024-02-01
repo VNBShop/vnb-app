@@ -30,7 +30,7 @@ export const flex = StyleSheet.create({
   flex_row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 16,
   },
   center: {
     flexDirection: 'row',

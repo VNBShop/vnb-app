@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
+import {useInfiniteQuery} from '@tanstack/react-query';
 import LottieView from 'lottie-react-native';
 import * as React from 'react';
 import {
@@ -16,7 +14,7 @@ import {
   View,
 } from 'react-native';
 import {Drawer} from 'react-native-drawer-layout';
-import {ProductStore, Products} from '../../types/product';
+import {Products} from '../../types/product';
 import {RootStackProps} from '../../types/route';
 import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import SafeArea from '../UIkit/layouts/safe-area';
@@ -29,38 +27,14 @@ import {
   new as newIcon,
   search_gray,
 } from '../assets';
-import ProductsSkeleton from '../components/skeleton/products-skeleton';
-import CheckboxCard from '../components/ui/checkbox-card';
-import {Icon} from '../components/ui/icon';
-import {brands} from '../libs/contants';
-import {notFoundLottie} from '../lottie';
-import getStores from '../api/public/stores';
 import ModalSearch from '../components/modals/modal-search';
+import ProductsFilter from '../components/products/products-filter';
+import ProductsSort from '../components/products/products-sort';
+import ProductsSkeleton from '../components/skeleton/products-skeleton';
+import {Icon, IconOutline} from '../components/ui/icon';
+import {notFoundLottie} from '../lottie';
 
-const sorts = [
-  {
-    id: 1,
-    label: 'A-Z',
-    value: 'name.asc',
-  },
-  {
-    id: 2,
-    label: 'Z-A',
-    value: 'name.desc',
-  },
-  {
-    id: 3,
-    label: 'Price increasing',
-    value: 'price.asc',
-  },
-  {
-    id: 4,
-    label: 'Price decreasing',
-    value: 'price.desc',
-  },
-];
-
-type FilterProps = {
+export type FilterProps = {
   brandIds?: string;
   storeIds?: string;
   minPrice?: number;
@@ -69,16 +43,10 @@ type FilterProps = {
 };
 
 export default function ProductScreen() {
-  const [isTransitionPending, startTransition] = React.useTransition();
   const [searchModal, setSearchModal] = React.useState(false);
-
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackProps, 'Root'>>();
 
   const [filter, setFilter] = React.useState<FilterProps>({});
   const [filterContainer, setFilterContainer] = React.useState(false);
-  const [brandsFilter, setBrandsFilter] = React.useState<number[]>([]);
-  const [storesFilter, setStoresFilter] = React.useState<number[]>([]);
 
   const stackNavigator =
     useNavigation<NavigationProp<RootStackProps, 'ProductDetail'>>();
@@ -103,46 +71,6 @@ export default function ProductScreen() {
 
   const flatData = data?.pages ? data?.pages?.flatMap(page => page) : [];
 
-  React.useEffect(() => {
-    if (brandsFilter?.length) {
-      const brandIdsConcat = brandsFilter.join('.');
-      startTransition(() => {
-        setFilter(prev => ({...prev, brandIds: brandIdsConcat}));
-      });
-    } else {
-      startTransition(() => {
-        setFilter(prev => {
-          const {brandIds: _, ...rest} = prev;
-          return {...rest};
-        });
-      });
-    }
-  }, [brandsFilter]);
-
-  React.useEffect(() => {
-    if (storesFilter?.length) {
-      const storeIdsConcat = storesFilter.join('.');
-      startTransition(() => {
-        setFilter(prev => ({...prev, storeIds: storeIdsConcat}));
-      });
-    } else {
-      startTransition(() => {
-        setFilter(prev => {
-          const {storeIds: _, ...rest} = prev;
-          return {...rest};
-        });
-      });
-    }
-  }, [storesFilter]);
-
-  const {data: dataStores} = useQuery({
-    queryKey: ['stores'],
-    queryFn: getStores,
-    refetchOnWindowFocus: false,
-  });
-
-  const stores = (dataStores?.data?.metadata as ProductStore[]) ?? [];
-
   return (
     <>
       <ModalSearch open={searchModal} onClose={() => setSearchModal(false)} />
@@ -152,125 +80,37 @@ export default function ProductScreen() {
           onClose={() => setFilterContainer(false)}
           onOpen={() => setFilterContainer(true)}
           renderDrawerContent={() => {
-            return (
-              <ScrollView style={styles.filterWrapper}>
-                <Text style={styles.filterTitle}>Filters</Text>
-
-                <Text style={styles.filterTitleSM}>Brands</Text>
-
-                <View style={styles.brandsFilter}>
-                  {brands.map(brand => (
-                    <TouchableOpacity
-                      key={brand.brandId}
-                      onPress={() => {
-                        setBrandsFilter(prev => {
-                          const findIndex = prev.indexOf(brand.brandId);
-
-                          if (findIndex !== -1) {
-                            return prev
-                              .slice(0, findIndex)
-                              .concat(prev.slice(findIndex + 1));
-                          } else {
-                            return [...prev, brand.brandId];
-                          }
-                        });
-                      }}>
-                      <CheckboxCard
-                        isAcive={brandsFilter.includes(brand.brandId)}
-                        label={brand.brandName}
-                      />
-                    </TouchableOpacity>
-                  ))}
-                </View>
-
-                {stores?.length ? (
-                  <>
-                    <Text style={styles.filterTitleSM}>Stores</Text>
-
-                    <View style={styles.brandsFilter}>
-                      {stores.map(store => (
-                        <TouchableOpacity
-                          key={store.storeId}
-                          onPress={() => {
-                            setStoresFilter(prev => {
-                              const findIndex = prev.indexOf(store.storeId);
-
-                              if (findIndex !== -1) {
-                                return prev
-                                  .slice(0, findIndex)
-                                  .concat(prev.slice(findIndex + 1));
-                              } else {
-                                return [...prev, store.storeId];
-                              }
-                            });
-                          }}>
-                          <CheckboxCard
-                            isAcive={storesFilter.includes(store.storeId)}
-                            label={store.storeName}
-                          />
-                        </TouchableOpacity>
-                      ))}
-                    </View>
-                  </>
-                ) : null}
-              </ScrollView>
-            );
+            return <ProductsFilter setFilter={setFilter} />;
           }}>
           <View style={styles.container}>
             <View style={styles.header}>
               <Text style={common.titleLeft}>Products</Text>
-              <TouchableOpacity disabled={isLoading}>
-                <Icon icon={cart_gray} size={25} />
+              <TouchableOpacity
+                disabled={isLoading}
+                onPress={() => stackNavigator.navigate('Cart')}>
+                <IconOutline icon={cart_gray} size={36} />
               </TouchableOpacity>
             </View>
 
-            <View style={styles.actionContainer}>
-              <TouchableOpacity
-                onPress={() => setSearchModal(true)}
-                style={styles.search}>
-                <Icon icon={search_gray} size={20} />
-                <Text style={[common.text_gray, common.text_base]}>Search</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.filterIcon}
-                onPress={() => setFilterContainer(true)}>
-                <Image source={filterIcon} style={styles.filterIconImg} />
-              </TouchableOpacity>
-            </View>
+            {!!flatData.length && (
+              <View style={styles.actionContainer}>
+                <TouchableOpacity
+                  onPress={() => setSearchModal(true)}
+                  style={styles.search}>
+                  <Icon icon={search_gray} size={20} />
+                  <Text style={[common.text_gray, common.text_base]}>
+                    Search
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.filterIcon}
+                  onPress={() => setFilterContainer(true)}>
+                  <Image source={filterIcon} style={styles.filterIconImg} />
+                </TouchableOpacity>
+              </View>
+            )}
 
-            <View style={styles.filterContainer}>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.filterScroll}>
-                {sorts.map(item => (
-                  <TouchableOpacity
-                    style={[
-                      styles.filterItem,
-                      filter?.sort === item.value && styles.filterItemActive,
-                    ]}
-                    key={item.value}
-                    onPress={() => {
-                      setFilter(prev => {
-                        if (prev?.sort === item.value) {
-                          const {sort, ...props} = prev;
-                          return {...props};
-                        } else {
-                          return {...prev, sort: item.value};
-                        }
-                      });
-                    }}>
-                    <Text
-                      style={[
-                        styles.filterText,
-                        filter?.sort === item.value && styles.filterTextActive,
-                      ]}>
-                      {item.label}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
+            {!!flatData?.length && <ProductsSort setFilter={setFilter} />}
 
             {flatData?.length && !isLoading ? (
               <View style={styles.flatContainer}>
@@ -381,7 +221,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 16,
-    marginTop: 24,
+    marginTop: 16,
   },
   filterIcon: {
     width: 25,
@@ -395,38 +235,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: color.divider,
     padding: 16,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderRadius: 9999,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
   },
-  filterContainer: {
-    marginBottom: 16,
-    marginTop: 16,
-    width: '100%',
-  },
-  filterScroll: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  filterItem: {
-    padding: 8,
-    paddingHorizontal: 20,
-    borderWidth: 0.17,
-    borderColor: color.gray,
-    borderRadius: 6,
-  },
-  filterItemActive: {
-    backgroundColor: color.primary,
-  },
-  filterText: {
-    fontWeight: '500',
-  },
-  filterTextActive: {
-    fontWeight: '600',
-    color: '#ffffff',
-  },
+
   flatContainer: {
     width: '100%',
     flex: 1,
@@ -485,21 +300,5 @@ const styles = StyleSheet.create({
   notFound: {
     width: 200,
     height: 200,
-  },
-  filterWrapper: {
-    padding: 16,
-  },
-  filterTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  filterTitleSM: {
-    fontSize: 16,
-    color: color.secondary,
-    marginTop: 16,
-  },
-  brandsFilter: {
-    marginTop: 12,
-    rowGap: 14,
   },
 });

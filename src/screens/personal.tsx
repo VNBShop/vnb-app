@@ -75,9 +75,9 @@ export default function PersonalScreen() {
           <View style={flex.between}>
             <Text style={common.titleLeft}>Account</Text>
 
-            <View style={styles.headerAction}>
-              <IconOutline icon={setting} size={32} />
-              <IconOutline icon={search} size={32} />
+            <View style={flex.flex_row}>
+              <IconOutline icon={setting} size={36} />
+              <IconOutline icon={search} size={36} />
             </View>
           </View>
 

@@ -17,7 +17,7 @@ export type IconOutlineProps = {
   style?: StyleProp<ViewStyle>;
 };
 export function IconOutline({icon, size, onPress, style}: IconOutlineProps) {
-  const iconSize = size * 0.6;
+  const iconSize = size * 0.5;
   if (onPress) {
     return (
       <TouchableOpacity

@@ -10,12 +10,12 @@ import {
   TabView,
 } from 'react-native-tab-view';
 import {Scene} from 'react-native-tab-view/lib/typescript/src/types';
+import {RootStackProps} from '../../types/route';
 import {color} from '../UIkit/palette';
-import {WIDTH_DEVICE, common} from '../UIkit/styles';
-import {back, search_gray} from '../assets';
+import {WIDTH_DEVICE} from '../UIkit/styles';
+import {back, home} from '../assets';
 import Order from '../components/order';
 import {Icon} from '../components/ui/icon';
-import {RootStackProps} from '../../types/route';
 
 type OrderedScreenProps = NativeStackScreenProps<RootStackProps, 'Ordered'>;
 
@@ -75,20 +75,15 @@ export default function OrderedScreen({navigation}: OrderedScreenProps) {
         },
       ]}>
       <View style={styles.header}>
-        <TouchableOpacity
-          style={common.positionLeftBase}
-          onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon icon={back} size={25} />
         </TouchableOpacity>
 
-        <Text style={common.headerTitle}>My ordered</Text>
-      </View>
+        <Text style={styles.headerTilte}>My ordered</Text>
 
-      <View style={styles.searchContainer}>
-        <View style={styles.search}>
-          <Icon size={20} icon={search_gray} />
-          <Text style={common.text_gray}>Search products</Text>
-        </View>
+        <TouchableOpacity onPress={() => navigation.navigate('Root')}>
+          <Icon icon={home} size={25} />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.container}>
@@ -110,27 +105,20 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    position: 'relative',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
     marginTop: 8,
   },
+  headerTilte: {
+    fontSize: 18,
+    fontWeight: '500',
+  },
   container: {
     flex: 1,
+    marginTop: 20,
   },
-  searchContainer: {
-    paddingHorizontal: 16,
-    marginVertical: 16,
-    marginTop: 24,
-  },
-  search: {
-    paddingHorizontal: 16,
-    borderRadius: 9990,
-    padding: 8,
-    backgroundColor: '#ffffff',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
+
   indicatorStyle: {
     backgroundColor: color.secondary,
   },

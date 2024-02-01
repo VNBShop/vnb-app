@@ -1,4 +1,4 @@
-import {BrandProps} from '../../types/product';
+import {ProductBrand} from '../../types/product';
 import {
   backpack,
   badminton,
@@ -184,7 +184,7 @@ export const actionOption = [
   },
 ];
 
-export const brands: BrandProps[] = [
+export const brands: ProductBrand[] = [
   {
     brandId: 1,
     brandName: 'Victor',
@@ -232,5 +232,28 @@ export const brands: BrandProps[] = [
   {
     brandId: 13,
     brandName: 'Kawasaki',
+  },
+];
+
+export const sorts = [
+  {
+    id: 1,
+    label: 'A-Z',
+    value: 'name.asc',
+  },
+  {
+    id: 2,
+    label: 'Z-A',
+    value: 'name.desc',
+  },
+  {
+    id: 3,
+    label: 'Price increasing',
+    value: 'price.asc',
+  },
+  {
+    id: 4,
+    label: 'Price decreasing',
+    value: 'price.desc',
   },
 ];
