@@ -31,7 +31,7 @@ export default function StackNavigation() {
       }}>
       {isFirstApp ? (
         <Stack.Screen name="Wellcome" component={WellcomeScreen} />
-      ) : !data?.accessToken ? (
+      ) : data?.accessToken ? (
         <Stack.Group>
           <Stack.Screen name="Root" component={TabNavigation} />
           <Stack.Screen name="Ordered" component={OrderedScreen} />

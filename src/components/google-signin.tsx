@@ -16,10 +16,11 @@ export default function GooogleSigninButton() {
   const {setLoading} = useLoading();
   const signIn = async () => {
     try {
+      setLoading(true);
+
       await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
 
       const userInfo = await GoogleSignin.signIn();
-      setLoading(true);
 
       const verifyWithBE = await googleLogin({
         idToken: userInfo?.idToken ?? '',
@@ -30,8 +31,12 @@ export default function GooogleSigninButton() {
         setLogin(verifyWithBE?.data?.metadata);
         return;
       }
+
+      setLoading(false);
     } catch (error: any) {
       setLoading(false);
+      console.log('Google login error: ', error);
+
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
       } else if (error.code === statusCodes.IN_PROGRESS) {
@@ -41,8 +46,6 @@ export default function GooogleSigninButton() {
       } else {
         // some other error happened
       }
-    } finally {
-      setLoading(false);
     }
   };
 

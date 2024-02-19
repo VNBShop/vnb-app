@@ -25,12 +25,12 @@ export default function LoadingScreen({description}: LoadingScreenProps) {
         <Image source={icon} style={styles.logo} />
 
         <View>
-          {!!description && <Text style={styles.text}>{description}</Text>}
           <ActivityIndicator size="large" />
+          {!!description && <Text style={styles.text}>{description}</Text>}
         </View>
 
         <View style={[styles.from, {bottom: insets.bottom}]}>
-          <Text style={styles.text1}>from</Text>
+          <Text style={styles.text1}>Powered by</Text>
           <Text style={styles.text2}>VNB Software Team</Text>
         </View>
       </View>
@@ -48,8 +48,8 @@ const styles = StyleSheet.create({
     marginTop: -200,
   },
   logo: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
   },
   from: {
     position: 'absolute',
@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
   text1: {
     textAlign: 'center',
     fontSize: 15,
+    color: color.gray,
   },
   text2: {
     textAlign: 'center',
