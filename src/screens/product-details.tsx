@@ -13,18 +13,20 @@ import {
 } from 'react-native';
 import {AirbnbRating} from 'react-native-ratings';
 import {ProductDetail} from '../../types/product';
+import {RootStackProps} from '../../types/route';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, spec} from '../UIkit/styles';
 import {getProductDetail} from '../api/public/product';
-import {back, cartPlus, cart_gray, heartOutline, share} from '../assets';
+import {back, heartOutline, share} from '../assets';
+import CartButton from '../components/cart-button';
 import ProductDescription from '../components/product-description';
+import ProductDetailAction from '../components/products/product-detail-action';
 import ProductDetailSkeleton from '../components/skeleton/product-detail-skeleton';
 import {Icon} from '../components/ui/icon';
 import OrHr from '../components/ui/or-hr';
 import Tag from '../components/ui/tag';
 import {notFoundLottie} from '../lottie';
-import {RootStackProps} from '../../types/route';
 
 type ProductDetailScreenProps = NativeStackScreenProps<
   RootStackProps,
@@ -74,11 +76,7 @@ export default function ProductDetailScreen({
           <Icon size={25} icon={back} />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          disabled={!isLoading || !isPending}
-          onPress={() => navigation.navigate('Cart')}>
-          <Icon size={25} icon={cart_gray} />
-        </TouchableOpacity>
+        <CartButton />
       </View>
 
       {data ? (
@@ -94,9 +92,9 @@ export default function ProductDetailScreen({
             <View style={styles.productInfoContainer}>
               <View style={styles.tag}>
                 <Tag
-                  content="Authentic"
-                  textColor={'#2e9e88'}
-                  backGroundColor={'#d3f4ea'}
+                  content={data?.productStatus ? 'In stock' : 'Out stock'}
+                  textColor={data?.productStatus ? '#486d1e' : '#d70041'}
+                  backGroundColor={data?.productStatus ? '#e9f5d2' : '#ffe0e6'}
                 />
               </View>
               <Text style={common.text_base}>{data?.productName}</Text>
@@ -104,9 +102,9 @@ export default function ProductDetailScreen({
               <View style={styles.priceContainer}>
                 <Text style={styles.price}>
                   {data?.productPrice
-                    ? data.productPrice.toLocaleString('en-EN', {
+                    ? data.productPrice.toLocaleString('vi-VI', {
                         style: 'currency',
-                        currency: 'USD',
+                        currency: 'VND',
                       })
                     : null}
                 </Text>
@@ -114,7 +112,13 @@ export default function ProductDetailScreen({
               </View>
 
               <View style={styles.footer}>
-                <AirbnbRating isDisabled showRating={false} size={18} />
+                <AirbnbRating
+                  count={5}
+                  defaultRating={5}
+                  isDisabled
+                  showRating={false}
+                  size={18}
+                />
                 <View style={styles.footerAction}>
                   <TouchableOpacity>
                     <Icon size={28} icon={share} />
@@ -134,17 +138,10 @@ export default function ProductDetailScreen({
         </View>
       ) : null}
 
-      <View style={styles.action}>
-        <TouchableOpacity>
-          <Icon size={30} icon={cartPlus} />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.buyBtn}
-          onPress={() => navigation.navigate('Cart')}>
-          <Text style={styles.buyText}>Buying now</Text>
-        </TouchableOpacity>
-      </View>
+      <ProductDetailAction
+        navigation={navigation}
+        product={data as ProductDetail}
+      />
 
       {isLoading ? <ProductDetailSkeleton /> : null}
     </SafeArea>
@@ -181,6 +178,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     marginBottom: 8,
+    justifyContent: 'space-between',
   },
   price: {
     fontSize: 18,
@@ -204,27 +202,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 16,
     alignItems: 'center',
-  },
-  action: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingLeft: 20,
-    paddingRight: 16,
-    paddingVertical: 8,
-  },
-  buyBtn: {
-    width: 120,
-    paddingVertical: 10,
-    backgroundColor: color.primary,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buyText: {
-    color: '#ffffff',
-    fontWeight: '500',
-    fontSize: 16,
   },
   notFoundContainer: {
     flex: 1,

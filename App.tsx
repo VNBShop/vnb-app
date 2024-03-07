@@ -13,6 +13,7 @@ import {common} from './src/UIkit/styles';
 import Navigation from './src/routes';
 import RQProvider from './src/components/provider';
 import LoadingScreen from './src/components/ui/loading-screen';
+import Toast from 'react-native-toast-message';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           />
           <Navigation />
           <LoadingScreen />
+          <Toast />
         </RQProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

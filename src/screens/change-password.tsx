@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {API_URL} from '@env';
 import * as React from 'react';
 import {

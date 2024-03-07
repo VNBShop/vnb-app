@@ -19,6 +19,7 @@ import RadioCard from '../components/ui/radio-card';
 import {fakeData, paymentMethod} from '../libs/contants';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackProps} from '../../types/route';
+import CheckoutSkeleton from '../components/skeleton/checkout-skeleton';
 
 type CheckoutScreenProps = NativeStackScreenProps<RootStackProps, 'Checkout'>;
 
@@ -37,166 +38,170 @@ export default function CheckoutScreen({navigation}: CheckoutScreenProps) {
         <Text style={common.headerTitle}>Checkout confirm</Text>
       </View>
 
-      <View style={styles.container}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={styles.locationContainer}>
-            <View>
-              <View style={styles.locationContainerLeft}>
-                <Icon icon={location} size={20} />
+      {/* <CheckoutSkeleton /> */}
 
-                <View style={styles.contactInfo}>
-                  <Text>Minh Dzung</Text>
-                  <HrVertical />
-                  <Text>0911710010</Text>
+      <>
+        <View style={styles.container}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={styles.locationContainer}>
+              <View>
+                <View style={styles.locationContainerLeft}>
+                  <Icon icon={location} size={20} />
+
+                  <View style={styles.contactInfo}>
+                    <Text>Minh Dzung</Text>
+                    <HrVertical />
+                    <Text>0911710010</Text>
+                  </View>
                 </View>
+                <Text style={styles.location}>
+                  172 Nguyen Thi Thap, 7 District, Ho Chi Minh
+                </Text>
               </View>
-              <Text style={styles.location}>
-                172 Nguyen Thi Thap, 7 District, Ho Chi Minh
-              </Text>
+
+              <Icon icon={forwardGray} size={20} />
             </View>
 
-            <Icon icon={forwardGray} size={20} />
-          </View>
+            <View style={styles.cartContainer}>
+              {fakeData.map((item, index) => {
+                return (
+                  index < 3 && (
+                    <View key={item.id}>
+                      <View style={styles.productItem}>
+                        <Image source={item.image} style={styles.productImg} />
+                        <View style={styles.productInfo}>
+                          <Text style={styles.productName}>{item.name}</Text>
+                          <Text>
+                            <Text style={styles.productPrice}>
+                              {item.price.toLocaleString()}
+                            </Text>{' '}
+                            <Text style={styles.priceDedre}>-15%</Text>
+                          </Text>
 
-          <View style={styles.cartContainer}>
-            {fakeData.map((item, index) => {
-              return (
-                index < 3 && (
-                  <View key={item.id}>
-                    <View style={styles.productItem}>
-                      <Image source={item.image} style={styles.productImg} />
-                      <View style={styles.productInfo}>
-                        <Text style={styles.productName}>{item.name}</Text>
-                        <Text>
-                          <Text style={styles.productPrice}>
-                            {item.price.toLocaleString()}
-                          </Text>{' '}
-                          <Text style={styles.priceDedre}>-15%</Text>
-                        </Text>
+                          <View style={styles.productFooter}>
+                            <View style={styles.actionHandle}>
+                              <TouchableOpacity
+                                style={[styles.actionHandleBtn, styles.left]}>
+                                <Text style={styles.textAction}>-</Text>
+                              </TouchableOpacity>
+                              <TextInput style={styles.actionHandleBtn} />
+                              <TouchableOpacity
+                                style={[styles.actionHandleBtn, styles.right]}>
+                                <Text style={styles.textAction}>+</Text>
+                              </TouchableOpacity>
+                            </View>
 
-                        <View style={styles.productFooter}>
-                          <View style={styles.actionHandle}>
-                            <TouchableOpacity
-                              style={[styles.actionHandleBtn, styles.left]}>
-                              <Text style={styles.textAction}>-</Text>
-                            </TouchableOpacity>
-                            <TextInput style={styles.actionHandleBtn} />
-                            <TouchableOpacity
-                              style={[styles.actionHandleBtn, styles.right]}>
-                              <Text style={styles.textAction}>+</Text>
+                            <TouchableOpacity>
+                              <Text style={[common.text_link]}>Delete</Text>
                             </TouchableOpacity>
                           </View>
-
-                          <TouchableOpacity>
-                            <Text style={[common.text_link]}>Delete</Text>
-                          </TouchableOpacity>
                         </View>
                       </View>
+
+                      <OrHr />
                     </View>
+                  )
+                );
+              })}
+            </View>
 
-                    <OrHr />
-                  </View>
-                )
-              );
-            })}
-          </View>
+            <View style={styles.paymentMethod}>
+              <Text style={styles.title}>Payment method</Text>
 
-          <View style={styles.paymentMethod}>
-            <Text style={styles.title}>Payment method</Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.methodContainer}>
+                {paymentMethod.map(payment => (
+                  <TouchableOpacity
+                    onPress={() => setPaymentM(payment.id)}
+                    key={payment.id}
+                    style={[
+                      styles.methodItem,
+                      {
+                        borderColor:
+                          paymentM === payment.id ? color.link : color.gray,
+                      },
+                    ]}>
+                    <RadioCard
+                      isAcive={paymentM === payment.id ? true : false}
+                      label={payment.label}
+                      labelLogo={payment.logo}
+                    />
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
 
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.methodContainer}>
-              {paymentMethod.map(payment => (
-                <TouchableOpacity
-                  onPress={() => setPaymentM(payment.id)}
-                  key={payment.id}
-                  style={[
-                    styles.methodItem,
-                    {
-                      borderColor:
-                        paymentM === payment.id ? color.link : color.gray,
-                    },
-                  ]}>
-                  <RadioCard
-                    isAcive={paymentM === payment.id ? true : false}
-                    label={payment.label}
-                    labelLogo={payment.logo}
-                  />
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
+            <View>
+              <Text style={styles.title}>Summary</Text>
+              <View style={styles.sumaryContainer}>
+                <View style={flex.between}>
+                  <Text style={common.text_gray}>Temp</Text>
+                  <Text style={common.text_gray}>
+                    {Number(30000000).toLocaleString()}
+                  </Text>
+                </View>
 
-          <View>
-            <Text style={styles.title}>Summary</Text>
-            <View style={styles.sumaryContainer}>
-              <View style={flex.between}>
-                <Text style={common.text_gray}>Temp</Text>
-                <Text style={common.text_gray}>
-                  {Number(30000000).toLocaleString()}
-                </Text>
-              </View>
+                <View style={flex.between}>
+                  <Text style={common.text_gray}>Shipping</Text>
+                  <Text style={common.text_gray}>
+                    {Number(23000).toLocaleString()}
+                  </Text>
+                </View>
 
-              <View style={flex.between}>
-                <Text style={common.text_gray}>Shipping</Text>
-                <Text style={common.text_gray}>
-                  {Number(23000).toLocaleString()}
-                </Text>
-              </View>
+                <View style={flex.between}>
+                  <Text style={common.text_gray}>Discount</Text>
+                  <Text style={common.text_success}>
+                    -{Number(423000).toLocaleString()}
+                  </Text>
+                </View>
 
-              <View style={flex.between}>
-                <Text style={common.text_gray}>Discount</Text>
-                <Text style={common.text_success}>
-                  -{Number(423000).toLocaleString()}
-                </Text>
-              </View>
+                <OrHr />
 
-              <OrHr />
-
-              <View style={flex.between}>
-                <Text style={styles.title}>Total</Text>
-                <Text style={styles.title}>
-                  {Number(29600000).toLocaleString()}
-                </Text>
+                <View style={flex.between}>
+                  <Text style={styles.title}>Total</Text>
+                  <Text style={styles.title}>
+                    {Number(29600000).toLocaleString()}
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
-        </ScrollView>
-      </View>
-
-      <View style={styles.footer}>
-        <View style={styles.footerAction}>
-          <View style={styles.footerActionInline}>
-            <Icon icon={voucher} size={20} />
-            <Text style={common.text_gray}>Voucher</Text>
-          </View>
-
-          <View style={styles.footerActionInline}>
-            <Text style={common.text_gray}>Fill or choose voucher</Text>
-            <Icon icon={forwardGray} size={20} />
-          </View>
+          </ScrollView>
         </View>
 
-        <OrHr />
+        <View style={styles.footer}>
+          <View style={styles.footerAction}>
+            <View style={styles.footerActionInline}>
+              <Icon icon={voucher} size={20} />
+              <Text style={common.text_gray}>Voucher</Text>
+            </View>
 
-        <View style={styles.footerAction}>
-          <View>
-            <Text style={common.text_gray}>Total</Text>
-            <Text style={styles.total}>
-              {fakeData
-                .reduce((acc, curr) => acc + curr.price, 0)
-                .toLocaleString()}
-            </Text>
+            <View style={styles.footerActionInline}>
+              <Text style={common.text_gray}>Fill or choose voucher</Text>
+              <Icon icon={forwardGray} size={20} />
+            </View>
           </View>
-          <TouchableOpacity
-            style={styles.checkoutBtn}
-            onPress={() => navigation.navigate('Ordered')}>
-            <Text style={styles.checkoutText}>Order</Text>
-          </TouchableOpacity>
+
+          <OrHr />
+
+          <View style={styles.footerAction}>
+            <View>
+              <Text style={common.text_gray}>Total</Text>
+              <Text style={styles.total}>
+                {fakeData
+                  .reduce((acc, curr) => acc + curr.price, 0)
+                  .toLocaleString()}
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.checkoutBtn}
+              onPress={() => navigation.navigate('Ordered')}>
+              <Text style={styles.checkoutText}>Order</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </>
     </SafeArea>
   );
 }
