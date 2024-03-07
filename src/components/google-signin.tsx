@@ -28,6 +28,8 @@ export default function GooogleSigninButton() {
       });
 
       if (verifyWithBE?.data?.success) {
+        setLoading(false);
+
         setLogin(verifyWithBE?.data?.metadata);
         return;
       }

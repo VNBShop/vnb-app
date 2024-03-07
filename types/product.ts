@@ -19,24 +19,25 @@ export type ProductDetail = Products & {
   productRating: number;
   productStatus: boolean;
   productDetail: Record<string, string | undefined | null>;
-  productComments: ProductComment[];
   productStores: ProductStore[];
   productStocks: ProductStock[];
   productIsHaveSize: boolean;
+  canComment: boolean;
 };
 
 export type ProductComment = {
-  commentId: string;
+  commentId: number;
   commentContent: string;
   commentAuthor: string;
+  commentDate: Date;
   commentAuthorAvatar: string;
-  commentDate: string;
+  yourComment: boolean;
 };
 
 export type ProductStock = {
   productStockId: number;
   productStockSize: string;
-  productStockQuantity: string;
+  productStockQuantity: number;
 };
 
 export type ProductBrand = {

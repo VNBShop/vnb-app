@@ -1,7 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useQuery} from '@tanstack/react-query';
 import * as React from 'react';
 import {
   Image,
@@ -12,11 +11,10 @@ import {
   View,
 } from 'react-native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import {Products} from '../../types/product';
+import {BottomTabProps, RootStackProps} from '../../types/route';
 import {color} from '../UIkit/palette';
 import {common, spec} from '../UIkit/styles';
-import {getProducts} from '../api/public/product';
-import {BottomTabProps, RootStackProps} from '../../types/route';
+import useFetchProduct from '../hooks/product/useFetchProducts';
 
 export default function HotSale() {
   const navigation =
@@ -25,17 +23,16 @@ export default function HotSale() {
   const bottomNav =
     useNavigation<NativeStackNavigationProp<BottomTabProps, 'Home'>>();
 
-  const {data, isError, isLoading} = useQuery<Products[]>({
-    queryKey: ['products'],
-    queryFn: () => getProducts({currentPage: 1}),
-    refetchOnWindowFocus: false,
+  const {products, isError, isPending} = useFetchProduct({
+    currentPage: 1,
+    pageSize: 7,
   });
 
   if (isError) {
     return;
   }
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <View style={{marginTop: 32, paddingHorizontal: 16}}>
         <Text style={styles.title}>Hot sales</Text>
@@ -95,8 +92,8 @@ export default function HotSale() {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.productContainer}>
-        {data?.length
-          ? data.map(item => (
+        {products?.length
+          ? products.map(item => (
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate('ProductDetail', {
@@ -113,8 +110,8 @@ export default function HotSale() {
                   <Text style={common.text_gray}>{item.productName}</Text>
                 </View>
                 <Text style={styles.price}>
-                  {item?.productPrice?.toLocaleString('en-EN', {
-                    currency: 'USD',
+                  {item?.productPrice?.toLocaleString('vi-VI', {
+                    currency: 'VND',
                     style: 'currency',
                   })}
                 </Text>
@@ -159,6 +156,7 @@ const styles = StyleSheet.create({
     height: 140,
     objectFit: 'contain',
     borderRadius: 8,
+    marginBottom: 8,
   },
   price: {
     color: color.secondary,

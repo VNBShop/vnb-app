@@ -36,7 +36,7 @@ export default function ModalSearch({open, onClose}: ModalSearchProps) {
 
   const searchValDebounce = useDebounce(searchVal, 1500);
 
-  const {data, isError, isPending} = useQuery<Products[]>({
+  const {data, isError, isPending} = useQuery({
     queryKey: ['productSearch', searchValDebounce],
     queryFn: ({queryKey}) =>
       getProducts({
@@ -46,6 +46,8 @@ export default function ModalSearch({open, onClose}: ModalSearchProps) {
       }),
     enabled: !!searchValDebounce,
   });
+
+  const products = (data?.products as Products[]) ?? [];
 
   return (
     <Modal
@@ -67,16 +69,17 @@ export default function ModalSearch({open, onClose}: ModalSearchProps) {
             />
           </View>
 
-          {data?.length ? (
+          {products?.length ? (
             <View>
-              {data.map(prod => {
+              {products.map(prod => {
                 return (
                   <TouchableOpacity
-                    onPress={() =>
+                    onPress={() => {
                       navigation.navigate('ProductDetail', {
                         productId: prod?.productId,
-                      })
-                    }
+                      });
+                      onClose();
+                    }}
                     style={styles.prodItem}
                     key={prod?.productId}>
                     <Image
@@ -98,13 +101,13 @@ export default function ModalSearch({open, onClose}: ModalSearchProps) {
             </View>
           ) : null}
 
-          {!data?.length && isPending && !!searchVal ? (
+          {!products?.length && isPending && !!searchVal ? (
             <View style={styles.skeletonContainer}>
               <SearchSkeleton />
             </View>
           ) : null}
 
-          {!isPending && isError && !data?.length && !!searchVal && (
+          {!isPending && isError && !products?.length && !!searchVal && (
             <View style={styles.notFoundContainer}>
               <LottieView
                 source={notFoundLottie}

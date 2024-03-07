@@ -1,5 +1,4 @@
 import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {useInfiniteQuery} from '@tanstack/react-query';
 import LottieView from 'lottie-react-native';
 import * as React from 'react';
 import {
@@ -14,13 +13,11 @@ import {
   View,
 } from 'react-native';
 import {Drawer} from 'react-native-drawer-layout';
-import {Products} from '../../types/product';
 import {RootStackProps} from '../../types/route';
 import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {WIDTH_DEVICE, common} from '../UIkit/styles';
-import {getProducts} from '../api/public/product';
 import {
   cart_gray,
   filter as filterIcon,
@@ -32,44 +29,27 @@ import ProductsFilter from '../components/products/products-filter';
 import ProductsSort from '../components/products/products-sort';
 import ProductsSkeleton from '../components/skeleton/products-skeleton';
 import {Icon, IconOutline} from '../components/ui/icon';
+import useFetchProduct from '../hooks/product/useFetchProducts';
 import {notFoundLottie} from '../lottie';
-
-export type FilterProps = {
-  brandIds?: string;
-  storeIds?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  sort?: string;
-};
 
 export default function ProductScreen() {
   const [searchModal, setSearchModal] = React.useState(false);
 
-  const [filter, setFilter] = React.useState<FilterProps>({});
   const [filterContainer, setFilterContainer] = React.useState(false);
+
+  const {
+    fetchNextPage,
+    hasNextPage,
+    isError,
+    isFetchingNextPage,
+    isPending,
+    products,
+    refetch,
+    setFilter,
+  } = useFetchProduct();
 
   const stackNavigator =
     useNavigation<NavigationProp<RootStackProps, 'ProductDetail'>>();
-
-  const {
-    data,
-    isPending,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isError,
-    isLoading,
-    refetch,
-  } = useInfiniteQuery<Products[]>({
-    queryKey: ['products', filter],
-    queryFn: ({pageParam, queryKey}) =>
-      getProducts({currentPage: pageParam as number, filter: queryKey[1]}),
-    initialPageParam: 1,
-    refetchOnWindowFocus: false,
-    getNextPageParam: (lastPage, allPage) => allPage?.length + 1,
-  });
-
-  const flatData = data?.pages ? data?.pages?.flatMap(page => page) : [];
 
   return (
     <>
@@ -86,13 +66,13 @@ export default function ProductScreen() {
             <View style={styles.header}>
               <Text style={common.titleLeft}>Products</Text>
               <TouchableOpacity
-                disabled={isLoading}
+                disabled={isPending}
                 onPress={() => stackNavigator.navigate('Cart')}>
                 <IconOutline icon={cart_gray} size={36} />
               </TouchableOpacity>
             </View>
 
-            {!!flatData.length && (
+            {!!products.length && (
               <View style={styles.actionContainer}>
                 <TouchableOpacity
                   onPress={() => setSearchModal(true)}
@@ -109,10 +89,9 @@ export default function ProductScreen() {
                 </TouchableOpacity>
               </View>
             )}
+            {!!products?.length && <ProductsSort setFilter={setFilter} />}
 
-            {!!flatData?.length && <ProductsSort setFilter={setFilter} />}
-
-            {flatData?.length && !isLoading ? (
+            {products?.length && !isError ? (
               <View style={styles.flatContainer}>
                 <FlatList
                   renderItem={({item}) => (
@@ -131,8 +110,8 @@ export default function ProductScreen() {
                         <Text style={common.text_gray}>{item.productName}</Text>
 
                         <Text style={styles.productPrice}>
-                          {item.productPrice.toLocaleString('en-EN', {
-                            currency: 'USD',
+                          {item.productPrice.toLocaleString('vi-VI', {
+                            currency: 'VND',
                             style: 'currency',
                           })}
                         </Text>
@@ -146,7 +125,7 @@ export default function ProductScreen() {
                       </View>
                     </TouchableOpacity>
                   )}
-                  data={flatData}
+                  data={products}
                   showsVerticalScrollIndicator={false}
                   numColumns={2}
                   contentContainerStyle={styles.gap}
@@ -175,9 +154,11 @@ export default function ProductScreen() {
               </View>
             ) : null}
 
-            {isLoading ? <ProductsSkeleton /> : null}
+            {isFetchingNextPage || isFetchingNextPage ? (
+              <ProductsSkeleton />
+            ) : null}
 
-            {isError && !isPending && !isLoading ? (
+            {isError && !isPending && !isFetchingNextPage ? (
               <ScrollView
                 refreshControl={
                   <RefreshControl refreshing={isPending} onRefresh={refetch} />
@@ -257,6 +238,7 @@ const styles = StyleSheet.create({
   },
   productImg: {
     width: '100%',
+    objectFit: 'contain',
     height: (WIDTH_DEVICE - 32) / 2,
   },
   productInfo: {

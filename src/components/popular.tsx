@@ -1,14 +1,12 @@
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useQuery} from '@tanstack/react-query';
 import * as React from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {Products} from '../../types/product';
-import {WIDTH_DEVICE, common} from '../UIkit/styles';
-import {getProducts} from '../api/public/product';
-import {heartOutline} from '../assets';
 import {BottomTabProps, RootStackProps} from '../../types/route';
+import {WIDTH_DEVICE, common} from '../UIkit/styles';
+import {heartOutline} from '../assets';
+import useFetchProduct from '../hooks/product/useFetchProducts';
 import ProductsSkeleton from './skeleton/products-skeleton';
 
 export default function Popular() {
@@ -18,17 +16,16 @@ export default function Popular() {
   const bottomNav =
     useNavigation<NativeStackNavigationProp<BottomTabProps, 'Home'>>();
 
-  const {data, isError, isLoading} = useQuery<Products[]>({
-    queryKey: ['products'],
-    queryFn: () => getProducts({currentPage: 1}),
-    refetchOnWindowFocus: false,
+  const {products, isError, isPending} = useFetchProduct({
+    currentPage: 3,
+    pageSize: 8,
   });
 
   if (isError) {
     return;
   }
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <View style={styles.container}>
         <ProductsSkeleton />
@@ -46,36 +43,41 @@ export default function Popular() {
       </View>
 
       <View style={styles.productContainer}>
-        {data?.length
-          ? data.map(item => (
-              <TouchableOpacity
-                key={item.productId}
-                style={styles.item}
-                onPress={() =>
-                  navigation.navigate('ProductDetail', {
-                    productId: item.productId,
-                  })
-                }>
-                <Image
-                  source={{uri: item?.productImages[0]}}
-                  style={styles.itemImg}
-                />
-                <View style={styles.body}>
-                  <Text style={common.text_gray}>{item?.productName}</Text>
-                  <View style={styles.footer}>
-                    <Text style={common.text_secondary}>
-                      {item?.productPrice?.toLocaleString('en-EN', {
-                        style: 'currency',
-                        currency: 'USD',
-                      })}
-                    </Text>
-                    <TouchableOpacity>
-                      <Image source={heartOutline} style={styles.heartIcon} />
-                    </TouchableOpacity>
+        {products?.length
+          ? products.map(item => {
+              return (
+                <TouchableOpacity
+                  key={item.productId}
+                  style={styles.item}
+                  onPress={() =>
+                    navigation.navigate('ProductDetail', {
+                      productId: item.productId,
+                    })
+                  }>
+                  <Image
+                    key={item?.productImages[0]}
+                    source={{
+                      uri: item?.productImages[0],
+                    }}
+                    style={styles.itemImg}
+                  />
+                  <View style={styles.body}>
+                    <Text style={common.text_gray}>{item?.productName}</Text>
+                    <View style={styles.footer}>
+                      <Text style={common.text_secondary}>
+                        {item?.productPrice?.toLocaleString('vi-VI', {
+                          style: 'currency',
+                          currency: 'VND',
+                        })}
+                      </Text>
+                      <TouchableOpacity>
+                        <Image source={heartOutline} style={styles.heartIcon} />
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                </View>
-              </TouchableOpacity>
-            ))
+                </TouchableOpacity>
+              );
+            })
           : null}
       </View>
     </View>
@@ -119,13 +121,15 @@ const styles = StyleSheet.create({
     width: '100%',
     height: (WIDTH_DEVICE - 48) / 2,
     marginBottom: 8,
+    objectFit: 'contain',
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingRight: 12,
-    padding: 8,
+    // padding: 8,
+    paddingVertical: 8,
   },
   heartIcon: {
     width: 20,

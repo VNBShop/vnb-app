@@ -20,7 +20,6 @@ import {getProductDetail} from '../api/public/product';
 import {back, cartPlus, cart_gray, heartOutline, share} from '../assets';
 import ProductDescription from '../components/product-description';
 import ProductDetailSkeleton from '../components/skeleton/product-detail-skeleton';
-import CommentProduct from '../components/ui/comment-card';
 import {Icon} from '../components/ui/icon';
 import OrHr from '../components/ui/or-hr';
 import Tag from '../components/ui/tag';
@@ -131,13 +130,6 @@ export default function ProductDetailScreen({
               <ProductDescription content={data.productDetail} />
             ) : null}
             <OrHr marginVertical={24} />
-
-            {data?.productComments?.length ? (
-              <View>
-                <Text style={common.text_base}>Product reviews</Text>
-                <CommentProduct comments={data.productComments} />
-              </View>
-            ) : null}
           </ScrollView>
         </View>
       ) : null}

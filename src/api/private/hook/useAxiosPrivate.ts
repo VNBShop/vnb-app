@@ -10,6 +10,7 @@ import useAuth from '../../../_store/useAuth';
 export default function useAxiosPrivate() {
   const {
     data: {accessToken},
+    logout,
   } = useAuth(state => state);
   const refresh = useRefreshToken();
 
@@ -30,13 +31,15 @@ export default function useAxiosPrivate() {
     const responseIntercept = axiosPrivate.interceptors.response.use(
       res => res,
       async err => {
+        if (err?.code === 'ERR_NETWORK') {
+          logout();
+          return;
+        }
         const prevReq = err.config;
-        console.log('err?.response?.status', err?.response?.status);
 
         if (err?.response?.status === 401 && !prevReq?.sent) {
           if (!isRefreshing) {
             isRefreshing = true;
-            console.log('run >> hehe');
 
             await refresh();
             isRefreshing = false;
@@ -44,7 +47,6 @@ export default function useAxiosPrivate() {
           prevReq.sent = true;
 
           prevReq.headers.Authorization = `Bearer ${accessToken}`;
-          console.log('run header');
 
           return axiosPrivate(prevReq);
         }

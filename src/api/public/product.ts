@@ -10,6 +10,8 @@ export async function getProducts({
   pageSize?: number;
   filter?: any;
 }) {
+  console.log('run >>');
+
   if (filter?.price_range) {
     const splitPrice = filter.price_range.split('-');
 
@@ -31,7 +33,10 @@ export async function getProducts({
   });
 
   if (res?.data?.metadata && !!res?.data?.metadata?.data?.length) {
-    return res?.data?.metadata?.data;
+    return {
+      products: res?.data?.metadata?.data,
+      total: res?.data?.metadata?.total,
+    };
   } else {
     throw new Error('');
   }
