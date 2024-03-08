@@ -1,13 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {color} from '../../UIkit/palette';
-import {flex, common} from '../../UIkit/styles';
-import {legit} from '../../assets';
-import Avatar from '../ui/avatar';
-import Tag from '../ui/tag';
+import {StyleSheet, Text, View} from 'react-native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import {color} from '../../UIkit/palette';
+import {flex} from '../../UIkit/styles';
 
 export default function ProfileSkeleton() {
   return (

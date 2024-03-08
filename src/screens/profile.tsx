@@ -1,25 +1,17 @@
 /* eslint-disable react-native/no-inline-styles */
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import * as React from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import SafeArea from '../UIkit/layouts/safe-area';
-import {color} from '../UIkit/palette';
-import {HEIGHT_DEVICE, common, flex} from '../UIkit/styles';
-import {back, legit, search_gray} from '../assets';
-import Avatar from '../components/ui/avatar';
-import {Icon, IconOutline} from '../components/ui/icon';
-import Tag from '../components/ui/tag';
-import Post from '../components/ui/post';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {Modalize} from 'react-native-modalize';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackProps} from '../../types/route';
+import SafeArea from '../UIkit/layouts/safe-area';
+import {color} from '../UIkit/palette';
+import {HEIGHT_DEVICE, common} from '../UIkit/styles';
+import {back, search_gray} from '../assets';
 import ProfileSkeleton from '../components/skeleton/profile-skeleton';
+import {Icon, IconOutline} from '../components/ui/icon';
+import Post from '../components/ui/post-item';
 
 type ProfileScreenProps = NativeStackScreenProps<RootStackProps, 'Profile'>;
 

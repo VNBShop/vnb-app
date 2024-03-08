@@ -5,17 +5,23 @@ import {Icon} from './icon';
 import {commentOutline, ellipsisBlack, heartOutline} from '../../assets';
 import Status from './status';
 import ImageCarousel from './image-carousel';
-import {spec} from '../../UIkit/styles';
+import {HEIGHT_DEVICE, spec} from '../../UIkit/styles';
 import {Modalize} from 'react-native-modalize';
+import {Portal} from 'react-native-portalize';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {Post} from '../../../types/forum';
 
-export default function Post({
-  commentModalRef,
-}: {
-  commentModalRef: React.RefObject<Modalize>;
-}) {
+type IProps = {
+  post: Post;
+};
+
+export default function PostItem({post}: IProps) {
+  const commentModalRef = React.useRef<Modalize>();
   const onOpenModalComment = () => {
     commentModalRef.current?.open();
   };
+
+  const insets = useSafeAreaInsets();
 
   return (
     <>
@@ -23,11 +29,9 @@ export default function Post({
         <View style={styles.header}>
           <View style={styles.headerInfo}>
             <Avatar
-              source={
-                'https://res.cloudinary.com/drpksxymr/image/upload/v1692624061/emtrangtri.jpg'
-              }
+              source={post?.postAuthorAvatar ?? ''}
               size={40}
-              username="D"
+              username={post?.postAuthorName ?? 'Z'}
             />
             <Text style={styles.username}>Dzung</Text>
           </View>
@@ -59,11 +63,41 @@ export default function Post({
           <Text>{Number(23123).toLocaleString()} likes</Text>
         </View>
       </View>
+
+      <Portal>
+        <Modalize
+          useNativeDriver
+          panGestureEnabled
+          modalHeight={HEIGHT_DEVICE - insets.top}
+          ref={commentModalRef}
+          HeaderComponent={
+            <View style={styles.commentHeader}>
+              <Text style={styles.commentTitle}>Comments</Text>
+            </View>
+          }>
+          <View>
+            <Text style={{textAlign: 'center', fontSize: 20, marginBottom: 8}}>
+              No comment yet
+            </Text>
+            <Text style={{textAlign: 'center', marginBottom: 8}}>
+              Be the first comment
+            </Text>
+          </View>
+        </Modalize>
+      </Portal>
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  commentHeader: {
+    paddingVertical: 32,
+  },
+  commentTitle: {
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '500',
+  },
   container: {
     paddingVertical: 16,
   },
