@@ -1,3 +1,5 @@
+import {User} from './user';
+
 export type RootStackProps = {
   Root: undefined;
   Ordered: undefined;
@@ -20,6 +22,9 @@ export type RootStackProps = {
   Identify: undefined;
   ConversationList: undefined;
   ConversationDetail: undefined;
+  UpdateProfile: {
+    user?: User;
+  };
 };
 
 export type BottomTabProps = {

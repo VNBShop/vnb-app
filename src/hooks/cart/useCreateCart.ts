@@ -1,11 +1,12 @@
-import {useMutation, useQueryClient} from '@tanstack/react-query';
-import {ProductStock} from '../../../types/product';
-import useAxiosPrivate from '../../api/private/hook/useAxiosPrivate';
-import {DataError, DataResponse} from '../../../types/auth';
-import {ORDER_SERVICE} from '../../libs/microservice';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackProps} from '../../../types/route';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
+import {DataError, DataResponse} from '../../../types/auth';
+import {ProductStock} from '../../../types/product';
+import {RootStackProps} from '../../../types/route';
+import useAxiosPrivate from '../../api/private/hook/useAxiosPrivate';
+import {ORDER_SERVICE} from '../../libs/microservice';
 
 export type CreateCartPayload = {
   productSizeId: ProductStock['productStockId'];
@@ -15,20 +16,22 @@ export type CreateCartPayload = {
 
 type IProps = {
   isMultiple?: boolean;
-  navigation: NativeStackNavigationProp<
-    RootStackProps,
-    'ProductDetail',
-    undefined
-  >;
+  navigation:
+    | NativeStackNavigationProp<RootStackProps, 'ProductDetail', undefined>
+    | NativeStackNavigationProp<RootStackProps, 'Cart', undefined>
+    | NativeStackNavigationProp<RootStackProps, 'Ordered', undefined>;
   onSuccess?: () => void;
+  onErr?: (messages: string[]) => void;
 };
 
 export default function useCreateCart({
   isMultiple,
   navigation,
   onSuccess,
+  onErr,
 }: IProps) {
   const client = useQueryClient();
+  const insets = useSafeAreaInsets();
   const axios = useAxiosPrivate();
 
   const {mutate, isPending} = useMutation<
@@ -64,26 +67,18 @@ export default function useCreateCart({
       console.log('err add cart', err);
 
       if (isMultiple) {
-        Toast.show({
-          type: 'error',
-          text2:
-            err?.response?.data?.metadata?.data?.join(' ') ??
-            'Cant not add to cart this product!',
-        });
+        onErr?.(err?.response?.data?.metadata?.data);
       } else {
         Toast.show({
           type: 'error',
           text2:
             err?.response?.data?.metadata?.message ??
             'Cant not add to cart this product!',
+          topOffset: insets.top,
           text2Style: {
             fontSize: 13,
           },
         });
-        // toast.error(
-        //   err?.response?.data?.metadata?.message ??
-        //     'Cant not add to cart this product!',
-        // );
       }
     },
   });

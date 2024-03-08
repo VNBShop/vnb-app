@@ -63,3 +63,4 @@ export {default as checkWhite} from './check-white.png';
 export {default as forumGray} from './forum-gray.png';
 export {default as forumBlack} from './forum-black.png';
 export {default as xmark} from './xmark.png';
+export {default as empty} from './404.png';

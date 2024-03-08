@@ -154,9 +154,7 @@ export default function ProductScreen() {
               </View>
             ) : null}
 
-            {isFetchingNextPage || isFetchingNextPage ? (
-              <ProductsSkeleton />
-            ) : null}
+            {isFetchingNextPage || isPending ? <ProductsSkeleton /> : null}
 
             {isError && !isPending && !isFetchingNextPage ? (
               <ScrollView

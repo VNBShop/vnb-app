@@ -1,5 +1,7 @@
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import * as React from 'react';
 import {
+  ActivityIndicator,
   Image,
   ScrollView,
   StyleSheet,
@@ -8,109 +10,318 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import SafeArea from '../UIkit/layouts/safe-area';
-import {common} from '../UIkit/styles';
-import {back, forwardGray, location} from '../assets';
-import {color} from '../UIkit/palette';
-import {fakeData} from '../libs/contants';
-import OrHr from '../components/ui/or-hr';
-import {Icon} from '../components/ui/icon';
-import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {Modalize} from 'react-native-modalize';
+import {Portal} from 'react-native-portalize';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
+import {Cart} from '../../types/order';
 import {RootStackProps} from '../../types/route';
+import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
+import SafeArea from '../UIkit/layouts/safe-area';
+import {color} from '../UIkit/palette';
+import {common} from '../UIkit/styles';
+import {back, cart, xmark} from '../assets';
+import Empty from '../components/404';
+import CartSkeleton from '../components/skeleton/cart-skeleteon';
+import {Icon} from '../components/ui/icon';
+import OrHr from '../components/ui/or-hr';
+import useCreateCart, {CreateCartPayload} from '../hooks/cart/useCreateCart';
+import useDeleteCart from '../hooks/cart/useDeleteCart';
+import useFetchCart from '../hooks/cart/useFetchCart';
 
 type CartScreenProps = NativeStackScreenProps<RootStackProps, 'Cart'>;
 
 export default function CartScreen({navigation}: CartScreenProps) {
+  const {data, isPending} = useFetchCart();
+  const [carts, setCarts] = React.useState<Cart[]>(data);
+  const insets = useSafeAreaInsets();
+
+  const [errs, setErrs] = React.useState<string[]>([]);
+
+  const popupErr = React.useRef<Modalize>();
+
+  const {loading, onAddToCart} = useCreateCart({
+    onSuccess: () => {},
+    isMultiple: true,
+    navigation: navigation,
+    onErr(messages) {
+      setErrs(messages);
+      !!popupErr?.current && popupErr.current?.open();
+    },
+  });
+
+  const {loadingDeleteCart, onDeleteCart} = useDeleteCart();
+
+  const onIncrease = (id: Cart['cartId']) => {
+    setCarts(prev => {
+      const findIndex = prev.findIndex(c => c?.cartId === id);
+
+      if (findIndex !== -1) {
+        const newCarts = [...prev];
+
+        newCarts[findIndex] = {
+          ...newCarts[findIndex],
+          quantity: newCarts[findIndex]?.quantity + 1,
+        };
+
+        return newCarts;
+      }
+      return prev;
+    });
+  };
+
+  const onDecrease = (id: Cart['cartId']) => {
+    setCarts(prev => {
+      const findIndex = prev.findIndex(c => c?.cartId === id);
+
+      if (findIndex !== -1) {
+        const newCarts = [...prev];
+
+        newCarts[findIndex] = {
+          ...newCarts[findIndex],
+          quantity:
+            newCarts[findIndex]?.quantity > 1
+              ? newCarts[findIndex]?.quantity - 1
+              : 1,
+        };
+
+        return newCarts;
+      }
+      return prev;
+    });
+  };
+
+  const onTextChange = (value: string, id: Cart['cartId']) => {
+    const convertValue = parseInt(value, 10);
+
+    setCarts(prev => {
+      const findIndex = prev.findIndex(c => c?.cartId === id);
+
+      if (findIndex !== -1) {
+        const newCarts = [...prev];
+
+        newCarts[findIndex] = {
+          ...newCarts[findIndex],
+          quantity: convertValue ? convertValue : 1,
+        };
+
+        return newCarts;
+      }
+      return prev;
+    });
+  };
+
+  const onSubmit = () => {
+    const payload: CreateCartPayload[] = carts?.map(c => ({
+      productSizeId: c?.productSizeId,
+      quantity: c.quantity,
+    }));
+
+    if (!payload?.length) {
+      Toast.show({
+        text2: 'Your cart is empty!',
+        text2Style: {
+          fontSize: 13,
+        },
+        topOffset: insets.top,
+      });
+
+      return;
+    }
+
+    onAddToCart(payload);
+  };
+
+  const onClosePopup = () => {
+    setErrs([]);
+    !!popupErr?.current && popupErr.current?.close();
+  };
+
+  React.useEffect(() => {
+    setCarts(data ?? []);
+  }, [data]);
+
   return (
-    <SafeArea>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={common.positionLeftBase}
-          onPress={() => navigation.goBack()}>
-          <Icon size={25} icon={back} />
-        </TouchableOpacity>
+    <>
+      <SafeArea>
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={common.positionLeftBase}
+            onPress={() => navigation.goBack()}>
+            <Icon size={25} icon={back} />
+          </TouchableOpacity>
 
-        <Text style={common.headerTitle}>Cart</Text>
-      </View>
+          <Text style={common.headerTitle}>Cart</Text>
+        </View>
 
-      <View style={styles.container}>
-        <ScrollView>
-          <View style={styles.locationContainer}>
-            <View style={styles.locationContainerLeft}>
-              <Icon size={20} icon={location} />
-              <Text style={styles.location}>
-                172 Nguyen Thi Thap, 7 District, Ho Chi Minh
-              </Text>
-            </View>
+        {isPending && <CartSkeleton />}
 
-            <Icon size={20} icon={forwardGray} />
-          </View>
-
-          <View style={styles.cartContainer}>
-            {fakeData.map(item => (
-              <View key={item.id}>
-                <View style={styles.productItem}>
-                  <Image source={item.image} style={styles.productImg} />
-                  <View style={styles.productInfo}>
-                    <Text style={styles.productName}>{item.name}</Text>
-                    <Text>
-                      <Text style={styles.productPrice}>
-                        {item.price.toLocaleString()}
-                      </Text>{' '}
-                      <Text style={styles.priceDedre}>-15%</Text>
-                    </Text>
-
-                    <View style={styles.productFooter}>
-                      <View style={styles.actionHandle}>
-                        <TouchableOpacity
-                          style={[styles.actionHandleBtn, styles.left]}>
-                          <Text style={styles.textAction}>-</Text>
-                        </TouchableOpacity>
-                        <TextInput style={styles.actionHandleBtn} />
-                        <TouchableOpacity
-                          style={[styles.actionHandleBtn, styles.right]}>
-                          <Text style={styles.textAction}>+</Text>
-                        </TouchableOpacity>
-                      </View>
-
-                      <TouchableOpacity>
-                        <Text style={[common.text_link]}>Delete</Text>
-                      </TouchableOpacity>
-                    </View>
+        {carts?.length && !isPending ? (
+          <>
+            <View style={styles.container}>
+              <ScrollView>
+                <View style={styles.locationContainer}>
+                  <View style={styles.locationContainerLeft}>
+                    <Icon size={20} icon={cart} />
+                    <Text style={styles.location}>Let empty your cart now</Text>
                   </View>
                 </View>
 
-                {fakeData[fakeData.length - 1] !== item && <OrHr />}
+                <View style={styles.cartContainer}>
+                  {carts.map(item => (
+                    <View key={item?.cartId}>
+                      <View style={styles.productItem}>
+                        <Image
+                          source={{
+                            uri: item?.productImage,
+                          }}
+                          style={styles.productImg}
+                        />
+                        <View style={styles.productInfo}>
+                          <Text style={styles.productName}>
+                            {item?.productName}
+                          </Text>
+                          <Text>
+                            <Text style={styles.productPrice}>
+                              {item?.productPriceUnit?.toLocaleString('vi-VI', {
+                                currency: 'VND',
+                                style: 'currency',
+                              })}
+                            </Text>
+                          </Text>
+
+                          <View style={styles.productFooter}>
+                            <View style={styles.actionHandle}>
+                              <TouchableOpacity
+                                style={[styles.actionHandleBtn]}
+                                onPress={() => onDecrease(item?.cartId)}>
+                                <Text style={styles.textAction}>-</Text>
+                              </TouchableOpacity>
+                              <TextInput
+                                style={styles.actionInput}
+                                keyboardType="numeric"
+                                value={item?.quantity?.toString()}
+                                onChangeText={value =>
+                                  onTextChange(value, item?.cartId)
+                                }
+                              />
+                              <TouchableOpacity
+                                style={[styles.actionHandleBtn]}
+                                onPress={() => onIncrease(item?.cartId)}>
+                                <Text style={styles.textAction}>+</Text>
+                              </TouchableOpacity>
+                            </View>
+
+                            <TouchableOpacity
+                              disabled={loadingDeleteCart}
+                              onPress={() =>
+                                onDeleteCart({
+                                  id: item?.cartId,
+                                })
+                              }>
+                              {loadingDeleteCart ? (
+                                <ActivityIndicator key={item?.cartId} />
+                              ) : (
+                                <Text style={[common.text_link]}>Delete</Text>
+                              )}
+                            </TouchableOpacity>
+                          </View>
+                        </View>
+                      </View>
+
+                      {carts[carts?.length - 1] !== item && <OrHr />}
+                    </View>
+                  ))}
+                </View>
+
+                <BottomSafeArea />
+              </ScrollView>
+            </View>
+
+            <View style={styles.footer}>
+              <View>
+                <Text style={common.text_gray}>Temp total</Text>
+                <Text style={styles.total}>
+                  {carts
+                    ?.reduce(
+                      (acc, curr) =>
+                        acc + curr?.quantity * curr?.productPriceUnit,
+                      0,
+                    )
+                    ?.toLocaleString()}
+                </Text>
               </View>
-            ))}
-          </View>
 
-          <BottomSafeArea />
-        </ScrollView>
-      </View>
+              <TouchableOpacity
+                style={styles.checkoutBtn}
+                disabled={loading}
+                onPress={onSubmit}>
+                {loading && <ActivityIndicator />}
+                <Text style={styles.checkoutText}>Checkout</Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        ) : (
+          <Empty message="Your cart is empty" />
+        )}
+      </SafeArea>
 
-      <View style={styles.footer}>
-        <View>
-          <Text style={common.text_gray}>Total</Text>
-          <Text style={styles.total}>
-            {fakeData
-              .reduce((acc, curr) => acc + curr.price, 0)
-              .toLocaleString()}
-          </Text>
-        </View>
+      <Portal>
+        <Modalize
+          useNativeDriver
+          panGestureEnabled
+          closeOnOverlayTap={false}
+          adjustToContentHeight
+          onClose={() => {
+            setErrs([]);
+          }}
+          // modalHeight={270}
+          ref={popupErr}
+          HeaderComponent={
+            <View style={styles.headerPopup}>
+              <Text style={styles.headerTitle}>Your cart is out of stock</Text>
 
-        <TouchableOpacity
-          style={styles.checkoutBtn}
-          onPress={() => navigation.navigate('Checkout')}>
-          <Text style={styles.checkoutText}>Checkout</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeArea>
+              <Icon onPress={onClosePopup} size={22} icon={xmark} />
+            </View>
+          }>
+          <>
+            <View style={styles.popupContent}>
+              {errs.map((item, index) => (
+                <Text key={index}>- {item}</Text>
+              ))}
+            </View>
+            <BottomSafeArea />
+          </>
+        </Modalize>
+      </Portal>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  popupContent: {
+    rowGap: 4,
+    paddingHorizontal: 16,
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: color.gray,
+  },
+  headerPopup: {
+    padding: 16,
+    paddingVertical: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  actionInput: {
+    borderBottomColor: color.border_input,
+    borderBottomWidth: 0.5,
+    width: 40,
+    paddingVertical: 6,
+    textAlign: 'center',
+  },
   header: {
     alignItems: 'center',
     position: 'relative',
@@ -157,11 +368,10 @@ const styles = StyleSheet.create({
     rowGap: 8,
   },
   productName: {
-    color: color.gray,
+    fontSize: 16,
   },
   productPrice: {
-    fontWeight: '500',
-    fontSize: 16,
+    color: color.secondary,
   },
   priceDedre: {
     fontWeight: '500',
@@ -171,8 +381,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 4,
-    borderWidth: 0.3,
-    borderColor: color.border_input,
+    // borderWidth: 0.3,
+    // borderColor: color.border_input,
     alignSelf: 'flex-start',
     marginTop: 8,
   },
@@ -184,16 +394,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   textAction: {
-    fontSize: 22,
+    fontSize: 25,
     color: color.gray,
-  },
-  left: {
-    borderRightWidth: 0.3,
-    borderColor: color.border_input,
-  },
-  right: {
-    borderLeftWidth: 0.3,
-    borderColor: color.border_input,
   },
   productFooter: {
     flexDirection: 'row',
@@ -221,6 +423,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: color.primary,
     borderRadius: 6,
+    flexDirection: 'row',
+    gap: 8,
   },
   checkoutText: {
     color: '#ffffff',

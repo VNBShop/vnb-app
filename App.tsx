@@ -9,11 +9,11 @@ import React from 'react';
 import {StatusBar} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import {common} from './src/UIkit/styles';
-import Navigation from './src/routes';
 import RQProvider from './src/components/provider';
 import LoadingScreen from './src/components/ui/loading-screen';
-import Toast from 'react-native-toast-message';
+import Navigation from './src/routes';
 
 function App() {
   return (

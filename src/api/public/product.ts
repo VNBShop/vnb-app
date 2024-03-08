@@ -10,8 +10,6 @@ export async function getProducts({
   pageSize?: number;
   filter?: any;
 }) {
-  console.log('run >>');
-
   if (filter?.price_range) {
     const splitPrice = filter.price_range.split('-');
 

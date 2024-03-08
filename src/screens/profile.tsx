@@ -19,6 +19,7 @@ import {Modalize} from 'react-native-modalize';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackProps} from '../../types/route';
+import ProfileSkeleton from '../components/skeleton/profile-skeleton';
 
 type ProfileScreenProps = NativeStackScreenProps<RootStackProps, 'Profile'>;
 
@@ -28,24 +29,6 @@ export default function ProfileScreen({navigation}: ProfileScreenProps) {
 
   return (
     <>
-      <Modalize
-        useNativeDriver
-        panGestureEnabled
-        modalHeight={HEIGHT_DEVICE - insets.top}
-        ref={commentModalRef}
-        handlePosition="inside"
-        HeaderComponent={
-          <View style={styles.commentHeader}>
-            <Text style={styles.commentTitle}>Comments</Text>
-          </View>
-        }>
-        <Text style={{textAlign: 'center', fontSize: 20, marginBottom: 8}}>
-          No comment yet
-        </Text>
-        <Text style={{textAlign: 'center', marginBottom: 8}}>
-          Be the first comment
-        </Text>
-      </Modalize>
       <SafeArea>
         <View style={styles.header}>
           <Icon size={25} icon={back} onPress={() => navigation.goBack()} />
@@ -55,7 +38,7 @@ export default function ProfileScreen({navigation}: ProfileScreenProps) {
 
         <View style={common.flex_full}>
           <ScrollView nestedScrollEnabled>
-            <View style={styles.userContainer}>
+            {/* <View style={styles.userContainer}>
               <View style={styles.userHead}>
                 <View style={styles.avt}>
                   <Avatar
@@ -118,7 +101,9 @@ export default function ProfileScreen({navigation}: ProfileScreenProps) {
                   <Text style={styles.actionText}>Message</Text>
                 </TouchableOpacity>
               </View>
-            </View>
+            </View> */}
+
+            <ProfileSkeleton />
 
             <View style={styles.userContent}>
               {Array.from('12345').map((_, index) => (
@@ -128,6 +113,25 @@ export default function ProfileScreen({navigation}: ProfileScreenProps) {
           </ScrollView>
         </View>
       </SafeArea>
+
+      <Modalize
+        useNativeDriver
+        panGestureEnabled
+        modalHeight={HEIGHT_DEVICE - insets.top}
+        ref={commentModalRef}
+        handlePosition="inside"
+        HeaderComponent={
+          <View style={styles.commentHeader}>
+            <Text style={styles.commentTitle}>Comments</Text>
+          </View>
+        }>
+        <Text style={{textAlign: 'center', fontSize: 20, marginBottom: 8}}>
+          No comment yet
+        </Text>
+        <Text style={{textAlign: 'center', marginBottom: 8}}>
+          Be the first comment
+        </Text>
+      </Modalize>
     </>
   );
 }

@@ -13,6 +13,7 @@ type useAuthProps = {
     payload: Pick<AuthProps, 'accessToken' | 'refreshToken'>,
   ) => void;
   data: AuthProps;
+  onUpdateProfile: (data: Partial<AuthProps>) => void;
 };
 
 const useAuth = create<useAuthProps>()(
@@ -42,6 +43,15 @@ const useAuth = create<useAuthProps>()(
             ...state.data,
             accessToken: payload.accessToken,
             refreshToken: payload.refreshToken,
+          },
+        }));
+      },
+      onUpdateProfile: payload => {
+        set(state => ({
+          ...state,
+          data: {
+            ...state?.data,
+            ...payload,
           },
         }));
       },

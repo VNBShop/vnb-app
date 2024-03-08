@@ -19,14 +19,14 @@ import {Icon} from '../components/ui/icon';
 
 type OrderedScreenProps = NativeStackScreenProps<RootStackProps, 'Ordered'>;
 
-const renderScene = SceneMap({
-  allorder: Order,
-  processing: Order,
-  shipping: Order,
-  delivered: Order,
-  cancelled: Order,
-});
-
+const renderScene = ({navigation}: {navigation: any}) =>
+  SceneMap({
+    allorder: () => <Order navigation={navigation} />,
+    processing: () => <Order navigation={navigation} status="PENDING" />,
+    shipping: () => <Order navigation={navigation} status="DELIVERING" />,
+    delivered: () => <Order navigation={navigation} status="SUCCESS" />,
+    cancelled: () => <Order navigation={navigation} status="CANCELLED" />,
+  });
 export default function OrderedScreen({navigation}: OrderedScreenProps) {
   const insets = useSafeAreaInsets();
   const [index, setIndex] = React.useState(0);
@@ -89,7 +89,7 @@ export default function OrderedScreen({navigation}: OrderedScreenProps) {
       <View style={styles.container}>
         <TabView
           navigationState={{index, routes}}
-          renderScene={renderScene}
+          renderScene={renderScene({navigation})}
           renderTabBar={renderTabBar}
           onIndexChange={setIndex}
           initialLayout={{width: WIDTH_DEVICE}}

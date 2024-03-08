@@ -1,30 +1,115 @@
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 import * as React from 'react';
 import {
+  ActivityIndicator,
+  Alert,
   Image,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import {BottomTabProps, RootStackProps} from '../../types/route';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {WIDTH_DEVICE, common, flex} from '../UIkit/styles';
-import {back, forwardGray, location, voucher} from '../assets';
+import {back, forwardGray, location} from '../assets';
+import CheckoutSkeleton from '../components/skeleton/checkout-skeleton';
 import HrVertical from '../components/ui/hrVertical';
 import {Icon} from '../components/ui/icon';
 import OrHr from '../components/ui/or-hr';
 import RadioCard from '../components/ui/radio-card';
-import {fakeData, paymentMethod} from '../libs/contants';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackProps} from '../../types/route';
-import CheckoutSkeleton from '../components/skeleton/checkout-skeleton';
+import useFetchCart from '../hooks/cart/useFetchCart';
+import useFetchUser from '../hooks/user/useFetchUser';
+import {paymentMethod} from '../libs/contants';
+import Toast from 'react-native-toast-message';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import useCreateOrder, {
+  CreateOrderPayload,
+} from '../hooks/order/useCreateOrder';
+import {useNavigation} from '@react-navigation/native';
 
 type CheckoutScreenProps = NativeStackScreenProps<RootStackProps, 'Checkout'>;
 
 export default function CheckoutScreen({navigation}: CheckoutScreenProps) {
-  const [paymentM, setPaymentM] = React.useState(0);
+  const [paymentM, setPaymentM] = React.useState('');
+  const insets = useSafeAreaInsets();
+
+  const bottomNav =
+    useNavigation<NativeStackNavigationProp<BottomTabProps, 'Home'>>();
+
+  const {data: carts, isPending: loadingCarts} = useFetchCart();
+  const {data: user, isPending: loadingUser} = useFetchUser();
+
+  const {loading, onCreateOrder} = useCreateOrder({
+    onSuccess: () => {
+      navigation.replace('Ordered');
+    },
+  });
+
+  const onSubmit = () => {
+    if (!carts?.length) {
+      Alert.alert('Cart empty', 'Your cart is empty, let buying now!', [
+        {
+          style: 'cancel',
+          text: 'Cancel',
+        },
+        {
+          style: 'default',
+          onPress: () => bottomNav.navigate('Product'),
+          text: 'Shopping',
+        },
+      ]);
+
+      return;
+    }
+
+    if (!paymentM) {
+      Toast.show({
+        type: 'error',
+        text2: 'Please select payment method',
+        text2Style: {
+          fontSize: 13,
+        },
+        topOffset: insets.top,
+      });
+      return;
+    }
+
+    if (
+      !user?.address ||
+      !user?.phoneNumber ||
+      (!user?.firstName && !user?.lastName)
+    ) {
+      Alert.alert('Information required', 'Update your information to order!', [
+        {
+          style: 'cancel',
+          text: 'Cancel',
+        },
+        {
+          style: 'default',
+          onPress: () =>
+            navigation.navigate('UpdateProfile', {
+              user: user,
+            }),
+          text: 'Update',
+        },
+      ]);
+
+      return;
+    }
+
+    const payload: CreateOrderPayload = {
+      cartIds: carts?.map(cart => cart?.cartId),
+      paymentType: paymentM as CreateOrderPayload['paymentType'],
+    };
+
+    onCreateOrder(payload);
+  };
 
   return (
     <SafeArea>
@@ -38,140 +123,156 @@ export default function CheckoutScreen({navigation}: CheckoutScreenProps) {
         <Text style={common.headerTitle}>Checkout confirm</Text>
       </View>
 
-      {/* <CheckoutSkeleton /> */}
+      {loadingCarts || loadingUser ? (
+        <CheckoutSkeleton />
+      ) : (
+        <>
+          <View style={styles.container}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <TouchableOpacity
+                style={styles.locationContainer}
+                onPress={() =>
+                  navigation.navigate('UpdateProfile', {
+                    user: user,
+                  })
+                }>
+                <View>
+                  <View style={styles.locationContainerLeft}>
+                    <Icon icon={location} size={20} />
 
-      <>
-        <View style={styles.container}>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={styles.locationContainer}>
-              <View>
-                <View style={styles.locationContainerLeft}>
-                  <Icon icon={location} size={20} />
-
-                  <View style={styles.contactInfo}>
-                    <Text>Minh Dzung</Text>
-                    <HrVertical />
-                    <Text>0911710010</Text>
+                    <View style={styles.contactInfo}>
+                      <Text>
+                        {user?.firstName || user?.lastName
+                          ? `${user?.firstName} ${user?.lastName}`
+                          : '-'}
+                      </Text>
+                      <HrVertical />
+                      <Text>{user?.phoneNumber ?? '-'}</Text>
+                    </View>
                   </View>
+                  <Text style={styles.location}>{user?.address ?? '-'}</Text>
                 </View>
-                <Text style={styles.location}>
-                  172 Nguyen Thi Thap, 7 District, Ho Chi Minh
-                </Text>
-              </View>
 
-              <Icon icon={forwardGray} size={20} />
-            </View>
+                <Icon icon={forwardGray} size={20} />
+              </TouchableOpacity>
 
-            <View style={styles.cartContainer}>
-              {fakeData.map((item, index) => {
-                return (
-                  index < 3 && (
-                    <View key={item.id}>
-                      <View style={styles.productItem}>
-                        <Image source={item.image} style={styles.productImg} />
-                        <View style={styles.productInfo}>
-                          <Text style={styles.productName}>{item.name}</Text>
-                          <Text>
+              <View style={styles.cartContainer}>
+                {carts.map((cart, index) => {
+                  return (
+                    index < 3 && (
+                      <View key={cart?.cartId}>
+                        <View style={styles.productItem}>
+                          <Image
+                            source={{
+                              uri: cart?.productImage ?? '',
+                            }}
+                            style={styles.productImg}
+                          />
+                          <View style={styles.productInfo}>
+                            <Text style={styles.productName}>
+                              {cart?.productName}
+                            </Text>
                             <Text style={styles.productPrice}>
-                              {item.price.toLocaleString()}
-                            </Text>{' '}
-                            <Text style={styles.priceDedre}>-15%</Text>
-                          </Text>
+                              {cart?.productPriceUnit?.toLocaleString('vi-VI', {
+                                currency: 'VND',
+                                style: 'currency',
+                              })}
+                            </Text>
+                            {!!cart?.productSizeName && (
+                              <View style={styles.sizeTag}>
+                                <Text style={styles.sizeTagText}>
+                                  {cart.productSizeName}
+                                </Text>
+                              </View>
+                            )}
 
-                          <View style={styles.productFooter}>
-                            <View style={styles.actionHandle}>
-                              <TouchableOpacity
-                                style={[styles.actionHandleBtn, styles.left]}>
-                                <Text style={styles.textAction}>-</Text>
-                              </TouchableOpacity>
-                              <TextInput style={styles.actionHandleBtn} />
-                              <TouchableOpacity
-                                style={[styles.actionHandleBtn, styles.right]}>
-                                <Text style={styles.textAction}>+</Text>
-                              </TouchableOpacity>
-                            </View>
-
-                            <TouchableOpacity>
-                              <Text style={[common.text_link]}>Delete</Text>
-                            </TouchableOpacity>
+                            <Text style={common.text_gray}>
+                              Quantity: {cart?.quantity}
+                            </Text>
                           </View>
                         </View>
+
+                        <OrHr />
                       </View>
+                    )
+                  );
+                })}
+              </View>
 
-                      <OrHr />
-                    </View>
-                  )
-                );
-              })}
-            </View>
+              <View style={styles.paymentMethod}>
+                <Text style={styles.title}>Payment method</Text>
 
-            <View style={styles.paymentMethod}>
-              <Text style={styles.title}>Payment method</Text>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.methodContainer}>
+                  {paymentMethod.map(payment => (
+                    <TouchableOpacity
+                      onPress={() => setPaymentM(payment.value)}
+                      key={payment.id}
+                      style={[
+                        styles.methodItem,
+                        {
+                          borderColor:
+                            paymentM === payment.value
+                              ? color.link
+                              : color.gray,
+                        },
+                      ]}>
+                      <RadioCard
+                        isAcive={paymentM === payment.value ? true : false}
+                        label={payment.label}
+                        labelLogo={payment.logo}
+                      />
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
 
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.methodContainer}>
-                {paymentMethod.map(payment => (
-                  <TouchableOpacity
-                    onPress={() => setPaymentM(payment.id)}
-                    key={payment.id}
-                    style={[
-                      styles.methodItem,
-                      {
-                        borderColor:
-                          paymentM === payment.id ? color.link : color.gray,
-                      },
-                    ]}>
-                    <RadioCard
-                      isAcive={paymentM === payment.id ? true : false}
-                      label={payment.label}
-                      labelLogo={payment.logo}
-                    />
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
+              <View>
+                <Text style={styles.title}>Summary</Text>
+                <View style={styles.sumaryContainer}>
+                  <View style={flex.between}>
+                    <Text style={common.text_gray}>Temp</Text>
+                    <Text style={common.text_gray}>
+                      {Number(30000000).toLocaleString()}
+                    </Text>
+                  </View>
 
-            <View>
-              <Text style={styles.title}>Summary</Text>
-              <View style={styles.sumaryContainer}>
-                <View style={flex.between}>
-                  <Text style={common.text_gray}>Temp</Text>
-                  <Text style={common.text_gray}>
-                    {Number(30000000).toLocaleString()}
-                  </Text>
-                </View>
+                  <View style={flex.between}>
+                    <Text style={common.text_gray}>Shipping</Text>
+                    <Text style={common.text_gray}>Free</Text>
+                  </View>
 
-                <View style={flex.between}>
-                  <Text style={common.text_gray}>Shipping</Text>
-                  <Text style={common.text_gray}>
-                    {Number(23000).toLocaleString()}
-                  </Text>
-                </View>
+                  <View style={flex.between}>
+                    <Text style={common.text_gray}>Discount</Text>
+                    <Text style={common.text_success}>-</Text>
+                  </View>
 
-                <View style={flex.between}>
-                  <Text style={common.text_gray}>Discount</Text>
-                  <Text style={common.text_success}>
-                    -{Number(423000).toLocaleString()}
-                  </Text>
-                </View>
+                  <OrHr />
 
-                <OrHr />
-
-                <View style={flex.between}>
-                  <Text style={styles.title}>Total</Text>
-                  <Text style={styles.title}>
-                    {Number(29600000).toLocaleString()}
-                  </Text>
+                  <View style={flex.between}>
+                    <Text style={styles.title}>Total</Text>
+                    <Text style={styles.title}>
+                      {carts
+                        ?.reduce(
+                          (acc, curr) =>
+                            acc + curr?.quantity * curr?.productPriceUnit,
+                          0,
+                        )
+                        ?.toLocaleString('vi-VI', {
+                          currency: 'VND',
+                          style: 'currency',
+                        })}
+                    </Text>
+                  </View>
                 </View>
               </View>
-            </View>
-          </ScrollView>
-        </View>
+            </ScrollView>
+          </View>
 
-        <View style={styles.footer}>
-          <View style={styles.footerAction}>
+          <View style={styles.footer}>
+            {/* <View style={styles.footerAction}>
             <View style={styles.footerActionInline}>
               <Icon icon={voucher} size={20} />
               <Text style={common.text_gray}>Voucher</Text>
@@ -183,30 +284,51 @@ export default function CheckoutScreen({navigation}: CheckoutScreenProps) {
             </View>
           </View>
 
-          <OrHr />
+          <OrHr /> */}
 
-          <View style={styles.footerAction}>
-            <View>
-              <Text style={common.text_gray}>Total</Text>
-              <Text style={styles.total}>
-                {fakeData
-                  .reduce((acc, curr) => acc + curr.price, 0)
-                  .toLocaleString()}
-              </Text>
+            <View style={styles.footerAction}>
+              <View>
+                <Text style={common.text_gray}>Total</Text>
+                <Text style={styles.total}>
+                  {carts
+                    ?.reduce(
+                      (acc, curr) =>
+                        acc + curr?.quantity * curr?.productPriceUnit,
+                      0,
+                    )
+                    ?.toLocaleString('vi-VI', {
+                      currency: 'VND',
+                      style: 'currency',
+                    })}
+                </Text>
+              </View>
+              <TouchableOpacity
+                disabled={loading}
+                style={styles.checkoutBtn}
+                onPress={onSubmit}>
+                {loading && <ActivityIndicator />}
+                <Text style={styles.checkoutText}>Order</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              style={styles.checkoutBtn}
-              onPress={() => navigation.navigate('Ordered')}>
-              <Text style={styles.checkoutText}>Order</Text>
-            </TouchableOpacity>
           </View>
-        </View>
-      </>
+        </>
+      )}
     </SafeArea>
   );
 }
 
 const styles = StyleSheet.create({
+  sizeTag: {
+    borderRadius: 4,
+    padding: 4,
+    paddingHorizontal: 8,
+    alignSelf: 'flex-start',
+    backgroundColor: '#e8fff7',
+  },
+  sizeTagText: {
+    fontSize: 12,
+    color: '#009171',
+  },
   header: {
     alignItems: 'center',
     position: 'relative',
@@ -252,6 +374,7 @@ const styles = StyleSheet.create({
     gap: 8,
     alignItems: 'flex-start',
     marginBottom: 16,
+    columnGap: 16,
   },
   productImg: {
     width: 100,
@@ -264,11 +387,10 @@ const styles = StyleSheet.create({
     rowGap: 8,
   },
   productName: {
-    color: color.gray,
+    fontSize: 16,
   },
   productPrice: {
-    fontWeight: '500',
-    fontSize: 16,
+    color: color.secondary,
   },
   priceDedre: {
     fontWeight: '500',
@@ -336,6 +458,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: color.primary,
     borderRadius: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   checkoutText: {
     color: '#ffffff',
