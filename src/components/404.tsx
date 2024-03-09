@@ -1,15 +1,21 @@
 /* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
-import {Image, Text, View, ViewStyle} from 'react-native';
-import {empty} from '../assets';
+import {Image, Text, View, ViewProps} from 'react-native';
 import {color} from '../UIkit/palette';
+import {empty} from '../assets';
 
 type IProps = {
   size?: number;
   message?: string;
-} & ViewStyle;
+  showIcon?: boolean;
+} & ViewProps;
 
-export default function Empty({size = 100, message, ...props}: IProps = {}) {
+export default function Empty({
+  size = 100,
+  message,
+  showIcon = true,
+  ...props
+}: IProps = {}) {
   return (
     <View
       style={{
@@ -18,13 +24,15 @@ export default function Empty({size = 100, message, ...props}: IProps = {}) {
         justifyContent: 'center',
       }}
       {...props}>
-      <Image
-        source={empty}
-        style={{
-          width: size,
-          height: size,
-        }}
-      />
+      {showIcon && (
+        <Image
+          source={empty}
+          style={{
+            width: size,
+            height: size,
+          }}
+        />
+      )}
       {!!message && (
         <Text
           style={{

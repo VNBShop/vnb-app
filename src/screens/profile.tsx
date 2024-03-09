@@ -11,7 +11,7 @@ import {HEIGHT_DEVICE, common} from '../UIkit/styles';
 import {back, search_gray} from '../assets';
 import ProfileSkeleton from '../components/skeleton/profile-skeleton';
 import {Icon, IconOutline} from '../components/ui/icon';
-import Post from '../components/ui/post-item';
+import Post from '../components/post/post-item';
 
 type ProfileScreenProps = NativeStackScreenProps<RootStackProps, 'Profile'>;
 

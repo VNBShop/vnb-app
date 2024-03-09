@@ -2,14 +2,19 @@ import * as React from 'react';
 import {Animated, FlatList, Image, StyleSheet, View} from 'react-native';
 import {WIDTH_DEVICE} from '../../UIkit/styles';
 import Pagination from './pagination';
+import {Post} from '../../../types/forum';
 
-export default function ImageCarousel({data}: {data: any}) {
+type IProps = {
+  photos: Post['postImages'];
+};
+
+export default function ImageCarousel({photos}: IProps) {
   const scrollX = React.useRef(new Animated.Value(0)).current;
 
   return (
     <View>
       <FlatList
-        data={data}
+        data={photos}
         renderItem={({item}) => (
           <Image
             style={styles.image}
@@ -29,7 +34,7 @@ export default function ImageCarousel({data}: {data: any}) {
         )}
       />
 
-      <Pagination data={data} scrollX={scrollX} />
+      <Pagination data={photos} scrollX={scrollX} />
     </View>
   );
 }

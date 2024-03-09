@@ -20,6 +20,7 @@ import SignupOptionScreen from '../screens/signup-option';
 import WellcomeScreen from '../screens/wellcome';
 import TabNavigation from './tab';
 import EditProfileScreen from '../screens/edit-profile';
+import PostDetailScreen from '../screens/post-detail';
 
 const Stack = createNativeStackNavigator<RootStackProps>();
 export default function StackNavigation() {
@@ -55,6 +56,7 @@ export default function StackNavigation() {
             component={ChangePasswordScreen}
           />
           <Stack.Screen name="UpdateProfile" component={EditProfileScreen} />
+          <Stack.Screen name="PostDetail" component={PostDetailScreen} />
         </Stack.Group>
       ) : (
         <Stack.Group>

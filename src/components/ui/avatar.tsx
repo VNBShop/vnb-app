@@ -30,7 +30,7 @@ export default function Avatar({
   if (error) {
     return (
       <View style={[styles.avtFallback, {width: size, height: size}, style]}>
-        <Text style={styles.username}>{username}</Text>
+        <Text style={styles.username}>{username?.charAt(0)}</Text>
       </View>
     );
   }

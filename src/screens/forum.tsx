@@ -15,8 +15,10 @@ import {forumP, messenger, search} from '../assets';
 import Empty from '../components/404';
 import PostsSkeleton from '../components/products/posts-skeleton';
 import {Icon, IconOutline} from '../components/ui/icon';
-import PostItem from '../components/ui/post-item';
+import PostItem from '../components/post/post-item';
 import useFetchPosts from '../hooks/forum/useFetchPosts';
+import CreatePost from '../components/post/create-post';
+import {color} from '../UIkit/palette';
 
 export default function ForumScreen() {
   const {
@@ -41,13 +43,15 @@ export default function ForumScreen() {
           </View>
         </View>
 
+        <CreatePost />
+
         {posts?.length && !isError ? (
           <View>
             <FlatList
               renderItem={({item}) => <PostItem post={item} />}
               data={posts}
               showsVerticalScrollIndicator={false}
-              numColumns={2}
+              numColumns={1}
               // contentContainerStyle={styles.gap}
               // columnWrapperStyle={styles.gap}
               keyExtractor={item => item?.postId?.toLocaleString()}
@@ -58,6 +62,7 @@ export default function ForumScreen() {
                   <BottomSafeArea />
                 )
               }
+              ItemSeparatorComponent={renderSeparator}
               onEndReachedThreshold={0.1}
               onEndReached={() => {
                 if (hasNextPage) {
@@ -108,4 +113,14 @@ const styles = StyleSheet.create({
   actionMid: {
     flex: 1,
   },
+  separator: {
+    height: 0.5,
+    width: '40%',
+    backgroundColor: color.border_input,
+    marginLeft: '60%',
+  },
 });
+
+const renderSeparator = () => {
+  return <View style={styles.separator} />;
+};

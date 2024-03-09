@@ -24,12 +24,20 @@ import {ShimmerView} from './shrimmer';
 import Box from './ui/box';
 import {Icon} from './ui/icon';
 
-export default function CameraRoll() {
+type IProps = {};
+
+// type CameraRollRef = {
+//   photos:
+// }
+
+const CameraRoll = React.forwardRef(() => {
   const insets = useSafeAreaInsets();
 
   const [hasPermission, setHasPermission] = React.useState<boolean>(false);
   const [photos, setPhotos] = React.useState<PhotoIdentifier[]>([]);
   const [loading, setLoading] = React.useState(false);
+
+  console.log('photos', photos);
 
   const modalCameraRollRef = React.useRef<Modalize>(null);
 
@@ -153,8 +161,6 @@ export default function CameraRoll() {
       assetType: 'Photos',
     });
 
-    console.log('res', res);
-
     setPhotos(res?.edges);
     setLoading(false);
   }, []);
@@ -226,8 +232,9 @@ export default function CameraRoll() {
       </Portal>
     </>
   );
-}
+});
 
+export default CameraRoll;
 const styles = StyleSheet.create({
   headerModal: {
     paddingHorizontal: 16,

@@ -1,3 +1,4 @@
+import {Post} from './forum';
 import {User} from './user';
 
 export type RootStackProps = {
@@ -24,6 +25,9 @@ export type RootStackProps = {
   ConversationDetail: undefined;
   UpdateProfile: {
     user?: User;
+  };
+  PostDetail: {
+    post?: Partial<Post>;
   };
 };
 
