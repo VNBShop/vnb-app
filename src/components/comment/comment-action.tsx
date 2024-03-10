@@ -7,7 +7,7 @@ import {Post} from '../../../types/forum';
 import {color} from '../../UIkit/palette';
 import useAuth from '../../_store/useAuth';
 import {messenger} from '../../assets';
-import useCreateComment from '../../hooks/forum/onCreateComment';
+import useCreateComment from '../../hooks/forum/useCreateComment';
 import Avatar from '../ui/avatar';
 import {Icon} from '../ui/icon';
 

@@ -7,29 +7,32 @@ import {DataError, DataResponse} from '../../../types/auth';
 import {FORUM_SERVICE} from '../../libs/microservice';
 import Toast from 'react-native-toast-message';
 
-export type CreateCommentPayload = {
-  commnentId: Comment['commentId'];
+export type EditCommentPayload = {
+  comment: string;
+  commentId: Comment['commentId'];
 };
 
 type IProps = {
-  onClose: () => void;
+  onSuccess: () => void;
   postId: Post['postId'];
 };
 
-export default function useDeleteComment({onClose, postId}: IProps) {
+export default function useEditComment({onSuccess, postId}: IProps) {
   const axios = useAxiosPrivate();
-  const insets = useSafeAreaInsets();
-
   const client = useQueryClient();
+  const insets = useSafeAreaInsets();
 
   const {isPending, mutate} = useMutation<
     DataResponse,
     DataError,
-    CreateCommentPayload
+    EditCommentPayload
   >({
     mutationFn: async payload => {
-      return await axios.delete(
-        `${FORUM_SERVICE}/comments/${payload.commnentId}`,
+      return await axios.put(
+        `${FORUM_SERVICE}/comments/${payload?.commentId}`,
+        {
+          comment: payload.comment,
+        },
       );
     },
     onSuccess: async res => {
@@ -37,19 +40,17 @@ export default function useDeleteComment({onClose, postId}: IProps) {
         await client.invalidateQueries({
           queryKey: ['get-comments', postId],
         });
-        onClose();
-        await client.invalidateQueries({
-          queryKey: ['get-post', postId],
-        });
+        onSuccess();
       }
     },
-
     onError: err => {
+      console.log('err', err);
+
       Toast.show({
         type: 'error',
         text2:
           (err?.response?.data?.metadata as string) ??
-          'Cant not delete this comment!',
+          'Cant not create comment on this post!',
         text2Style: {
           fontSize: 13,
         },
@@ -59,7 +60,7 @@ export default function useDeleteComment({onClose, postId}: IProps) {
   });
 
   return {
-    onDeleteComment: mutate,
+    onEditComment: mutate,
     loading: isPending,
   };
 }

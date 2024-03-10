@@ -10,6 +10,8 @@ export type Post = {
   totalComment: number;
   reacted: boolean;
   yourPost: boolean;
+  saved: boolean;
+  reported: boolean;
 };
 
 export type Comment = {

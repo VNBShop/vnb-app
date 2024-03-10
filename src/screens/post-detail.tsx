@@ -14,11 +14,19 @@ import PostItem from '../components/post/post-item';
 import CommentsSkeleton from '../components/skeleton/comments-skeleton';
 import useFetchComments from '../hooks/forum/useFetchComments';
 import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
+import useFetchPost from '../hooks/forum/useFetchPost';
+import PostsSkeleton from '../components/products/posts-skeleton';
 
 type IProps = NativeStackScreenProps<RootStackProps, 'PostDetail'>;
 
 export default function PostDetailScreen({route, navigation}: IProps) {
   const post = route?.params?.post;
+
+  const {postData, isPending: fetchingData} = useFetchPost({
+    postId: post?.postId as number,
+  });
+
+  const [isHaveUpdateCmt, setIsHaveUpdateComment] = React.useState(false);
 
   const {
     comments,
@@ -37,20 +45,30 @@ export default function PostDetailScreen({route, navigation}: IProps) {
         <FlatList
           data={comments}
           renderItem={({item}) => (
-            <CommentCard postId={post?.postId as number} comment={item} />
+            <CommentCard
+              postId={post?.postId as number}
+              setIsHaveUpdateComment={setIsHaveUpdateComment}
+              comment={item}
+            />
           )}
           ListHeaderComponent={
             <>
-              <PostItem post={post as Post} nav={navigation} />
-              <View
-                style={{
-                  height: 0.7,
-                  backgroundColor: color.border_input,
-                  width: '70%',
-                  marginLeft: '30%',
-                  marginVertical: 8,
-                }}
-              />
+              {fetchingData ? (
+                <PostsSkeleton />
+              ) : (
+                <>
+                  <PostItem post={postData as Post} nav={navigation} />
+                  <View
+                    style={{
+                      height: 0.7,
+                      backgroundColor: color.border_input,
+                      width: '70%',
+                      marginLeft: '30%',
+                      marginVertical: 8,
+                    }}
+                  />
+                </>
+              )}
             </>
           }
           ListEmptyComponent={
@@ -85,9 +103,9 @@ export default function PostDetailScreen({route, navigation}: IProps) {
           }}
         />
 
-        <BottomSafeArea />
+        {!isHaveUpdateCmt && <BottomSafeArea />}
 
-        <CommentAction post={post as Post} />
+        {!isHaveUpdateCmt && <CommentAction post={post as Post} />}
       </SafeArea>
     </KeyboardShift>
   );

@@ -37,9 +37,9 @@ export default function useCreateComment({onSuccess, postId}: IProps) {
           queryKey: ['get-comments', postId],
         });
         onSuccess();
-        // await client.invalidateQueries({
-        //   queryKey: [queryKey],
-        // });
+        await client.invalidateQueries({
+          queryKey: ['get-post', postId],
+        });
       }
     },
     onError: err => {
