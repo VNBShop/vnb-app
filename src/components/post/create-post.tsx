@@ -26,6 +26,9 @@ import {
   REACT_APP_CLOUDINARY_UPLOAD_PRESET,
 } from '@env';
 import axios from 'axios';
+import useCreatePost, {
+  CreatePostPayload,
+} from '../../hooks/forum/useCreatePost';
 
 export default function CreatePost() {
   const refCameraRoll = React.createRef<CameraRollRef>();
@@ -53,6 +56,16 @@ export default function CreatePost() {
     setModal(false);
   };
 
+  const {onCreatePost} = useCreatePost({
+    onError: () => {
+      setLoading(false);
+    },
+    onSuccess: () => {
+      form.reset();
+      onCloseModal();
+    },
+  });
+
   const onSubmit = async ({status}: {status: string}) => {
     if (!status && !photos?.length) {
       return;
@@ -61,8 +74,6 @@ export default function CreatePost() {
     setLoading(true);
 
     if (photos?.length) {
-      console.log('photo', photos);
-
       const uploadPhotosCloudinary: {
         assetId: string;
         secureUrl: string;
@@ -102,7 +113,17 @@ export default function CreatePost() {
       }
 
       console.log('uploadPhotosCloudinary >>', uploadPhotosCloudinary);
-      setLoading(false);
+
+      const payload: CreatePostPayload = {
+        content: status,
+        postAssets: uploadPhotosCloudinary,
+      };
+
+      onCreatePost(payload);
+    } else {
+      onCreatePost({
+        content: status,
+      });
     }
   };
 
