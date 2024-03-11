@@ -93,9 +93,6 @@ export default function ForumScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    // paddingHorizontal: 16,
-  },
   header: {
     paddingHorizontal: 16,
     marginTop: 8,
