@@ -55,6 +55,7 @@ export default function useFetchProduct({currentPage, pageSize}: IProps = {}) {
     hasNextPage,
     isFetchingNextPage,
     refetch,
+    filter,
     setFilter,
   };
 }

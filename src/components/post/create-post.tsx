@@ -30,7 +30,11 @@ import useCreatePost, {
   CreatePostPayload,
 } from '../../hooks/forum/useCreatePost';
 
-export default function CreatePost() {
+type IProps = {
+  pageKey: 'get-posts' | 'get-posts-profile';
+};
+
+export default function CreatePost({pageKey}: IProps) {
   const refCameraRoll = React.createRef<CameraRollRef>();
   const form = useForm<{status: string}>({
     defaultValues: {
@@ -64,6 +68,7 @@ export default function CreatePost() {
       form.reset();
       onCloseModal();
     },
+    pageKey,
   });
 
   const onSubmit = async ({status}: {status: string}) => {

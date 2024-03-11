@@ -6,15 +6,15 @@ import {
   Text,
   StyleSheet,
 } from 'react-native';
-import {filter} from '../../assets';
 import {color} from '../../UIkit/palette';
 import {sorts} from '../../libs/contants';
-import {FilterProps} from '../../screens/products';
+import {FilterProps} from '../../hooks/product/useFetchProducts';
 
 type ProductsSortProps = {
+  filter: FilterProps;
   setFilter: React.Dispatch<React.SetStateAction<FilterProps>>;
 };
-export default function ProductsSort({setFilter}: ProductsSortProps) {
+export default function ProductsSort({setFilter, filter}: ProductsSortProps) {
   return (
     <View style={styles.filterContainer}>
       <ScrollView

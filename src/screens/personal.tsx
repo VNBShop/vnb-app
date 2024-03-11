@@ -29,7 +29,7 @@ export default function PersonalScreen() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackProps, 'Root'>>();
 
-  const {logout} = useAuth(state => state);
+  const {logout, data} = useAuth(state => state);
 
   const axios = useAxiosPrivate();
 
@@ -86,16 +86,18 @@ export default function PersonalScreen() {
             onPress={() => navigation.navigate('Profile')}>
             <View style={styles.infoL}>
               <Avatar
-                source={
-                  'https://res.cloudinary.com/drpksxymr/image/upload/v1692624061/emtrangtri.jpg'
-                }
+                source={data?.avatar ?? ''}
                 size={50}
-                username="D"
+                username={data?.firstName ?? data?.lastName ?? 'Z'}
               />
 
               <View>
-                <Text style={styles.name}>Dzung</Text>
-                <Text style={styles.username}>@jungjung261</Text>
+                <Text style={styles.name}>
+                  {data?.firstName || data?.lastName
+                    ? `${data?.firstName} ${data?.lastName}`
+                    : data?.email}
+                </Text>
+                <Text style={styles.username}>{data?.email}</Text>
               </View>
             </View>
 
@@ -107,7 +109,11 @@ export default function PersonalScreen() {
               <TouchableOpacity
                 key={nav.id}
                 style={styles.navItem}
-                onPress={() => logout()}>
+                onPress={() =>
+                  navigation.navigate('Ordered', {
+                    tab: nav.id,
+                  })
+                }>
                 <View style={styles.navIcon}>
                   <Icon icon={nav.logo} size={24} />
                 </View>
@@ -170,7 +176,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: color.white,
     padding: 12,
-    paddingVertical: 10,
+    paddingVertical: 16,
     borderRadius: 8,
     shadowColor: color.gray,
     shadowOffset: {width: 0, height: 1},
@@ -239,8 +245,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   icon: {
-    width: 25,
-    height: 25,
+    width: 20,
+    height: 20,
   },
   label: {
     fontSize: 16,

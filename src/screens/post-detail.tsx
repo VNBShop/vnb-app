@@ -57,7 +57,11 @@ export default function PostDetailScreen({route, navigation}: IProps) {
                 <PostsSkeleton />
               ) : (
                 <>
-                  <PostItem post={postData as Post} nav={navigation} />
+                  <PostItem
+                    isPostDetail
+                    post={postData as Post}
+                    nav={navigation}
+                  />
                   <View
                     style={{
                       height: 0.7,

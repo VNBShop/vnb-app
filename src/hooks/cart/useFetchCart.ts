@@ -6,7 +6,7 @@ import {Cart} from '../../../types/order';
 
 export default function useFetchCart() {
   const axios = useAxiosPrivate();
-  const {data, isPending, refetch} = useQuery({
+  const {data, isPending, refetch, isError} = useQuery({
     queryKey: ['get-user-cart'],
     queryFn: async () => {
       return (await axios.get(`${ORDER_SERVICE}/carts`)) as DataResponse;
@@ -16,6 +16,7 @@ export default function useFetchCart() {
 
   return {
     isPending,
+    isError,
     refetch,
     data: (data?.data?.metadata as Cart[]) ?? [],
   };

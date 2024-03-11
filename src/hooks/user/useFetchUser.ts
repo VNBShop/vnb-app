@@ -23,7 +23,7 @@ export default function useFetchUser() {
     refetchOnWindowFocus: false,
   });
   return {
-    data,
+    user: data,
     isPending,
   };
 }

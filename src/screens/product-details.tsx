@@ -1,6 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useQuery} from '@tanstack/react-query';
-import LottieView from 'lottie-react-native';
 import * as React from 'react';
 import {
   Image,
@@ -19,6 +18,7 @@ import {color} from '../UIkit/palette';
 import {common, spec} from '../UIkit/styles';
 import {getProductDetail} from '../api/public/product';
 import {back, heartOutline, share} from '../assets';
+import Empty from '../components/404';
 import CartButton from '../components/cart-button';
 import ProductDescription from '../components/product-description';
 import ProductDetailAction from '../components/products/product-detail-action';
@@ -26,7 +26,6 @@ import ProductDetailSkeleton from '../components/skeleton/product-detail-skeleto
 import {Icon} from '../components/ui/icon';
 import OrHr from '../components/ui/or-hr';
 import Tag from '../components/ui/tag';
-import {notFoundLottie} from '../lottie';
 
 type ProductDetailScreenProps = NativeStackScreenProps<
   RootStackProps,
@@ -56,15 +55,14 @@ export default function ProductDetailScreen({
         }
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.notFoundContainer}>
-        <LottieView
-          source={notFoundLottie}
-          autoPlay
-          loop
-          style={styles.notFound}
-        />
-        <Text style={[common.text_base, common.text_gray]}>
-          No thing to see!
-        </Text>
+        <View style={[styles.header]}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Icon size={25} icon={back} />
+          </TouchableOpacity>
+
+          <CartButton />
+        </View>
+        <Empty message="Product not found!" />
       </ScrollView>
     );
   }

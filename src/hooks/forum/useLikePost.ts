@@ -13,11 +13,18 @@ export type LikeActionPayload = {
 };
 
 type IProps = {
+  queryKey?: 'get-posts' | 'get-posts-profile';
+  postId?: Post['postId'];
   setReact: Dispatch<SetStateAction<boolean>>;
   setTotalReaction: Dispatch<SetStateAction<number>>;
 };
 
-export default function useLikePost({setReact, setTotalReaction}: IProps) {
+export default function useLikePost({
+  setReact,
+  setTotalReaction,
+  queryKey,
+  postId,
+}: IProps) {
   const axios = useAxiosPrivate();
   const client = useQueryClient();
 
@@ -44,9 +51,15 @@ export default function useLikePost({setReact, setTotalReaction}: IProps) {
       }
     },
     onSettled: async () => {
-      await client.invalidateQueries({
-        queryKey: ['get-posts'],
-      });
+      if (postId) {
+        await client.invalidateQueries({
+          queryKey: ['get-post', postId],
+        });
+      } else {
+        await client.invalidateQueries({
+          queryKey: [queryKey],
+        });
+      }
     },
   });
 

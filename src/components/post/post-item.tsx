@@ -26,10 +26,12 @@ import useDeletePost from '../../hooks/forum/useDeletePost';
 
 type IProps = {
   post: Post;
+  isPostDetail?: boolean;
+  queryKey?: 'get-posts' | 'get-posts-profile';
   nav?: NativeStackNavigationProp<RootStackProps, 'PostDetail', undefined>;
 };
 
-export default function PostItem({post, nav}: IProps) {
+export default function PostItem({post, nav, isPostDetail, queryKey}: IProps) {
   const refAction = React.useRef<Modalize>();
   const insets = useSafeAreaInsets();
 
@@ -41,17 +43,22 @@ export default function PostItem({post, nav}: IProps) {
     onSuccess: () => {
       onCloseAction();
     },
+    isDetail: !!isPostDetail,
   });
 
   const {loadingReport, onReportPost} = useReportPost({
     onSuccess: () => {
       onCloseAction();
     },
+    isDetail: !!isPostDetail,
   });
 
   const {loadingDelete, onDeletePost} = useDeletePost({
     onSuccess: () => {
       onCloseAction();
+      if (isPostDetail) {
+        nav?.goBack();
+      }
     },
   });
 
@@ -91,12 +98,14 @@ export default function PostItem({post, nav}: IProps) {
         )}
 
         {!!post?.postImages?.length && (
-          <View style={styles.container}>
-            <ImageCarousel photos={post?.postImages ?? []} />
-          </View>
+          <ImageCarousel photos={post?.postImages ?? []} />
         )}
 
-        <PostAction post={post} />
+        <PostAction
+          post={post}
+          queryKey={queryKey}
+          isPostDetail={isPostDetail}
+        />
       </View>
 
       <Portal>

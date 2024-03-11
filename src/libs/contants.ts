@@ -4,14 +4,17 @@ import {
   backpack,
   badminton,
   bag,
+  cartWhite,
   cashondelivery,
   delivery,
   logout,
+  orderWhite,
   pant,
   password,
   processing,
   racket,
   refund,
+  save,
   shipping,
   shirt,
   shoe,
@@ -154,12 +157,33 @@ export const navPerson = [
   },
   {
     id: 4,
-    label: 'Returned',
+    label: 'Cancelled',
     logo: refund,
   },
 ];
 
 export const actionOption = [
+  {
+    id: 5,
+    label: 'Save',
+    icon: save,
+    bgColor: '#B47B84',
+    redirect: 'PostSaved',
+  },
+  {
+    id: 4,
+    label: 'Cart',
+    icon: cartWhite,
+    bgColor: '#A5DD9B',
+    redirect: 'Cart',
+  },
+  {
+    id: 3,
+    label: 'Ordered',
+    icon: orderWhite,
+    bgColor: '#9caeff',
+    redirect: 'Ordered',
+  },
   {
     id: 1,
     label: 'Change password',
@@ -167,12 +191,6 @@ export const actionOption = [
     bgColor: '#FFC0D9',
     redirect: 'ChangePassword',
   },
-  // {
-  //   id: 2,
-  //   label: 'Save',
-  //   icon: save,
-  //   bgColor: '#4FC0D0',
-  // },
   {
     id: 2,
     label: 'Logout',

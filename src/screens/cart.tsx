@@ -32,8 +32,8 @@ import useFetchCart from '../hooks/cart/useFetchCart';
 type CartScreenProps = NativeStackScreenProps<RootStackProps, 'Cart'>;
 
 export default function CartScreen({navigation}: CartScreenProps) {
-  const {data, isPending} = useFetchCart();
-  const [carts, setCarts] = React.useState<Cart[]>(data);
+  const {data, isPending, isError} = useFetchCart();
+  const [carts, setCarts] = React.useState<Cart[]>([]);
   const insets = useSafeAreaInsets();
 
   const [errs, setErrs] = React.useState<string[]>([]);
@@ -138,17 +138,29 @@ export default function CartScreen({navigation}: CartScreenProps) {
   };
 
   React.useEffect(() => {
-    setCarts(data ?? []);
+    if (JSON.stringify(data) !== JSON.stringify(carts)) {
+      if (data && data.length > 0) {
+        setCarts(data);
+      } else {
+        setCarts([]);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   return (
     <>
       <SafeArea>
         <View style={styles.header}>
-          <TouchableOpacity
-            style={common.positionLeftBase}
-            onPress={() => navigation.goBack()}>
-            <Icon size={25} icon={back} />
+          <TouchableOpacity style={common.positionLeftBase}>
+            <Icon
+              size={25}
+              icon={back}
+              onPress={() => {
+                console.log('check');
+                navigation.goBack();
+              }}
+            />
           </TouchableOpacity>
 
           <Text style={common.headerTitle}>Cart</Text>
@@ -156,7 +168,7 @@ export default function CartScreen({navigation}: CartScreenProps) {
 
         {isPending && <CartSkeleton />}
 
-        {carts?.length && !isPending ? (
+        {!!carts?.length && !isPending && (
           <>
             <View style={styles.container}>
               <ScrollView>
@@ -261,7 +273,9 @@ export default function CartScreen({navigation}: CartScreenProps) {
               </TouchableOpacity>
             </View>
           </>
-        ) : (
+        )}
+
+        {(isError || !carts?.length) && !isPending && (
           <Empty message="Your cart is empty" />
         )}
       </SafeArea>

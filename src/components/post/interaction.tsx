@@ -10,8 +10,10 @@ import useLikePost from '../../hooks/forum/useLikePost';
 
 type IProps = {
   post: Post;
+  isPostDetail?: boolean;
+  queryKey?: 'get-posts' | 'get-posts-profile';
 };
-export default function PostAction({post}: IProps) {
+export default function PostAction({post, queryKey, isPostDetail}: IProps) {
   const navigation = useNavigation<NavigationProp<RootStackProps>>();
 
   const [react, setReact] = React.useState(false);
@@ -20,6 +22,8 @@ export default function PostAction({post}: IProps) {
   const {onLike} = useLikePost({
     setReact,
     setTotalReaction,
+    queryKey,
+    ...(isPostDetail && {postId: post?.postId}),
   });
 
   React.useEffect(() => {

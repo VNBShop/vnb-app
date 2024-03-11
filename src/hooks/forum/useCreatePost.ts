@@ -10,6 +10,7 @@ import Toast from 'react-native-toast-message';
 type IProps = {
   onSuccess: () => void;
   onError: () => void;
+  pageKey: 'get-posts' | 'get-posts-profile';
 };
 
 export type CreatePostPayload = {

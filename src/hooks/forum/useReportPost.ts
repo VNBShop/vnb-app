@@ -12,9 +12,10 @@ type ReportPostPayload = {
 
 type IProps = {
   onSuccess?: () => void;
+  isDetail?: boolean;
 };
 
-export default function useReportPost({onSuccess}: IProps = {}) {
+export default function useReportPost({onSuccess, isDetail}: IProps = {}) {
   const axios = useAxiosPrivate();
   const insets = useSafeAreaInsets();
   const client = useQueryClient();
@@ -27,11 +28,18 @@ export default function useReportPost({onSuccess}: IProps = {}) {
     mutationFn: async payload => {
       return axios.post(`${FORUM_SERVICE}/post-reports`, payload);
     },
-    onSuccess: async response => {
+    onSuccess: async (response, payload) => {
       if (response?.data?.success) {
-        await client.invalidateQueries({
-          queryKey: ['get-posts'],
-        });
+        if (isDetail) {
+          await client.invalidateQueries({
+            queryKey: ['get-post', payload?.postId],
+          });
+        } else {
+          await client.invalidateQueries({
+            queryKey: ['get-posts'],
+          });
+        }
+
         Toast.show({
           topOffset: insets.top,
           type: 'success',

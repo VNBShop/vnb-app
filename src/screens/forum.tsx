@@ -34,27 +34,31 @@ export default function ForumScreen() {
   return (
     <>
       <SafeArea>
-        <View style={styles.header}>
-          <Icon size={40} icon={forumP} />
-
-          <View style={flex.flex_row}>
-            <IconOutline size={36} icon={search} />
-            <IconOutline size={36} icon={messenger} />
-          </View>
-        </View>
-
-        <CreatePost />
-
         {posts?.length && !isError ? (
           <View>
             <FlatList
-              renderItem={({item}) => <PostItem post={item} />}
+              nestedScrollEnabled
+              renderItem={({item}) => (
+                <PostItem post={item} queryKey="get-posts" />
+              )}
               data={posts}
               showsVerticalScrollIndicator={false}
               numColumns={1}
-              // contentContainerStyle={styles.gap}
-              // columnWrapperStyle={styles.gap}
               keyExtractor={item => item?.postId?.toLocaleString()}
+              ListHeaderComponent={
+                <>
+                  <View style={styles.header}>
+                    <Icon size={40} icon={forumP} />
+
+                    <View style={flex.flex_row}>
+                      <IconOutline size={36} icon={search} />
+                      <IconOutline size={36} icon={messenger} />
+                    </View>
+                  </View>
+
+                  <CreatePost pageKey="get-posts" />
+                </>
+              }
               ListFooterComponent={
                 isPending || isFetchingNextPage ? (
                   <ActivityIndicator />

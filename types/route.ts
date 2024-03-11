@@ -3,7 +3,9 @@ import {User} from './user';
 
 export type RootStackProps = {
   Root: undefined;
-  Ordered: undefined;
+  Ordered: {
+    tab?: number;
+  };
   Cart: undefined;
   Checkout: undefined;
   ProductDetail: {
@@ -29,6 +31,7 @@ export type RootStackProps = {
   PostDetail: {
     post?: Partial<Post>;
   };
+  PostSaved: undefined;
 };
 
 export type BottomTabProps = {

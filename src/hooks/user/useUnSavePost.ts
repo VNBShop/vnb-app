@@ -1,21 +1,20 @@
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import useAxiosPrivate from '../../api/private/hook/useAxiosPrivate';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import {DataError, DataResponse} from '../../../types/auth';
 import {Post} from '../../../types/forum';
+import useAxiosPrivate from '../../api/private/hook/useAxiosPrivate';
 import {FORUM_SERVICE} from '../../libs/microservice';
-import Toast from 'react-native-toast-message';
 
-type SavePostPayload = {
+type UnsavePostPayload = {
   postId: Post['postId'];
 };
 
 type IProps = {
   onSuccess?: () => void;
-  isDetail?: boolean;
 };
 
-export default function useSavePost({onSuccess, isDetail}: IProps = {}) {
+export default function useUnsavePost({onSuccess}: IProps = {}) {
   const axios = useAxiosPrivate();
   const insets = useSafeAreaInsets();
   const client = useQueryClient();
@@ -23,27 +22,20 @@ export default function useSavePost({onSuccess, isDetail}: IProps = {}) {
   const {mutate, isPending} = useMutation<
     DataResponse,
     DataError,
-    SavePostPayload
+    UnsavePostPayload
   >({
     mutationFn: async payload => {
-      return axios.post(`${FORUM_SERVICE}/post-saves`, payload);
+      return axios.delete(`${FORUM_SERVICE}/post-saves/${payload?.postId}`);
     },
-    onSuccess: async (response, payload) => {
+    onSuccess: async response => {
       if (response?.data?.success) {
-        if (isDetail) {
-          await client.invalidateQueries({
-            queryKey: ['get-post', payload?.postId],
-          });
-        } else {
-          await client.invalidateQueries({
-            queryKey: ['get-posts'],
-          });
-        }
-
+        await client.invalidateQueries({
+          queryKey: ['get-posts-saved'],
+        });
         Toast.show({
           topOffset: insets.top,
           type: 'success',
-          text2: 'Post has been saved!',
+          text2: 'Post has been unsaved!',
           text2Style: {
             fontSize: 13,
           },
@@ -57,7 +49,7 @@ export default function useSavePost({onSuccess, isDetail}: IProps = {}) {
         type: 'error',
         text2:
           (err?.response?.data?.metadata as string) ??
-          'Cant not save this post!',
+          'Cant not unsave this post!',
         text2Style: {
           fontSize: 13,
         },
@@ -65,7 +57,7 @@ export default function useSavePost({onSuccess, isDetail}: IProps = {}) {
     },
   });
   return {
-    onSavePost: mutate,
-    loading: isPending,
+    onUnsavePost: mutate,
+    loadingDelete: isPending,
   };
 }
