@@ -14,9 +14,14 @@ export type FilterProps = {
 type IProps = {
   currentPage?: number;
   pageSize?: number;
+  type?: string;
 };
 
-export default function useFetchProduct({currentPage, pageSize}: IProps = {}) {
+export default function useFetchProduct({
+  currentPage,
+  pageSize,
+  type,
+}: IProps = {}) {
   const [filter, setFilter] = React.useState<FilterProps>({});
 
   const {
@@ -28,11 +33,16 @@ export default function useFetchProduct({currentPage, pageSize}: IProps = {}) {
     isError,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ['get-products', filter],
+    queryKey: ['get-products', {filter, type}],
     queryFn: ({pageParam, queryKey}) =>
       getProducts({
         currentPage: currentPage ? currentPage : (pageParam as number),
-        filter: queryKey[1],
+        filter: {
+          ...((queryKey[1] as any)?.filter as {}),
+          ...(!!(queryKey[1] as any)?.type && {
+            type: (queryKey[1] as any)?.type,
+          }),
+        },
         ...(pageSize && {pageSize}),
       }),
     initialPageParam: 1,

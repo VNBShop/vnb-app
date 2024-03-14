@@ -82,7 +82,7 @@ export default function HotSale() {
         <TouchableOpacity>
           <Text
             style={common.text_link}
-            onPress={() => bottomNav.navigate('Product')}>
+            onPress={() => bottomNav.navigate('Product', {})}>
             See all
           </Text>
         </TouchableOpacity>

@@ -43,11 +43,13 @@ export default function CheckoutScreen({navigation}: CheckoutScreenProps) {
     useNavigation<NativeStackNavigationProp<BottomTabProps, 'Home'>>();
 
   const {data: carts, isPending: loadingCarts} = useFetchCart();
-  const {data: user, isPending: loadingUser} = useFetchUser();
+  const {user, isPending: loadingUser} = useFetchUser();
 
   const {loading, onCreateOrder} = useCreateOrder({
     onSuccess: () => {
-      navigation.replace('Ordered');
+      navigation.replace('Ordered', {
+        tab: 0,
+      });
     },
   });
 
@@ -60,7 +62,7 @@ export default function CheckoutScreen({navigation}: CheckoutScreenProps) {
         },
         {
           style: 'default',
-          onPress: () => bottomNav.navigate('Product'),
+          onPress: () => bottomNav.navigate('Product', {}),
           text: 'Shopping',
         },
       ]);

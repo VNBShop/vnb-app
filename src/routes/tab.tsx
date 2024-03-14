@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 import * as React from 'react';
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -9,6 +10,10 @@ import ProductScreen from '../screens/products';
 import {BottomTabProps} from '../../types/route';
 import {tabOption} from './tab-options';
 import {useNavigationState} from '@react-navigation/native';
+import {Icon} from '../components/ui/icon';
+import {bell, bellGray} from '../assets';
+import useSocketNotify from '../hooks/forum/useSocketNotify';
+import useAuth from '../_store/useAuth';
 
 const Tab = createBottomTabNavigator<BottomTabProps>();
 
@@ -16,6 +21,12 @@ export default function TabNavigation() {
   const screenName = useNavigationState(
     state => state.routes[state.index].state?.index,
   );
+
+  const {data: user} = useAuth();
+
+  const socket = useSocketNotify({
+    room: user?.notificationRoom,
+  });
 
   return (
     <Tab.Navigator
@@ -41,7 +52,15 @@ export default function TabNavigation() {
         component={ForumScreen}
       />
       <Tab.Screen
-        options={tabOption.notify}
+        options={{
+          tabBarIcon: ({focused}) => {
+            return focused ? (
+              <Icon icon={bell} size={30} />
+            ) : (
+              <Icon icon={bellGray} size={30} />
+            );
+          },
+        }}
         name="Notification"
         component={NotificationScreen}
       />

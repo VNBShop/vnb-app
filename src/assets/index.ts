@@ -71,3 +71,5 @@ export {default as locationBlue} from './location-blue.png';
 export {default as phone} from './phone.png';
 export {default as orderWhite} from './orderwhite.png';
 export {default as cartWhite} from './cart-white.png';
+export {default as ball} from './ball.png';
+export {default as gear} from './gear.png';

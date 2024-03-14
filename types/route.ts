@@ -41,7 +41,9 @@ export type RootStackProps = {
 
 export type BottomTabProps = {
   Home: undefined;
-  Product: undefined;
+  Product: {
+    type?: string;
+  };
   Forum: undefined;
   Notification: undefined;
   Personal: undefined;

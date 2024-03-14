@@ -37,7 +37,7 @@ export default function Popular() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Popular</Text>
-        <TouchableOpacity onPress={() => bottomNav.navigate('Product')}>
+        <TouchableOpacity onPress={() => bottomNav.navigate('Product', {})}>
           <Text style={common.text_link}>See all</Text>
         </TouchableOpacity>
       </View>

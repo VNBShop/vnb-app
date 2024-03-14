@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import {Drawer} from 'react-native-drawer-layout';
-import {RootStackProps} from '../../types/route';
+import {BottomTabProps, RootStackProps} from '../../types/route';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {WIDTH_DEVICE, common} from '../UIkit/styles';
@@ -28,8 +28,11 @@ import ProductsSkeleton from '../components/skeleton/products-skeleton';
 import {Icon, IconOutline} from '../components/ui/icon';
 import useFetchProduct from '../hooks/product/useFetchProducts';
 import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
-export default function ProductScreen() {
+type IProps = NativeStackScreenProps<BottomTabProps, 'Product'>;
+
+export default function ProductScreen({route}: IProps) {
   const [searchModal, setSearchModal] = React.useState(false);
 
   const [filterContainer, setFilterContainer] = React.useState(false);
@@ -44,7 +47,9 @@ export default function ProductScreen() {
     refetch,
     filter,
     setFilter,
-  } = useFetchProduct();
+  } = useFetchProduct({
+    type: route?.params?.type,
+  });
 
   const stackNavigator =
     useNavigation<NavigationProp<RootStackProps, 'ProductDetail'>>();

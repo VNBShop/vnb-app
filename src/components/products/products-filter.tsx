@@ -13,10 +13,10 @@ import stores from '../../api/public/stores';
 import {brands} from '../../libs/contants';
 import CheckboxCard from '../ui/checkbox-card';
 import {color} from '../../UIkit/palette';
-import {FilterProps} from '../../screens/products';
 import {useQuery} from '@tanstack/react-query';
 import getStores from '../../api/public/stores';
 import {ProductStore} from '../../../types/product';
+import {FilterProps} from '../../hooks/product/useFetchProducts';
 
 type ProductsFilterProps = {
   setFilter: (value: React.SetStateAction<FilterProps>) => void;

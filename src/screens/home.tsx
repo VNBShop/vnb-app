@@ -57,7 +57,11 @@ export default function HomeScreen({navigation}: HomeScreenProps) {
           <View style={styles.navContainer}>
             {navList.map(item => (
               <TouchableOpacity
-                onPress={() => navigation.navigate('Product')}
+                onPress={() =>
+                  navigation.navigate('Product', {
+                    type: item.value,
+                  })
+                }
                 key={item.id}
                 style={styles.navItem}>
                 <Icon icon={item.icon} size={30} />
@@ -65,7 +69,11 @@ export default function HomeScreen({navigation}: HomeScreenProps) {
               </TouchableOpacity>
             ))}
             <TouchableOpacity
-              onPress={() => navigation.navigate('Product')}
+              onPress={() =>
+                navigation.navigate('Product', {
+                  type: 'SOCKS',
+                })
+              }
               style={styles.navItem}>
               <LottieView
                 source={ballLottie}
