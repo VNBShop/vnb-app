@@ -24,7 +24,9 @@ export type RootStackProps = {
   ChangePassword: undefined;
   Identify: undefined;
   ConversationList: undefined;
-  ConversationDetail: undefined;
+  ConversationDetail: {
+    userId: number;
+  };
   UpdateProfile: {
     user?: User;
   };
@@ -32,6 +34,9 @@ export type RootStackProps = {
     post?: Partial<Post>;
   };
   PostSaved: undefined;
+  UserProfile: {
+    userId: number;
+  };
 };
 
 export type BottomTabProps = {

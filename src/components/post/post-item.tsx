@@ -28,10 +28,17 @@ type IProps = {
   post: Post;
   isPostDetail?: boolean;
   queryKey?: 'get-posts' | 'get-posts-profile';
+  orther?: boolean;
   nav?: NativeStackNavigationProp<RootStackProps, 'PostDetail', undefined>;
 };
 
-export default function PostItem({post, nav, isPostDetail, queryKey}: IProps) {
+export default function PostItem({
+  post,
+  nav,
+  isPostDetail,
+  queryKey,
+  orther = false,
+}: IProps) {
   const refAction = React.useRef<Modalize>();
   const insets = useSafeAreaInsets();
 
@@ -85,10 +92,12 @@ export default function PostItem({post, nav, isPostDetail, queryKey}: IProps) {
             <Text style={styles.username}>{post?.postAuthorName}</Text>
           </View>
 
-          <TouchableOpacity
-            onPress={() => !!refAction?.current && refAction.current?.open()}>
-            <Icon size={30} icon={ellipsisBlack} />
-          </TouchableOpacity>
+          {!orther && (
+            <TouchableOpacity
+              onPress={() => !!refAction?.current && refAction.current?.open()}>
+              <Icon size={30} icon={ellipsisBlack} />
+            </TouchableOpacity>
+          )}
         </View>
 
         {!!post?.postContent && (

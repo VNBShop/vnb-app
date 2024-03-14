@@ -3,23 +3,24 @@ import * as React from 'react';
 import {FlatList, RefreshControl, StyleSheet, Text, View} from 'react-native';
 import {RootStackProps} from '../../types/route';
 import {User} from '../../types/user';
+import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {back} from '../assets';
 import Empty from '../components/404';
-import CreatePost from '../components/post/create-post';
 import PostItem from '../components/post/post-item';
 import PostsSkeleton from '../components/products/posts-skeleton';
 import ProfileHeader from '../components/profile-header';
 import ProfileSkeleton from '../components/skeleton/profile-skeleton';
 import Box from '../components/ui/box';
 import {Icon} from '../components/ui/icon';
-import useFetchUserPosts from '../hooks/user/useFetchPostsUser';
-import useFetchUser from '../hooks/user/useFetchUser';
+import useFetchUserAcc from '../hooks/user/useFetchUserAcc';
+import useFetchUserPostsAcc from '../hooks/user/useFetchUsetPostAcc';
 
-type ProfileScreenProps = NativeStackScreenProps<RootStackProps, 'Profile'>;
+type IProps = NativeStackScreenProps<RootStackProps, 'UserProfile'>;
 
-export default function ProfileScreen({navigation}: ProfileScreenProps) {
+export default function UserProfileScreen({navigation, route}: IProps) {
+  const userId = route?.params?.userId;
   const {
     fetchNextPage,
     hasNextPage,
@@ -28,16 +29,25 @@ export default function ProfileScreen({navigation}: ProfileScreenProps) {
     isPending,
     posts,
     refetch,
-  } = useFetchUserPosts();
+  } = useFetchUserPostsAcc({
+    userId,
+  });
 
-  const {user, isPending: loadingUser} = useFetchUser();
+  const {loading, userAccount} = useFetchUserAcc({
+    userId,
+  });
+
   return (
     <>
       <SafeArea>
         <View>
           <FlatList
             renderItem={({item}) => (
-              <PostItem post={item} queryKey="get-posts-profile" />
+              <PostItem
+                orther={true}
+                post={item}
+                queryKey="get-posts-profile"
+              />
             )}
             data={posts}
             showsVerticalScrollIndicator={false}
@@ -52,22 +62,26 @@ export default function ProfileScreen({navigation}: ProfileScreenProps) {
                     icon={back}
                     onPress={() => navigation.goBack()}
                   />
-                  <Text style={styles.headerUsername}>{user?.firstName}</Text>
+                  <Text style={styles.headerUsername}>
+                    {userAccount?.firstName}
+                  </Text>
                   <Box width={30} />
                 </View>
 
-                {loadingUser ? (
+                {loading ? (
                   <ProfileSkeleton />
                 ) : (
-                  <ProfileHeader user={user as User} nav={navigation} />
+                  <ProfileHeader user={userAccount as User} isUser={false} />
                 )}
-
-                <CreatePost pageKey="get-posts" />
               </>
             }
             ListFooterComponent={
               <>
-                {isFetchingNextPage || isPending ? <PostsSkeleton /> : null}
+                {isFetchingNextPage || isPending ? (
+                  <PostsSkeleton />
+                ) : (
+                  <BottomSafeArea />
+                )}
 
                 {isError && !isPending && !isFetchingNextPage ? (
                   <Empty message="No posts" />

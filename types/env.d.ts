@@ -5,4 +5,5 @@ declare module '@env' {
   export const REACT_APP_CLOUDINARY_API_KEY: string;
   export const REACT_APP_CLOUDINARY_API_SECRET: string;
   export const REACT_APP_CLOUDINARY_UPLOAD_PRESET: string;
+  export const API_SOCKET: string;
 }

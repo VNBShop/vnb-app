@@ -7,6 +7,8 @@ export type AuthProps = {
   avatar: string;
   email: string;
   provider: 'LOCAL' | 'GOOGLE';
+  notificationRoom: string;
+  userId: number;
 };
 
 export type DataResponse<TData = unknown> = {

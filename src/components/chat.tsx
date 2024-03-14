@@ -1,25 +1,21 @@
 import * as React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+import {Chat} from '../../types/messenger';
 import {color} from '../UIkit/palette';
 import {common, spec} from '../UIkit/styles';
+import useAuth from '../_store/useAuth';
 import {markConsecutiveDuplicates} from '../libs/utils';
 import Avatar from './ui/avatar';
 
-export type ChatProps = {
-  id?: string;
-  sender: string | number;
-  receiver: string | number;
-  content: string;
-  createAt?: string;
-};
-
-export default function Chat({chats}: {chats: ChatProps[]}) {
+export default function ChatApp({chats}: {chats: Chat[]}) {
   const data = markConsecutiveDuplicates(chats);
+
+  const {data: user} = useAuth();
 
   return (
     <>
       {data.map((item, index: number) => {
-        return item.sender === 1 && !!item?.content ? (
+        return item.senderId === user?.userId && !!item?.content ? (
           item?.content ? (
             <View key={index} style={styles.container}>
               <View

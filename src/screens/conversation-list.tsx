@@ -1,16 +1,18 @@
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import * as React from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {FlatList, RefreshControl, StyleSheet, Text, View} from 'react-native';
+import {RootStackProps} from '../../types/route';
+import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, spec} from '../UIkit/styles';
-import {back, create, search_gray} from '../assets';
+import {back, create} from '../assets';
+import Empty from '../components/404';
+import ConversationListCard from '../components/conversation-list';
+import ModalSearchForum from '../components/modal-search-forum';
+import ChatCardSkeleton from '../components/skeleton/chat-card-skeleton';
 import {Icon} from '../components/ui/icon';
-import ActiveUserList from '../components/active-user-list';
-import ConversationListCard, {
-  ConversationListCardProps,
-} from '../components/conversation-list';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackProps} from '../../types/route';
+import useFetchChats from '../hooks/messenger/useFetchChats';
 
 type ConversationListScreenProps = NativeStackScreenProps<
   RootStackProps,
@@ -20,39 +22,72 @@ type ConversationListScreenProps = NativeStackScreenProps<
 export default function ConversationListScreen({
   navigation,
 }: ConversationListScreenProps) {
+  const {
+    fetchNextPage,
+    hasNextPage,
+    refetch,
+    isFetchingNextPage,
+    isPending,
+    messages,
+    isRefetching,
+  } = useFetchChats();
   return (
     <SafeArea>
       <View style={styles.header}>
         <Icon size={25} icon={back} onPress={() => navigation.goBack()} />
         <Text style={common.headerTitle}>Conversations</Text>
 
-        <Icon icon={create} size={25} />
+        <ModalSearchForum>
+          <Icon icon={create} size={25} />
+        </ModalSearchForum>
       </View>
 
       <View style={[common.flex_full, spec.space_horizontal, spec.mt_xl]}>
-        <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false}>
-          <View style={styles.search}>
-            <Icon size={20} icon={search_gray} />
-            <Text style={[common.text_gray, common.text_base]}>Search</Text>
-          </View>
-
-          <View style={spec.marginVerticalBase}>
-            <ActiveUserList />
-          </View>
-
-          <View style={styles.conversationList}>
-            {fakeListUser.map(conversation => (
+        <View style={styles.conversationList}>
+          <FlatList
+            numColumns={1}
+            renderItem={({item}) => (
               <ConversationListCard
-                key={conversation.id}
-                name={conversation.name}
-                avatar={conversation.avatar}
-                lastMessage={conversation.lastMessage}
-                updateAt={conversation.updateAt}
-                isRead={conversation.isRead}
+                avatar={item?.receiverAvatar}
+                lastMessage={item?.latestMessage}
+                name={item?.receiverName}
+                id={item?.receiverId}
+                updateAt={item?.latestMessageAt}
               />
-            ))}
-          </View>
-        </ScrollView>
+            )}
+            data={messages}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={item => item?.receiverId?.toLocaleString()}
+            ListFooterComponent={
+              <>
+                {isFetchingNextPage || isPending ? (
+                  <ChatCardSkeleton />
+                ) : (
+                  <BottomSafeArea />
+                )}
+                {!messages?.length && !isFetchingNextPage && !isPending ? (
+                  <View
+                    // eslint-disable-next-line react-native/no-inline-styles
+                    style={{justifyContent: 'center', alignItems: 'center'}}>
+                    <Empty
+                      message="You has no messages yet!"
+                      showIcon={false}
+                    />
+                  </View>
+                ) : null}
+              </>
+            }
+            onEndReachedThreshold={0.1}
+            onEndReached={() => {
+              if (hasNextPage) {
+                fetchNextPage();
+              }
+            }}
+            refreshControl={
+              <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+            }
+          />
+        </View>
       </View>
     </SafeArea>
   );
@@ -79,77 +114,6 @@ const styles = StyleSheet.create({
   conversationList: {
     rowGap: 16,
     marginTop: 12,
+    flex: 1,
   },
 });
-
-const fakeListUser: ConversationListCardProps[] = [
-  {
-    id: 1,
-    name: 'Dzung',
-    updateAt: 'now',
-    isRead: true,
-    lastMessage:
-      'In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document',
-    avatar:
-      'https://res.cloudinary.com/drpksxymr/image/upload/v1695303196/berreck_i387ac.jpg',
-  },
-  {
-    id: 2,
-    name: 'Hoe Hoe',
-    updateAt: '1m',
-    isRead: false,
-    lastMessage:
-      'In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document',
-    avatar:
-      'https://res.cloudinary.com/drpksxymr/image/upload/v1694877191/littlething_eyzztc.jpg',
-  },
-  {
-    id: 3,
-    name: 'Sad man',
-    isRead: true,
-    updateAt: '5m',
-    lastMessage:
-      'In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document',
-    avatar:
-      'https://res.cloudinary.com/drpksxymr/image/upload/v1695018436/lonly_fwyyvv.jpg',
-  },
-  {
-    id: 4,
-    name: 'Curl',
-    updateAt: '1h',
-    isRead: true,
-    lastMessage:
-      'In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document',
-    avatar:
-      'https://res.cloudinary.com/drpksxymr/image/upload/v1694439090/greeting_oayt55.jpg',
-  },
-  {
-    id: 5,
-    name: 'Namew',
-    updateAt: '1m',
-    isRead: false,
-    lastMessage: 'In publishing and graphic',
-    avatar:
-      'https://res.cloudinary.com/drpksxymr/image/upload/v1694497931/goodbye_djgszf.jpg',
-  },
-  {
-    id: 6,
-    name: 'Mews',
-    updateAt: '8m',
-    isRead: true,
-    lastMessage:
-      'In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document',
-    avatar:
-      'https://res.cloudinary.com/drpksxymr/image/upload/v1693812419/butterflie_podx45.jpg',
-  },
-  {
-    id: 7,
-    name: 'Fish',
-    updateAt: '1h',
-    isRead: false,
-    lastMessage:
-      'In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document',
-    avatar:
-      'https://res.cloudinary.com/drpksxymr/image/upload/v1693752270/zj6tpy9f6mxowzdsxd78.jpg',
-  },
-];

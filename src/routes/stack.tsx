@@ -22,6 +22,7 @@ import TabNavigation from './tab';
 import EditProfileScreen from '../screens/edit-profile';
 import PostDetailScreen from '../screens/post-detail';
 import PostSavedScreen from '../screens/post-saved';
+import UserProfileScreen from '../screens/user-profile';
 
 const Stack = createNativeStackNavigator<RootStackProps>();
 export default function StackNavigation() {
@@ -59,6 +60,7 @@ export default function StackNavigation() {
           <Stack.Screen name="UpdateProfile" component={EditProfileScreen} />
           <Stack.Screen name="PostDetail" component={PostDetailScreen} />
           <Stack.Screen name="PostSaved" component={PostSavedScreen} />
+          <Stack.Screen name="UserProfile" component={UserProfileScreen} />
         </Stack.Group>
       ) : (
         <Stack.Group>

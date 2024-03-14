@@ -1,13 +1,13 @@
-import {ChatProps} from '../components/chat';
+import {Chat} from '../../types/messenger';
 
 export const markConsecutiveDuplicates = (
-  arr: (ChatProps & {position?: string})[],
+  arr: (Chat & {position?: string})[],
 ) => {
-  const result: (ChatProps & {position?: string})[] = [];
+  const result: (Chat & {position?: string})[] = [];
   let consecutiveCount = 1;
 
   for (let i = 1; i < arr.length; i++) {
-    if (arr[i]?.sender === arr[i - 1]?.sender) {
+    if (arr[i]?.senderId === arr[i - 1]?.senderId) {
       consecutiveCount++;
     } else {
       if (consecutiveCount >= 2) {

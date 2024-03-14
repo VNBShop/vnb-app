@@ -1,32 +1,32 @@
 import * as React from 'react';
 
-import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {FlatList, RefreshControl, StyleSheet, View} from 'react-native';
+import {RootStackProps} from '../../types/route';
 import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import SafeArea from '../UIkit/layouts/safe-area';
+import {color} from '../UIkit/palette';
 import {flex} from '../UIkit/styles';
 import {forumP, messenger, search} from '../assets';
 import Empty from '../components/404';
+import ModalSearchForum from '../components/modal-search-forum';
+import CreatePost from '../components/post/create-post';
+import PostItem from '../components/post/post-item';
 import PostsSkeleton from '../components/products/posts-skeleton';
 import {Icon, IconOutline} from '../components/ui/icon';
-import PostItem from '../components/post/post-item';
 import useFetchPosts from '../hooks/forum/useFetchPosts';
-import CreatePost from '../components/post/create-post';
-import {color} from '../UIkit/palette';
 
 export default function ForumScreen() {
+  const nav =
+    useNavigation<NativeStackNavigationProp<RootStackProps, 'Root'>>();
   const {
     fetchNextPage,
     hasNextPage,
     isError,
     isFetchingNextPage,
     isPending,
+    isRefetching,
     posts,
     refetch,
   } = useFetchPosts();
@@ -34,63 +34,61 @@ export default function ForumScreen() {
   return (
     <>
       <SafeArea>
-        {posts?.length && !isError ? (
-          <View>
-            <FlatList
-              nestedScrollEnabled
-              renderItem={({item}) => (
-                <PostItem post={item} queryKey="get-posts" />
-              )}
-              data={posts}
-              showsVerticalScrollIndicator={false}
-              numColumns={1}
-              keyExtractor={item => item?.postId?.toLocaleString()}
-              ListHeaderComponent={
-                <>
-                  <View style={styles.header}>
-                    <Icon size={40} icon={forumP} />
+        <View>
+          <FlatList
+            nestedScrollEnabled
+            renderItem={({item}) => (
+              <PostItem post={item} queryKey="get-posts" />
+            )}
+            data={posts}
+            showsVerticalScrollIndicator={false}
+            numColumns={1}
+            keyExtractor={item => item?.postId?.toLocaleString()}
+            ListHeaderComponent={
+              <>
+                <View style={styles.header}>
+                  <Icon size={40} icon={forumP} />
 
-                    <View style={flex.flex_row}>
+                  <View style={flex.flex_row}>
+                    <ModalSearchForum isProfile>
                       <IconOutline size={36} icon={search} />
-                      <IconOutline size={36} icon={messenger} />
-                    </View>
+                    </ModalSearchForum>
+                    <IconOutline
+                      size={36}
+                      icon={messenger}
+                      onPress={() => nav.navigate('ConversationList')}
+                    />
                   </View>
+                </View>
 
-                  <CreatePost pageKey="get-posts" />
-                </>
-              }
-              ListFooterComponent={
-                isPending || isFetchingNextPage ? (
-                  <ActivityIndicator />
+                <CreatePost pageKey="get-posts" />
+              </>
+            }
+            ListFooterComponent={
+              <>
+                {isFetchingNextPage || isPending ? (
+                  <PostsSkeleton />
                 ) : (
                   <BottomSafeArea />
-                )
-              }
-              ItemSeparatorComponent={renderSeparator}
-              onEndReachedThreshold={0.1}
-              onEndReached={() => {
-                if (hasNextPage) {
-                  fetchNextPage();
-                }
-              }}
-              refreshControl={
-                <RefreshControl refreshing={isPending} onRefresh={refetch} />
-              }
-            />
-          </View>
-        ) : null}
+                )}
 
-        {isFetchingNextPage || isPending ? <PostsSkeleton /> : null}
-
-        {isError && !isPending && !isFetchingNextPage ? (
-          <ScrollView
-            refreshControl={
-              <RefreshControl refreshing={isPending} onRefresh={refetch} />
+                {isError && !isPending && !isFetchingNextPage ? (
+                  <Empty message="No posts" />
+                ) : null}
+              </>
             }
-            showsVerticalScrollIndicator={false}>
-            <Empty message="No posts" />
-          </ScrollView>
-        ) : null}
+            ItemSeparatorComponent={renderSeparator}
+            onEndReachedThreshold={0.1}
+            onEndReached={() => {
+              if (hasNextPage) {
+                fetchNextPage();
+              }
+            }}
+            refreshControl={
+              <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+            }
+          />
+        </View>
       </SafeArea>
     </>
   );

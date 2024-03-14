@@ -12,10 +12,11 @@ import {Icon} from './ui/icon';
 
 type IProps = {
   user: User;
-  nav: NativeStackNavigationProp<RootStackProps, 'Profile', undefined>;
+  isUser?: boolean;
+  nav?: NativeStackNavigationProp<RootStackProps, 'Profile', undefined>;
 };
 
-export default function ProfileHeader({user, nav}: IProps) {
+export default function ProfileHeader({user, nav, isUser = true}: IProps) {
   return (
     <View style={styles.userContainer}>
       <View style={styles.userHead}>
@@ -37,14 +38,16 @@ export default function ProfileHeader({user, nav}: IProps) {
         <Text>{user?.email}</Text>
       </View>
 
-      <View style={styles.userAction}>
-        <TouchableOpacity
-          onPress={() => nav.navigate('UpdateProfile', {user})}
-          style={[styles.actionBtn, {backgroundColor: color.link}]}>
-          <Icon icon={penWhite} size={18} />
-          <Text style={[styles.actionText, common.text_white]}>Edit</Text>
-        </TouchableOpacity>
-      </View>
+      {isUser && (
+        <View style={styles.userAction}>
+          <TouchableOpacity
+            onPress={() => nav?.navigate('UpdateProfile', {user})}
+            style={[styles.actionBtn, {backgroundColor: color.link}]}>
+            <Icon icon={penWhite} size={18} />
+            <Text style={[styles.actionText, common.text_white]}>Edit</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       <View style={styles.info}>
         <View style={styles.infoItem}>
