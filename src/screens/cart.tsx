@@ -50,7 +50,7 @@ export default function CartScreen({navigation}: CartScreenProps) {
     },
   });
 
-  const {loadingDeleteCart, onDeleteCart} = useDeleteCart();
+  const {loadingDeleteCart, onDeleteCart, variables} = useDeleteCart();
 
   const onIncrease = (id: Cart['cartId']) => {
     setCarts(prev => {
@@ -231,7 +231,8 @@ export default function CartScreen({navigation}: CartScreenProps) {
                                   id: item?.cartId,
                                 })
                               }>
-                              {loadingDeleteCart ? (
+                              {loadingDeleteCart &&
+                              item?.cartId === variables?.id ? (
                                 <ActivityIndicator key={item?.cartId} />
                               ) : (
                                 <Text style={[common.text_link]}>Delete</Text>

@@ -1,7 +1,9 @@
+/* eslint-disable react-native/no-inline-styles */
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useQuery} from '@tanstack/react-query';
 import * as React from 'react';
 import {
+  ActivityIndicator,
   Image,
   RefreshControl,
   ScrollView,
@@ -10,9 +12,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {TextInput} from 'react-native-gesture-handler';
 import {AirbnbRating} from 'react-native-ratings';
 import {ProductDetail} from '../../types/product';
 import {RootStackProps} from '../../types/route';
+import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, spec} from '../UIkit/styles';
@@ -26,6 +30,8 @@ import ProductDetailSkeleton from '../components/skeleton/product-detail-skeleto
 import {Icon} from '../components/ui/icon';
 import OrHr from '../components/ui/or-hr';
 import Tag from '../components/ui/tag';
+import useFetchProductComments from '../hooks/product/useFetchProductComments';
+import CommentCard from '../components/comment/comment-card';
 
 type ProductDetailScreenProps = NativeStackScreenProps<
   RootStackProps,
@@ -45,7 +51,18 @@ export default function ProductDetailScreen({
       queryKey: ['product', productId],
       queryFn: ({queryKey}) => getProductDetail(queryKey[1]),
       enabled: !!productId,
+      refetchOnWindowFocus: true,
     });
+
+  const {
+    comments,
+    hasNextPage,
+    isLoading: loadingComments,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useFetchProductComments({
+    productId: data?.productId as number,
+  });
 
   if (isError) {
     return (
@@ -132,16 +149,59 @@ export default function ProductDetailScreen({
               <ProductDescription content={data.productDetail} />
             ) : null}
             <OrHr marginVertical={24} />
+
+            {data?.canComment && (
+              <TextInput
+                style={{
+                  padding: 16,
+                  height: 40,
+                  backgroundColor: color.divider,
+                  borderRadius: 9999,
+                }}
+                placeholder="Comment to rating this product"
+              />
+            )}
+
+            {!!comments?.length && comments.map(() => <CommentCard />)}
+
+            {!comments?.length && (loadingComments || isFetchingNextPage) && (
+              <View>
+                <ActivityIndicator />
+              </View>
+            )}
+
+            {!loadingComments && !isFetchingNextPage && !comments?.length && (
+              <Text
+                style={[
+                  common.text_gray,
+                  {
+                    textAlign: 'center',
+                    marginTop: 20,
+                  },
+                ]}>
+                Product has no comment yet
+              </Text>
+            )}
+
+            {hasNextPage && !loadingComments && !isFetchingNextPage && (
+              <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                <TouchableOpacity onPress={() => fetchNextPage()}>
+                  <Text style={common.text_link}>Load more...</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            <BottomSafeArea />
           </ScrollView>
         </View>
       ) : null}
+
+      {isLoading ? <ProductDetailSkeleton /> : null}
 
       <ProductDetailAction
         navigation={navigation}
         product={data as ProductDetail}
       />
-
-      {isLoading ? <ProductDetailSkeleton /> : null}
     </SafeArea>
   );
 }

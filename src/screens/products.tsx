@@ -65,117 +65,94 @@ export default function ProductScreen({route}: IProps) {
           renderDrawerContent={() => {
             return <ProductsFilter setFilter={setFilter} />;
           }}>
-          <View style={styles.container}>
-            <View style={styles.flatContainer}>
-              <FlatList
-                renderItem={({item}) => (
-                  <TouchableOpacity
-                    style={styles.productItem}
-                    onPress={() =>
-                      stackNavigator.navigate('ProductDetail', {
-                        productId: item.productId,
-                      })
-                    }>
-                    <Image
-                      source={{uri: item.productImages[0]}}
-                      style={styles.productImg}
-                    />
-                    <View style={styles.productInfo}>
-                      <Text style={common.text_gray}>{item.productName}</Text>
+          <View style={styles.flatContainer}>
+            <FlatList
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  style={styles.productItem}
+                  onPress={() =>
+                    stackNavigator.navigate('ProductDetail', {
+                      productId: item.productId,
+                    })
+                  }>
+                  <Image
+                    source={{uri: item.productImages[0]}}
+                    style={styles.productImg}
+                  />
+                  <View style={styles.productInfo}>
+                    <Text style={common.text_gray}>{item.productName}</Text>
 
-                      <Text style={styles.productPrice}>
-                        {item.productPrice.toLocaleString('vi-VI', {
-                          currency: 'VND',
-                          style: 'currency',
-                        })}
+                    <Text style={styles.productPrice}>
+                      {item.productPrice.toLocaleString('vi-VI', {
+                        currency: 'VND',
+                        style: 'currency',
+                      })}
+                    </Text>
+                  </View>
+
+                  <View style={styles.benefit}>
+                    <Image source={newIcon} style={styles.newImg} />
+                  </View>
+                </TouchableOpacity>
+              )}
+              data={products}
+              showsVerticalScrollIndicator={false}
+              ListHeaderComponent={
+                <>
+                  <View style={styles.header}>
+                    <Text style={common.titleLeft}>Products</Text>
+                    <TouchableOpacity
+                      disabled={isPending}
+                      onPress={() => stackNavigator.navigate('Cart')}>
+                      <IconOutline icon={cart_gray} size={36} />
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={styles.actionContainer}>
+                    <TouchableOpacity
+                      onPress={() => setSearchModal(true)}
+                      style={styles.search}>
+                      <Icon icon={search_gray} size={20} />
+                      <Text style={[common.text_gray, common.text_base]}>
+                        Search
                       </Text>
-                    </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.filterIcon}
+                      onPress={() => setFilterContainer(true)}>
+                      <Image source={filterIcon} style={styles.filterIconImg} />
+                    </TouchableOpacity>
+                  </View>
+                  <ProductsSort filter={filter} setFilter={setFilter} />
+                </>
+              }
+              numColumns={2}
+              contentContainerStyle={styles.gap}
+              columnWrapperStyle={styles.gap}
+              keyExtractor={item => item.productId.toLocaleString()}
+              ListFooterComponent={
+                <>
+                  {isFetchingNextPage || isPending ? (
+                    <ProductsSkeleton />
+                  ) : (
+                    <BottomSafeArea />
+                  )}
 
-                    <View style={styles.benefit}>
-                      {/* <View style={styles.discount}>
-                        <Text style={styles.discountText}>-15%</Text>
-                      </View> */}
-                      <Image source={newIcon} style={styles.newImg} />
-                    </View>
-                  </TouchableOpacity>
-                )}
-                data={products}
-                // ListEmptyComponent={
-                //   <Empty
-                //     style={{margin: 'auto', flex: 1}}
-                //     message="No products found!"
-                //   />
-                // }
-                showsVerticalScrollIndicator={false}
-                ListHeaderComponent={
-                  <>
-                    <View style={styles.header}>
-                      <Text style={common.titleLeft}>Products</Text>
-                      <TouchableOpacity
-                        disabled={isPending}
-                        onPress={() => stackNavigator.navigate('Cart')}>
-                        <IconOutline icon={cart_gray} size={36} />
-                      </TouchableOpacity>
-                    </View>
-
-                    {!!products.length && (
-                      <View style={styles.actionContainer}>
-                        <TouchableOpacity
-                          onPress={() => setSearchModal(true)}
-                          style={styles.search}>
-                          <Icon icon={search_gray} size={20} />
-                          <Text style={[common.text_gray, common.text_base]}>
-                            Search
-                          </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          style={styles.filterIcon}
-                          onPress={() => setFilterContainer(true)}>
-                          <Image
-                            source={filterIcon}
-                            style={styles.filterIconImg}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    )}
-                    {!!products?.length && (
-                      <ProductsSort filter={filter} setFilter={setFilter} />
-                    )}
-                  </>
+                  {isError && !isPending && !isFetchingNextPage ? (
+                    <Empty message="No products found!" />
+                  ) : null}
+                </>
+              }
+              onEndReachedThreshold={0.1}
+              onEndReached={() => {
+                if (hasNextPage) {
+                  fetchNextPage();
                 }
-                numColumns={2}
-                contentContainerStyle={styles.gap}
-                columnWrapperStyle={styles.gap}
-                keyExtractor={item => item.productId.toLocaleString()}
-                ListFooterComponent={
-                  // isPending || isFetchingNextPage ? (
-                  //   <ActivityIndicator />
-                  // ) : (
-                  //   <BottomSafeArea />
-                  // )
-                  <>
-                    {isFetchingNextPage || isPending ? (
-                      <ProductsSkeleton />
-                    ) : (
-                      <BottomSafeArea />
-                    )}
-
-                    {isError && !isPending && !isFetchingNextPage ? (
-                      <Empty message="No products found!" />
-                    ) : null}
-                  </>
-                }
-                onEndReachedThreshold={0.1}
-                onEndReached={() => {
-                  if (hasNextPage) {
-                    fetchNextPage();
-                  }
-                }}
-                refreshControl={
-                  <RefreshControl refreshing={isPending} onRefresh={refetch} />
-                }
-              />
-            </View>
+              }}
+              refreshControl={
+                <RefreshControl refreshing={isPending} onRefresh={refetch} />
+              }
+            />
           </View>
         </Drawer>
       </SafeArea>
@@ -226,6 +203,7 @@ const styles = StyleSheet.create({
   flatContainer: {
     width: '100%',
     flex: 1,
+    paddingHorizontal: 16,
   },
   productItem: {
     width: (WIDTH_DEVICE - 32) / 2,

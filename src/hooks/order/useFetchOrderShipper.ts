@@ -34,8 +34,6 @@ export default function useFetchOrderShipper({phone}: IProps) {
     retry: 1,
   });
 
-  console.log('data', data);
-
   return {
     orders: data as Ordered[],
     loading: isLoading,

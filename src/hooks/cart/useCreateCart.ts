@@ -56,8 +56,9 @@ export default function useCreateCart({
           navigation.push('Checkout');
         } else {
           await client.refetchQueries({queryKey: ['get-user-cart']});
+          onSuccess?.();
+
           if ((payload as CreateCartPayload)?.isBuyNow) {
-            onSuccess?.();
             navigation.push('Checkout');
           }
         }

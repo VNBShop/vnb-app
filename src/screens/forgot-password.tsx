@@ -29,6 +29,7 @@ import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
 import {OTPPayloadProps, confirmOTP} from '../api/auth/otp';
+import ResendOTP from '../components/resend-otp';
 
 type ForgotPasswordScreenProps = NativeStackScreenProps<
   RootStackProps,
@@ -215,6 +216,8 @@ export default function ForgotPasswordScreen({
               )}
             </View>
             <InputOtp onSubmit={onSubmitVerify} />
+
+            <ResendOTP email={getValues('email')} type="RESET_PASSWORD" />
 
             <BottomSafeArea />
           </View>

@@ -18,7 +18,7 @@ export default function Popular() {
 
   const {products, isError, isPending} = useFetchProduct({
     currentPage: 3,
-    pageSize: 8,
+    pageSize: 9,
   });
 
   if (isError) {

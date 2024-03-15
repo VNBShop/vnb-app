@@ -16,7 +16,7 @@ export default function useDeleteCart() {
   const client = useQueryClient();
   const insets = useSafeAreaInsets();
 
-  const {isPending, mutate} = useMutation<
+  const {isPending, mutate, variables} = useMutation<
     DataResponse,
     DataError,
     DeleteCartPayload
@@ -42,6 +42,7 @@ export default function useDeleteCart() {
   });
   return {
     onDeleteCart: mutate,
+    variables,
     loadingDeleteCart: isPending,
   };
 }

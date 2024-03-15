@@ -60,7 +60,10 @@ export default function ChangePasswordScreen({
     unknown
   >({
     mutationFn: payload => {
-      const res = axios.put(`${API_URL}/account/change-password`, payload);
+      const res = axios.put(
+        `${API_URL}/user-service/api/v1/account/change-password`,
+        payload,
+      );
       return res;
     },
     onSuccess: response => {
@@ -75,12 +78,18 @@ export default function ChangePasswordScreen({
       }
     },
     onError: error => {
-      Alert.alert('Error', error?.response?.data?.metadata?.message ?? '', [
-        {
-          text: 'Try again',
-          style: 'cancel',
-        },
-      ]);
+      console.log('err', error);
+
+      Alert.alert(
+        'Error',
+        (error?.response?.data?.metadata?.message as string) ?? '',
+        [
+          {
+            text: 'Try again',
+            style: 'cancel',
+          },
+        ],
+      );
     },
   });
 

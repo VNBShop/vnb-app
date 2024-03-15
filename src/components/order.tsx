@@ -5,7 +5,6 @@ import {
   FlatList,
   Image,
   RefreshControl,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -15,6 +14,7 @@ import {Modalize} from 'react-native-modalize';
 import {Portal} from 'react-native-portalize';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
+import {OrderedStatus} from '../../types/order';
 import {RootStackProps} from '../../types/route';
 import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import {color} from '../UIkit/palette';
@@ -30,7 +30,6 @@ import HrVertical from './ui/hrVertical';
 import {Icon} from './ui/icon';
 import OrHr from './ui/or-hr';
 import Tag from './ui/tag';
-import {OrderedStatus} from '../../types/order';
 
 type IProps = Partial<NativeStackScreenProps<RootStackProps, 'Ordered'>> & {
   status?: OrderedStatus;
@@ -44,6 +43,7 @@ export default function AllOrder({navigation, status}: IProps) {
     hasNextPage,
     isError,
     isFetchingNextPage,
+    isRefetching,
     isPending,
     refetch,
   } = useFetchOrdered({
@@ -90,133 +90,122 @@ export default function AllOrder({navigation, status}: IProps) {
   return (
     <>
       <View style={styles.container}>
-        {!!orders?.length && !isError ? (
-          <View>
-            <FlatList
-              renderItem={({item}) => (
-                <View style={styles.orderItem}>
-                  <Tag
-                    content={
-                      orderedStatusOption.find(
-                        o => o?.value === item?.orderStatus,
-                      )?.label ?? ''
-                    }
-                    textColor={colorsOrderedStatus[item?.orderStatus]?.color}
-                    backGroundColor={
-                      colorsOrderedStatus[item?.orderStatus]?.backgroundColor
-                    }
-                  />
-                  {item?.products?.map(prod => {
-                    return (
-                      <View key={prod?.productId}>
-                        <View style={styles.productItem}>
-                          <Image
-                            source={{
-                              uri: prod?.productImage ?? '',
-                            }}
-                            style={styles.productImg}
-                          />
+        <FlatList
+          renderItem={({item}) => (
+            <View style={styles.orderItem}>
+              <Tag
+                content={
+                  orderedStatusOption.find(o => o?.value === item?.orderStatus)
+                    ?.label ?? ''
+                }
+                textColor={colorsOrderedStatus[item?.orderStatus]?.color}
+                backGroundColor={
+                  colorsOrderedStatus[item?.orderStatus]?.backgroundColor
+                }
+              />
+              {item?.products?.map(prod => {
+                return (
+                  <View key={prod?.productId}>
+                    <View style={styles.productItem}>
+                      <Image
+                        source={{
+                          uri: prod?.productImage ?? '',
+                        }}
+                        style={styles.productImg}
+                      />
 
-                          <View style={styles.productInfo}>
-                            <Text>{prod?.productName}</Text>
+                      <View style={styles.productInfo}>
+                        <Text>{prod?.productName}</Text>
 
-                            <View style={styles.productPrice}>
-                              {!!prod?.productSizeName && (
-                                <View style={styles.tag}>
-                                  <Text style={styles.tagText}>
-                                    {prod.productSizeName}
-                                  </Text>
-                                </View>
-                              )}
-                              <HrVertical />
-                              <Text style={common.text_gray}>
-                                x{prod?.quantity}
+                        <View style={styles.productPrice}>
+                          {!!prod?.productSizeName && (
+                            <View style={styles.tag}>
+                              <Text style={styles.tagText}>
+                                {prod.productSizeName}
                               </Text>
                             </View>
-
-                            <View style={flex.between}>
-                              <Text style={common.text_secondary}>
-                                {prod?.priceUnit?.toLocaleString('vi-VI', {
-                                  currency: 'VND',
-                                  style: 'currency',
-                                })}
-                              </Text>
-                              {item?.orderStatus === 'SUCCESS' && (
-                                <TouchableOpacity style={styles.editContainer}>
-                                  <Icon size={20} icon={pen} />
-                                  <Text style={common.text_link}>Review</Text>
-                                </TouchableOpacity>
-                              )}
-                            </View>
-                          </View>
+                          )}
+                          <HrVertical />
+                          <Text style={common.text_gray}>
+                            x{prod?.quantity}
+                          </Text>
                         </View>
 
-                        {item?.orderStatus === 'SUCCESS' && <OrHr />}
+                        <View style={flex.between}>
+                          <Text style={common.text_secondary}>
+                            {prod?.priceUnit?.toLocaleString('vi-VI', {
+                              currency: 'VND',
+                              style: 'currency',
+                            })}
+                          </Text>
+                          {item?.orderStatus === 'SUCCESS' && (
+                            <TouchableOpacity style={styles.editContainer}>
+                              <Icon size={20} icon={pen} />
+                              <Text style={common.text_link}>Review</Text>
+                            </TouchableOpacity>
+                          )}
+                        </View>
                       </View>
-                    );
-                  })}
+                    </View>
 
-                  {item?.orderStatus === 'SUCCESS' && (
-                    <View style={styles.orderFooter}>
-                      {/* <TouchableOpacity style={styles.footerBtn}>
+                    {item?.orderStatus === 'SUCCESS' && <OrHr />}
+                  </View>
+                );
+              })}
+
+              {item?.orderStatus === 'SUCCESS' && (
+                <View style={styles.orderFooter}>
+                  {/* <TouchableOpacity style={styles.footerBtn}>
                         <Text>View detail</Text>
                       </TouchableOpacity> */}
-                      <Box />
+                  <Box />
 
-                      <TouchableOpacity
-                        onPress={() => {
-                          const payload: CreateCartPayload[] =
-                            item?.products?.map(p => ({
-                              productSizeId: p?.productSizeId,
-                              quantity: p?.quantity,
-                            }));
+                  <TouchableOpacity
+                    onPress={() => {
+                      const payload: CreateCartPayload[] = item?.products?.map(
+                        p => ({
+                          productSizeId: p?.productSizeId,
+                          quantity: p?.quantity,
+                        }),
+                      );
 
-                          onReDeem(payload);
-                        }}
-                        disabled={loading}
-                        style={[styles.footerBtn, styles.btnR]}>
-                        {loading && <ActivityIndicator />}
-                        <Text style={styles.textBtnR}>Redeem</Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
+                      onReDeem(payload);
+                    }}
+                    disabled={loading}
+                    style={[styles.footerBtn, styles.btnR]}>
+                    {loading && <ActivityIndicator />}
+                    <Text style={styles.textBtnR}>Redeem</Text>
+                  </TouchableOpacity>
                 </View>
               )}
-              data={orders}
-              showsVerticalScrollIndicator={false}
-              numColumns={1}
-              keyExtractor={item => item?.orderId?.toLocaleString()}
-              ListFooterComponent={
-                isPending || isFetchingNextPage ? (
-                  <ActivityIndicator />
-                ) : (
-                  <BottomSafeArea />
-                )
-              }
-              onEndReachedThreshold={0.1}
-              onEndReached={() => {
-                if (hasNextPage) {
-                  fetchNextPage();
-                }
-              }}
-              refreshControl={
-                <RefreshControl refreshing={isPending} onRefresh={refetch} />
-              }
-            />
-          </View>
-        ) : null}
+            </View>
+          )}
+          data={orders}
+          showsVerticalScrollIndicator={false}
+          numColumns={1}
+          keyExtractor={item => item?.orderId?.toLocaleString()}
+          ListFooterComponent={
+            <>
+              {(isFetchingNextPage || isPending) && <OrderedSkeleton />}
 
-        {(isFetchingNextPage || isPending) && <OrderedSkeleton />}
-
-        {isError && !isPending && !isFetchingNextPage && !orders?.length ? (
-          <ScrollView
-            refreshControl={
-              <RefreshControl refreshing={isPending} onRefresh={refetch} />
+              {isError &&
+              !isPending &&
+              !isFetchingNextPage &&
+              !orders?.length ? (
+                <Empty message="Your ordered is empty" />
+              ) : null}
+            </>
+          }
+          onEndReachedThreshold={0.1}
+          onEndReached={() => {
+            if (hasNextPage) {
+              fetchNextPage();
             }
-            showsVerticalScrollIndicator={false}>
-            <Empty message="Your ordered is empty" />
-          </ScrollView>
-        ) : null}
+          }}
+          refreshControl={
+            <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+          }
+        />
       </View>
 
       <Portal>

@@ -30,6 +30,7 @@ import {signUpSchema} from '../libs/validatetions/auth';
 import {DataError, DataResponse} from '../../types/auth';
 import {RootStackProps} from '../../types/route';
 import InputPassword from '../components/ui/input-password';
+import ResendOTP from '../components/resend-otp';
 
 type SignupScreenProps = NativeStackScreenProps<RootStackProps, 'Signup'>;
 
@@ -162,6 +163,7 @@ export default function SignupScreen({navigation}: SignupScreenProps) {
                         onChangeText={onChange}
                         placeholder="Password"
                         autoCapitalize="none"
+                        secureTextEntry={false}
                         style={styles.input}
                       />
                       <Text style={styles.error}>
@@ -181,6 +183,7 @@ export default function SignupScreen({navigation}: SignupScreenProps) {
                         onChangeText={onChange}
                         placeholder="Retype password"
                         autoCapitalize="none"
+                        secureTextEntry={false}
                         style={styles.input}
                       />
                       <Text style={styles.error}>
@@ -235,6 +238,8 @@ export default function SignupScreen({navigation}: SignupScreenProps) {
               )}
             </View>
             <InputOtp onSubmit={onSubmitVerify} />
+
+            <ResendOTP email={getValues('email')} type="REGISTER" />
 
             <BottomSafeArea />
           </View>

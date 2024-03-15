@@ -19,6 +19,7 @@ export default function useFetchOrdered({filter}: IProps) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    isRefetching,
     isError,
     refetch,
   } = useInfiniteQuery({
@@ -64,6 +65,7 @@ export default function useFetchOrdered({filter}: IProps) {
     isFetchingNextPage,
     isError,
     isPending,
+    isRefetching,
     refetch,
   };
 }
