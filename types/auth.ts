@@ -9,6 +9,7 @@ export type AuthProps = {
   provider: 'LOCAL' | 'GOOGLE';
   notificationRoom: string;
   userId: number;
+  roles: ('ADMIN' | 'USER' | 'STORE_OWNER' | 'STORE_MEMBER' | 'SHIPPER')[];
 };
 
 export type DataResponse<TData = unknown> = {

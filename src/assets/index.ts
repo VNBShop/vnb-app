@@ -73,3 +73,5 @@ export {default as orderWhite} from './orderwhite.png';
 export {default as cartWhite} from './cart-white.png';
 export {default as ball} from './ball.png';
 export {default as gear} from './gear.png';
+export {default as changepass} from './changepass.png';
+export {default as cat} from './cat.png';

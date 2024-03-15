@@ -23,6 +23,7 @@ import EditProfileScreen from '../screens/edit-profile';
 import PostDetailScreen from '../screens/post-detail';
 import PostSavedScreen from '../screens/post-saved';
 import UserProfileScreen from '../screens/user-profile';
+import ShipperScreen from '../screens/shipper';
 
 const Stack = createNativeStackNavigator<RootStackProps>();
 export default function StackNavigation() {
@@ -36,32 +37,45 @@ export default function StackNavigation() {
       {isFirstApp ? (
         <Stack.Screen name="Wellcome" component={WellcomeScreen} />
       ) : data?.accessToken ? (
-        <Stack.Group>
-          <Stack.Screen name="Root" component={TabNavigation} />
-          <Stack.Screen name="Ordered" component={OrderedScreen} />
-          <Stack.Screen name="Cart" component={CartScreen} />
-          <Stack.Screen name="Checkout" component={CheckoutScreen} />
-          <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
-          <Stack.Screen name="Profile" component={ProfileScreen} />
+        data?.roles?.includes('SHIPPER') ? (
+          <Stack.Group>
+            <Stack.Screen name="Shipper" component={ShipperScreen} />
+            <Stack.Screen
+              name="ChangePassword"
+              component={ChangePasswordScreen}
+            />
+          </Stack.Group>
+        ) : (
+          <Stack.Group>
+            <Stack.Screen name="Root" component={TabNavigation} />
+            <Stack.Screen name="Ordered" component={OrderedScreen} />
+            <Stack.Screen name="Cart" component={CartScreen} />
+            <Stack.Screen name="Checkout" component={CheckoutScreen} />
+            <Stack.Screen
+              name="ProductDetail"
+              component={ProductDetailScreen}
+            />
+            <Stack.Screen name="Profile" component={ProfileScreen} />
 
-          <Stack.Screen name="Identify" component={IdentifyScreen} />
-          <Stack.Screen
-            name="ConversationList"
-            component={ConversationListScreen}
-          />
-          <Stack.Screen
-            name="ConversationDetail"
-            component={ConversationDetailScreen}
-          />
-          <Stack.Screen
-            name="ChangePassword"
-            component={ChangePasswordScreen}
-          />
-          <Stack.Screen name="UpdateProfile" component={EditProfileScreen} />
-          <Stack.Screen name="PostDetail" component={PostDetailScreen} />
-          <Stack.Screen name="PostSaved" component={PostSavedScreen} />
-          <Stack.Screen name="UserProfile" component={UserProfileScreen} />
-        </Stack.Group>
+            <Stack.Screen name="Identify" component={IdentifyScreen} />
+            <Stack.Screen
+              name="ConversationList"
+              component={ConversationListScreen}
+            />
+            <Stack.Screen
+              name="ConversationDetail"
+              component={ConversationDetailScreen}
+            />
+            <Stack.Screen
+              name="ChangePassword"
+              component={ChangePasswordScreen}
+            />
+            <Stack.Screen name="UpdateProfile" component={EditProfileScreen} />
+            <Stack.Screen name="PostDetail" component={PostDetailScreen} />
+            <Stack.Screen name="PostSaved" component={PostSavedScreen} />
+            <Stack.Screen name="UserProfile" component={UserProfileScreen} />
+          </Stack.Group>
+        )
       ) : (
         <Stack.Group>
           <Stack.Screen name="LoginOption" component={LoginOptionScreen} />

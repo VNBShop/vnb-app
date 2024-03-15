@@ -37,6 +37,7 @@ export type RootStackProps = {
   UserProfile: {
     userId: number;
   };
+  Shipper: undefined;
 };
 
 export type BottomTabProps = {

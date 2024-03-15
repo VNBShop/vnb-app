@@ -31,6 +31,7 @@ import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import {InputOtp} from '../components/ui/input-otp';
 import {OTPPayloadProps, confirmOTP} from '../api/auth/otp';
 import InputPassword from '../components/ui/input-password';
+import ResendOTP from '../components/resend-otp';
 
 type LoginScreenProps = NativeStackScreenProps<RootStackProps, 'Login'>;
 
@@ -259,7 +260,10 @@ export default function LoginScreen({navigation}: LoginScreenProps) {
                 <ActivityIndicator color={color.secondary} />
               )}
             </View>
+
             <InputOtp onSubmit={onSubmitVerify} />
+
+            <ResendOTP email={getValues('email')} type="REGISTER" />
 
             <BottomSafeArea />
           </View>

@@ -2,18 +2,16 @@
 import * as React from 'react';
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {useNavigationState} from '@react-navigation/native';
+import {BottomTabProps} from '../../types/route';
+import {bell, bellGray} from '../assets';
+import {Icon} from '../components/ui/icon';
 import ForumScreen from '../screens/forum';
 import HomeScreen from '../screens/home';
 import NotificationScreen from '../screens/notification';
 import PersonalScreen from '../screens/personal';
 import ProductScreen from '../screens/products';
-import {BottomTabProps} from '../../types/route';
 import {tabOption} from './tab-options';
-import {useNavigationState} from '@react-navigation/native';
-import {Icon} from '../components/ui/icon';
-import {bell, bellGray} from '../assets';
-import useSocketNotify from '../hooks/forum/useSocketNotify';
-import useAuth from '../_store/useAuth';
 
 const Tab = createBottomTabNavigator<BottomTabProps>();
 
@@ -22,11 +20,11 @@ export default function TabNavigation() {
     state => state.routes[state.index].state?.index,
   );
 
-  const {data: user} = useAuth();
+  // const {data: user} = useAuth();
 
-  const socket = useSocketNotify({
-    room: user?.notificationRoom,
-  });
+  // const socket = useSocketNotify({
+  //   room: user?.notificationRoom,
+  // });
 
   return (
     <Tab.Navigator
