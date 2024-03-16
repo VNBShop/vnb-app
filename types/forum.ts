@@ -12,6 +12,7 @@ export type Post = {
   yourPost: boolean;
   saved: boolean;
   reported: boolean;
+  postAuthorId: number;
 };
 
 export type Comment = {

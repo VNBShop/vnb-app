@@ -1,6 +1,6 @@
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import useAxiosPrivate from '../../api/private/hook/useAxiosPrivate';
-import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {QueryKey, useMutation, useQueryClient} from '@tanstack/react-query';
 import {DataError, DataResponse} from '../../../types/auth';
 import {Post} from '../../../types/forum';
 import {FORUM_SERVICE} from '../../libs/microservice';
@@ -12,9 +12,10 @@ type DeletePostPayload = {
 
 type IProps = {
   onSuccess?: () => void;
+  queryKey: QueryKey;
 };
 
-export default function useDeletePost({onSuccess}: IProps = {}) {
+export default function useDeletePost({onSuccess, queryKey}: IProps) {
   const axios = useAxiosPrivate();
   const insets = useSafeAreaInsets();
   const client = useQueryClient();
@@ -30,7 +31,7 @@ export default function useDeletePost({onSuccess}: IProps = {}) {
     onSuccess: async response => {
       if (response?.data?.success) {
         await client.invalidateQueries({
-          queryKey: ['get-posts'],
+          queryKey: queryKey,
         });
         Toast.show({
           topOffset: insets.top,

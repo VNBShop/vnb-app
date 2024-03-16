@@ -27,14 +27,19 @@ export default function useChangeStatusOrder({onSuccess}: IProps) {
     ChangeStatusOrder
   >({
     mutationFn: async payload => {
-      return axios.put(`${ORDER_SERVICE}/orders/deliver/${payload?.orderId}`, {
-        orderStatus: payload?.orderStatus,
-        reason: '',
-      });
+      return await axios.put(
+        `${ORDER_SERVICE}/orders/deliver/${payload?.orderId}`,
+        {
+          orderStatus: payload?.orderStatus,
+          reason: '',
+        },
+      );
     },
     onSuccess: async (res, variables) => {
+      console.log('variables', res);
+
       if (res?.data?.success) {
-        await client.refetchQueries({
+        await client.invalidateQueries({
           queryKey: ['get-order-shipper', variables?.search],
         });
         Toast.show({

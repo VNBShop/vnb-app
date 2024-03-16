@@ -75,3 +75,4 @@ export {default as ball} from './ball.png';
 export {default as gear} from './gear.png';
 export {default as changepass} from './changepass.png';
 export {default as cat} from './cat.png';
+export {default as messengerwhite} from './messwhite.png';

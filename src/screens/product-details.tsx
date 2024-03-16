@@ -20,10 +20,12 @@ import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, spec} from '../UIkit/styles';
-import {getProductDetail} from '../api/public/product';
-import {back, heartOutline, share} from '../assets';
+import useAuth from '../_store/useAuth';
+import {axiosProduct} from '../api/axios/axios-product';
+import {back, heartOutline, messenger, share} from '../assets';
 import Empty from '../components/404';
 import CartButton from '../components/cart-button';
+import CommentProductCard from '../components/comment/comment-product-card';
 import ProductDescription from '../components/product-description';
 import ProductDetailAction from '../components/products/product-detail-action';
 import ProductDetailSkeleton from '../components/skeleton/product-detail-skeleton';
@@ -31,7 +33,11 @@ import {Icon} from '../components/ui/icon';
 import OrHr from '../components/ui/or-hr';
 import Tag from '../components/ui/tag';
 import useFetchProductComments from '../hooks/product/useFetchProductComments';
-import CommentCard from '../components/comment/comment-card';
+import {Controller, useForm} from 'react-hook-form';
+import KeyboardShift from '../UIkit/layouts/keyboard-shift';
+import useCreateProductCmt, {
+  CreateProductCmtPayload,
+} from '../hooks/product/useCreateCommentProduct';
 
 type ProductDetailScreenProps = NativeStackScreenProps<
   RootStackProps,
@@ -46,10 +52,33 @@ export default function ProductDetailScreen({
     params: {productId},
   } = route;
 
+  const form = useForm<{
+    comment: string;
+  }>({
+    defaultValues: {
+      comment: '',
+    },
+  });
+  const {data: user} = useAuth();
+
   const {data, isError, isLoading, isPending, refetch} =
     useQuery<ProductDetail>({
       queryKey: ['product', productId],
-      queryFn: ({queryKey}) => getProductDetail(queryKey[1]),
+      queryFn: async ({queryKey}) => {
+        const res = await axiosProduct.get(`/products/${queryKey[1]}`, {
+          headers: {
+            Authorization: user?.accessToken
+              ? `Bearer ${user?.accessToken}`
+              : null,
+          },
+        });
+
+        if (res?.data?.success) {
+          return res?.data?.metadata as ProductDetail;
+        } else {
+          throw new Error('');
+        }
+      },
       enabled: !!productId,
       refetchOnWindowFocus: true,
     });
@@ -63,6 +92,27 @@ export default function ProductDetailScreen({
   } = useFetchProductComments({
     productId: data?.productId as number,
   });
+
+  console.log('comments', data);
+
+  const {loading, onCreateCmt} = useCreateProductCmt({
+    onSuccess: () => {},
+  });
+
+  const onSubmit = ({comment}: {comment: string}) => {
+    console.log('comment', comment);
+
+    if (!comment || !data?.productId) {
+      return;
+    }
+
+    const payload: CreateProductCmtPayload = {
+      comment,
+      productId: data?.productId as number,
+    };
+
+    onCreateCmt(payload);
+  };
 
   if (isError) {
     return (
@@ -85,124 +135,161 @@ export default function ProductDetailScreen({
   }
 
   return (
-    <SafeArea>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon size={25} icon={back} />
-        </TouchableOpacity>
+    <KeyboardShift>
+      <SafeArea>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Icon size={25} icon={back} />
+          </TouchableOpacity>
 
-        <CartButton />
-      </View>
+          <CartButton />
+        </View>
 
-      {data ? (
-        <View style={styles.container}>
-          <ScrollView contentContainerStyle={spec.space_horizontal}>
-            <View style={styles.imageContainer}>
-              <Image
-                source={{uri: data?.productImages[0]}}
-                style={styles.imageProduct}
-              />
-            </View>
-
-            <View style={styles.productInfoContainer}>
-              <View style={styles.tag}>
-                <Tag
-                  content={data?.productStatus ? 'In stock' : 'Out stock'}
-                  textColor={data?.productStatus ? '#486d1e' : '#d70041'}
-                  backGroundColor={data?.productStatus ? '#e9f5d2' : '#ffe0e6'}
+        {data ? (
+          <View style={styles.container}>
+            <ScrollView contentContainerStyle={spec.space_horizontal}>
+              <View style={styles.imageContainer}>
+                <Image
+                  source={{uri: data?.productImages[0]}}
+                  style={styles.imageProduct}
                 />
               </View>
-              <Text style={common.text_base}>{data?.productName}</Text>
 
-              <View style={styles.priceContainer}>
-                <Text style={styles.price}>
-                  {data?.productPrice
-                    ? data.productPrice.toLocaleString('vi-VI', {
-                        style: 'currency',
-                        currency: 'VND',
-                      })
-                    : null}
-                </Text>
-                <Text style={styles.sale}>-15%</Text>
-              </View>
+              <View style={styles.productInfoContainer}>
+                <View style={styles.tag}>
+                  <Tag
+                    content={data?.productStatus ? 'In stock' : 'Out stock'}
+                    textColor={data?.productStatus ? '#486d1e' : '#d70041'}
+                    backGroundColor={
+                      data?.productStatus ? '#e9f5d2' : '#ffe0e6'
+                    }
+                  />
+                </View>
+                <Text style={common.text_base}>{data?.productName}</Text>
 
-              <View style={styles.footer}>
-                <AirbnbRating
-                  count={5}
-                  defaultRating={5}
-                  isDisabled
-                  showRating={false}
-                  size={18}
-                />
-                <View style={styles.footerAction}>
-                  <TouchableOpacity>
-                    <Icon size={28} icon={share} />
-                  </TouchableOpacity>
-                  <TouchableOpacity>
-                    <Icon size={25} icon={heartOutline} />
-                  </TouchableOpacity>
+                <View style={styles.priceContainer}>
+                  <Text style={styles.price}>
+                    {data?.productPrice
+                      ? data.productPrice.toLocaleString('vi-VI', {
+                          style: 'currency',
+                          currency: 'VND',
+                        })
+                      : null}
+                  </Text>
+                  <Text style={styles.sale}>-15%</Text>
+                </View>
+
+                <View style={styles.footer}>
+                  <AirbnbRating
+                    count={5}
+                    defaultRating={5}
+                    isDisabled
+                    showRating={false}
+                    size={18}
+                  />
+                  <View style={styles.footerAction}>
+                    <TouchableOpacity>
+                      <Icon size={28} icon={share} />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                      <Icon size={25} icon={heartOutline} />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
-            </View>
 
-            {Object.keys(data?.productDetail).length ? (
-              <ProductDescription content={data.productDetail} />
-            ) : null}
-            <OrHr marginVertical={24} />
+              {Object.keys(data?.productDetail).length ? (
+                <ProductDescription content={data.productDetail} />
+              ) : null}
+              <OrHr marginVertical={24} />
 
-            {data?.canComment && (
-              <TextInput
-                style={{
-                  padding: 16,
-                  height: 40,
-                  backgroundColor: color.divider,
-                  borderRadius: 9999,
-                }}
-                placeholder="Comment to rating this product"
-              />
-            )}
+              {data?.canComment && (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    gap: 16,
+                    alignItems: 'center',
+                  }}>
+                  <Controller
+                    control={form.control}
+                    name="comment"
+                    render={({field: {onChange, value}}) => (
+                      <TextInput
+                        value={value}
+                        onChangeText={onChange}
+                        style={{
+                          paddingHorizontal: 16,
+                          height: 40,
+                          flex: 1,
+                          backgroundColor: color.divider,
+                          borderRadius: 9999,
+                        }}
+                        placeholder="Comment to rating this product"
+                      />
+                    )}
+                  />
 
-            {!!comments?.length && comments.map(() => <CommentCard />)}
+                  {loading ? (
+                    <ActivityIndicator />
+                  ) : (
+                    <Icon
+                      icon={messenger}
+                      onPress={() => form.handleSubmit(onSubmit)()}
+                      size={25}
+                    />
+                  )}
+                </View>
+              )}
 
-            {!comments?.length && (loadingComments || isFetchingNextPage) && (
-              <View>
-                <ActivityIndicator />
-              </View>
-            )}
+              {!!comments?.length &&
+                comments.map(cmt => (
+                  <CommentProductCard
+                    productId={data?.productId}
+                    comment={cmt}
+                    key={cmt?.commentId}
+                  />
+                ))}
 
-            {!loadingComments && !isFetchingNextPage && !comments?.length && (
-              <Text
-                style={[
-                  common.text_gray,
-                  {
-                    textAlign: 'center',
-                    marginTop: 20,
-                  },
-                ]}>
-                Product has no comment yet
-              </Text>
-            )}
+              {!comments?.length && (loadingComments || isFetchingNextPage) && (
+                <View>
+                  <ActivityIndicator />
+                </View>
+              )}
 
-            {hasNextPage && !loadingComments && !isFetchingNextPage && (
-              <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                <TouchableOpacity onPress={() => fetchNextPage()}>
-                  <Text style={common.text_link}>Load more...</Text>
-                </TouchableOpacity>
-              </View>
-            )}
+              {!loadingComments && !isFetchingNextPage && !comments?.length && (
+                <Text
+                  style={[
+                    common.text_gray,
+                    {
+                      textAlign: 'center',
+                      marginTop: 20,
+                    },
+                  ]}>
+                  Product has no comment yet
+                </Text>
+              )}
 
-            <BottomSafeArea />
-          </ScrollView>
-        </View>
-      ) : null}
+              {hasNextPage && !loadingComments && !isFetchingNextPage && (
+                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                  <TouchableOpacity onPress={() => fetchNextPage()}>
+                    <Text style={common.text_link}>Load more...</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
 
-      {isLoading ? <ProductDetailSkeleton /> : null}
+              <BottomSafeArea />
+            </ScrollView>
+          </View>
+        ) : null}
 
-      <ProductDetailAction
-        navigation={navigation}
-        product={data as ProductDetail}
-      />
-    </SafeArea>
+        {isLoading ? <ProductDetailSkeleton /> : null}
+
+        <ProductDetailAction
+          navigation={navigation}
+          product={data as ProductDetail}
+        />
+      </SafeArea>
+    </KeyboardShift>
   );
 }
 

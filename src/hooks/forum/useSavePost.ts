@@ -1,6 +1,6 @@
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import useAxiosPrivate from '../../api/private/hook/useAxiosPrivate';
-import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {QueryKey, useMutation, useQueryClient} from '@tanstack/react-query';
 import {DataError, DataResponse} from '../../../types/auth';
 import {Post} from '../../../types/forum';
 import {FORUM_SERVICE} from '../../libs/microservice';
@@ -12,10 +12,10 @@ type SavePostPayload = {
 
 type IProps = {
   onSuccess?: () => void;
-  isDetail?: boolean;
+  queryKey: QueryKey;
 };
 
-export default function useSavePost({onSuccess, isDetail}: IProps = {}) {
+export default function useSavePost({onSuccess, queryKey}: IProps) {
   const axios = useAxiosPrivate();
   const insets = useSafeAreaInsets();
   const client = useQueryClient();
@@ -28,17 +28,13 @@ export default function useSavePost({onSuccess, isDetail}: IProps = {}) {
     mutationFn: async payload => {
       return axios.post(`${FORUM_SERVICE}/post-saves`, payload);
     },
-    onSuccess: async (response, payload) => {
+    onSuccess: async response => {
       if (response?.data?.success) {
-        if (isDetail) {
-          await client.invalidateQueries({
-            queryKey: ['get-post', payload?.postId],
-          });
-        } else {
-          await client.invalidateQueries({
-            queryKey: ['get-posts'],
-          });
-        }
+        console.log('queryKey >>', queryKey);
+
+        await client.invalidateQueries({
+          queryKey: queryKey,
+        });
 
         Toast.show({
           topOffset: insets.top,

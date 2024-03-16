@@ -26,7 +26,6 @@ export default function ForumScreen() {
     isError,
     isFetchingNextPage,
     isPending,
-    isRefetching,
     posts,
     refetch,
   } = useFetchPosts();
@@ -38,7 +37,7 @@ export default function ForumScreen() {
           <FlatList
             nestedScrollEnabled
             renderItem={({item}) => (
-              <PostItem post={item} queryKey="get-posts" />
+              <PostItem post={item} queryKey={['get-posts']} />
             )}
             data={posts}
             showsVerticalScrollIndicator={false}
@@ -85,7 +84,7 @@ export default function ForumScreen() {
               }
             }}
             refreshControl={
-              <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+              <RefreshControl refreshing={false} onRefresh={refetch} />
             }
           />
         </View>

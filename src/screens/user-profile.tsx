@@ -21,6 +21,8 @@ type IProps = NativeStackScreenProps<RootStackProps, 'UserProfile'>;
 
 export default function UserProfileScreen({navigation, route}: IProps) {
   const userId = route?.params?.userId;
+  console.log('userId >>', userId);
+
   const {
     fetchNextPage,
     hasNextPage,
@@ -46,7 +48,7 @@ export default function UserProfileScreen({navigation, route}: IProps) {
               <PostItem
                 orther={true}
                 post={item}
-                queryKey="get-posts-profile"
+                queryKey={['get-posts-user-acc', userId]}
               />
             )}
             data={posts}
@@ -71,7 +73,11 @@ export default function UserProfileScreen({navigation, route}: IProps) {
                 {loading ? (
                   <ProfileSkeleton />
                 ) : (
-                  <ProfileHeader user={userAccount as User} isUser={false} />
+                  <ProfileHeader
+                    user={userAccount as User}
+                    isUser={false}
+                    userId={userId}
+                  />
                 )}
               </>
             }

@@ -93,16 +93,27 @@ export default function AllOrder({navigation, status}: IProps) {
         <FlatList
           renderItem={({item}) => (
             <View style={styles.orderItem}>
-              <Tag
-                content={
-                  orderedStatusOption.find(o => o?.value === item?.orderStatus)
-                    ?.label ?? ''
-                }
-                textColor={colorsOrderedStatus[item?.orderStatus]?.color}
-                backGroundColor={
-                  colorsOrderedStatus[item?.orderStatus]?.backgroundColor
-                }
-              />
+              <View
+                // eslint-disable-next-line react-native/no-inline-styles
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                <Tag
+                  content={
+                    orderedStatusOption.find(
+                      o => o?.value === item?.orderStatus,
+                    )?.label ?? ''
+                  }
+                  textColor={colorsOrderedStatus[item?.orderStatus]?.color}
+                  backGroundColor={
+                    colorsOrderedStatus[item?.orderStatus]?.backgroundColor
+                  }
+                />
+
+                <Text style={common.text_gray}>Order id:{item?.orderId}</Text>
+              </View>
               {item?.products?.map(prod => {
                 return (
                   <View key={prod?.productId}>
@@ -139,7 +150,13 @@ export default function AllOrder({navigation, status}: IProps) {
                             })}
                           </Text>
                           {item?.orderStatus === 'SUCCESS' && (
-                            <TouchableOpacity style={styles.editContainer}>
+                            <TouchableOpacity
+                              onPress={() =>
+                                navigation?.navigate('ProductDetail', {
+                                  productId: prod?.productId,
+                                })
+                              }
+                              style={styles.editContainer}>
                               <Icon size={20} icon={pen} />
                               <Text style={common.text_link}>Review</Text>
                             </TouchableOpacity>

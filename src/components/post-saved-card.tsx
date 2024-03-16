@@ -34,6 +34,7 @@ export default function PostSavedCard({post, nav}: IProps) {
 
   const {loadingDelete, onUnsavePost} = useUnsavePost({
     onSuccess: onCloseAction,
+    queryKey: ['get-posts-saved'],
   });
 
   return (

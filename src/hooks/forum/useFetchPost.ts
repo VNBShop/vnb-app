@@ -18,7 +18,7 @@ export default function useFetchPost({postId}: IProps) {
         `${FORUM_SERVICE}/posts/${queryKey[1]}`,
       );
       if (res?.data?.success) {
-        return res?.data?.metadata;
+        return res?.data?.metadata as Post;
       } else {
         throw new Error('Cant not fetch this post');
       }

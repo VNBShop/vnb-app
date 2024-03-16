@@ -1,4 +1,3 @@
-import {ProductDetail} from '../../../types/product';
 import {axiosProduct} from '../axios/axios-product';
 
 export async function getProducts({
@@ -35,16 +34,6 @@ export async function getProducts({
       products: res?.data?.metadata?.data,
       total: res?.data?.metadata?.total,
     };
-  } else {
-    throw new Error('');
-  }
-}
-
-export async function getProductDetail(productId: any) {
-  const res = await axiosProduct.get(`/products/${productId}`);
-
-  if (res?.data?.success) {
-    return res?.data?.metadata as ProductDetail;
   } else {
     throw new Error('');
   }

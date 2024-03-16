@@ -20,7 +20,6 @@ import {
   shoe,
   skirt,
   tenis,
-  vnpay,
 } from '../assets';
 
 export const navList = [
@@ -138,12 +137,12 @@ export const paymentMethod = [
     value: 'CASH',
     logo: cashondelivery,
   },
-  {
-    id: 2,
-    label: 'VNPay',
-    value: 'CREDIT',
-    logo: vnpay,
-  },
+  // {
+  //   id: 2,
+  //   label: 'VNPay',
+  //   value: 'CREDIT',
+  //   logo: vnpay,
+  // },
 ];
 
 export const navPerson = [

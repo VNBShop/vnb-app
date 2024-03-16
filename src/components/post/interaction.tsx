@@ -1,19 +1,19 @@
 import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {QueryKey} from '@tanstack/react-query';
 import * as React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Post} from '../../../types/forum';
 import {RootStackProps} from '../../../types/route';
 import {color} from '../../UIkit/palette';
 import {commentOutline, heart, heartOutline} from '../../assets';
-import {Icon} from '../ui/icon';
 import useLikePost from '../../hooks/forum/useLikePost';
+import {Icon} from '../ui/icon';
 
 type IProps = {
   post: Post;
-  isPostDetail?: boolean;
-  queryKey?: 'get-posts' | 'get-posts-profile';
+  queryKey: QueryKey;
 };
-export default function PostAction({post, queryKey, isPostDetail}: IProps) {
+export default function PostAction({post, queryKey}: IProps) {
   const navigation = useNavigation<NavigationProp<RootStackProps>>();
 
   const [react, setReact] = React.useState(false);
@@ -23,7 +23,6 @@ export default function PostAction({post, queryKey, isPostDetail}: IProps) {
     setReact,
     setTotalReaction,
     queryKey,
-    ...(isPostDetail && {postId: post?.postId}),
   });
 
   React.useEffect(() => {

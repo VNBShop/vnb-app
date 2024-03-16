@@ -152,17 +152,28 @@ export default function ShipperScreen({navigation}: IProps) {
               }}>
               {orders.map(item => (
                 <View style={styles.orderItem}>
-                  <Tag
-                    content={
-                      orderedStatusOption.find(
-                        o => o?.value === item?.orderStatus,
-                      )?.label ?? ''
-                    }
-                    textColor={colorsOrderedStatus[item?.orderStatus]?.color}
-                    backGroundColor={
-                      colorsOrderedStatus[item?.orderStatus]?.backgroundColor
-                    }
-                  />
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}>
+                    <Tag
+                      content={
+                        orderedStatusOption.find(
+                          o => o?.value === item?.orderStatus,
+                        )?.label ?? ''
+                      }
+                      textColor={colorsOrderedStatus[item?.orderStatus]?.color}
+                      backGroundColor={
+                        colorsOrderedStatus[item?.orderStatus]?.backgroundColor
+                      }
+                    />
+
+                    <Text style={common.text_gray}>
+                      Order id:{item?.orderId}
+                    </Text>
+                  </View>
                   {item?.products?.map(prod => {
                     return (
                       <View key={prod?.productId}>
@@ -309,7 +320,13 @@ export default function ShipperScreen({navigation}: IProps) {
                   <View key={item?.value}>
                     <TouchableOpacity
                       disabled={loadingChange}
-                      onPress={() => onChangeStatusOrder(payload)}
+                      onPress={() =>
+                        onChangeStatusOrder({
+                          orderId: payload?.orderId,
+                          orderStatus: item.value,
+                          search: search,
+                        })
+                      }
                       style={{
                         alignItems: 'center',
                         justifyContent: 'center',

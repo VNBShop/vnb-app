@@ -2,7 +2,14 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import * as React from 'react';
 import {Controller, useForm} from 'react-hook-form';
-import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {v4 as uuidv4} from 'uuid';
 import {Chat, ChatCommunicate} from '../../types/messenger';
@@ -158,23 +165,37 @@ export default function ConversationDetailScreen({
               </>
             ) : (
               <>
-                <Avatar
-                  source={userAccount?.avatar ?? ''}
-                  username={
-                    userAccount?.firstName ??
-                    userAccount?.lastName ??
-                    userAccount?.email ??
-                    'Z'
-                  }
-                  size={40}
-                  isActive
-                />
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('UserProfile', {
+                      userId,
+                    })
+                  }>
+                  <Avatar
+                    source={userAccount?.avatar ?? ''}
+                    username={
+                      userAccount?.firstName ??
+                      userAccount?.lastName ??
+                      userAccount?.email ??
+                      'Z'
+                    }
+                    size={40}
+                    isActive
+                  />
+                </TouchableOpacity>
                 <View>
-                  <Text style={styles.name}>
-                    {userAccount?.firstName || userAccount?.lastName
-                      ? `${userAccount?.firstName} ${userAccount?.lastName}`
-                      : userAccount?.email}
-                  </Text>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('UserProfile', {
+                        userId,
+                      })
+                    }>
+                    <Text style={styles.name}>
+                      {userAccount?.firstName || userAccount?.lastName
+                        ? `${userAccount?.firstName} ${userAccount?.lastName}`
+                        : userAccount?.email}
+                    </Text>
+                  </TouchableOpacity>
                   <Text style={styles.active}>Active now</Text>
                 </View>
               </>

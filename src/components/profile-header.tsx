@@ -6,17 +6,33 @@ import {RootStackProps} from '../../types/route';
 import {User} from '../../types/user';
 import {color} from '../UIkit/palette';
 import {common} from '../UIkit/styles';
-import {birthday, gender, locationBlue, penWhite, phone} from '../assets';
+import {
+  birthday,
+  gender,
+  locationBlue,
+  messengerwhite,
+  penWhite,
+  phone,
+} from '../assets';
 import Avatar from './ui/avatar';
 import {Icon} from './ui/icon';
+import {useNavigation} from '@react-navigation/native';
 
 type IProps = {
   user: User;
+  userId?: number;
   isUser?: boolean;
   nav?: NativeStackNavigationProp<RootStackProps, 'Profile', undefined>;
 };
 
-export default function ProfileHeader({user, nav, isUser = true}: IProps) {
+export default function ProfileHeader({
+  user,
+  nav,
+  isUser = true,
+  userId,
+}: IProps) {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackProps, 'UserProfile'>>();
   return (
     <View style={styles.userContainer}>
       <View style={styles.userHead}>
@@ -38,13 +54,28 @@ export default function ProfileHeader({user, nav, isUser = true}: IProps) {
         <Text>{user?.email}</Text>
       </View>
 
-      {isUser && (
+      {isUser ? (
         <View style={styles.userAction}>
           <TouchableOpacity
             onPress={() => nav?.navigate('UpdateProfile', {user})}
             style={[styles.actionBtn, {backgroundColor: color.link}]}>
             <Icon icon={penWhite} size={18} />
             <Text style={[styles.actionText, common.text_white]}>Edit</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={styles.userAction}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('ConversationDetail', {
+                userId: userId as number,
+              })
+            }
+            style={[styles.actionBtn]}>
+            <Icon icon={messengerwhite} size={18} />
+            <Text style={[styles.actionText, common.text_white]}>
+              Messenger
+            </Text>
           </TouchableOpacity>
         </View>
       )}
@@ -162,6 +193,7 @@ const styles = StyleSheet.create({
   userAction: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'flex-end',
     gap: 16,
   },
   actionBtn: {
@@ -171,7 +203,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 13,
     borderRadius: 6,
-    gap: 4,
+    gap: 8,
+    backgroundColor: color.link,
   },
   actionText: {
     fontWeight: '500',

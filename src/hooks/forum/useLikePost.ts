@@ -1,6 +1,6 @@
 import {Dispatch, SetStateAction} from 'react';
 
-import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {QueryKey, useMutation, useQueryClient} from '@tanstack/react-query';
 
 import {Post} from '../../../types/forum';
 import useAxiosPrivate from '../../api/private/hook/useAxiosPrivate';
@@ -13,8 +13,7 @@ export type LikeActionPayload = {
 };
 
 type IProps = {
-  queryKey?: 'get-posts' | 'get-posts-profile';
-  postId?: Post['postId'];
+  queryKey: QueryKey;
   setReact: Dispatch<SetStateAction<boolean>>;
   setTotalReaction: Dispatch<SetStateAction<number>>;
 };
@@ -23,7 +22,6 @@ export default function useLikePost({
   setReact,
   setTotalReaction,
   queryKey,
-  postId,
 }: IProps) {
   const axios = useAxiosPrivate();
   const client = useQueryClient();
@@ -51,15 +49,9 @@ export default function useLikePost({
       }
     },
     onSettled: async () => {
-      if (postId) {
-        await client.invalidateQueries({
-          queryKey: ['get-post', postId],
-        });
-      } else {
-        await client.invalidateQueries({
-          queryKey: [queryKey],
-        });
-      }
+      await client.invalidateQueries({
+        queryKey: queryKey,
+      });
     },
   });
 

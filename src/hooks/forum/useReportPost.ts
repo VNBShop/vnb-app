@@ -1,10 +1,10 @@
+import {QueryKey, useMutation, useQueryClient} from '@tanstack/react-query';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import useAxiosPrivate from '../../api/private/hook/useAxiosPrivate';
-import {useMutation, useQueryClient} from '@tanstack/react-query';
+import Toast from 'react-native-toast-message';
 import {DataError, DataResponse} from '../../../types/auth';
 import {Post} from '../../../types/forum';
+import useAxiosPrivate from '../../api/private/hook/useAxiosPrivate';
 import {FORUM_SERVICE} from '../../libs/microservice';
-import Toast from 'react-native-toast-message';
 
 type ReportPostPayload = {
   postId: Post['postId'];
@@ -12,10 +12,10 @@ type ReportPostPayload = {
 
 type IProps = {
   onSuccess?: () => void;
-  isDetail?: boolean;
+  queryKey: QueryKey;
 };
 
-export default function useReportPost({onSuccess, isDetail}: IProps = {}) {
+export default function useReportPost({onSuccess, queryKey}: IProps) {
   const axios = useAxiosPrivate();
   const insets = useSafeAreaInsets();
   const client = useQueryClient();
@@ -28,17 +28,11 @@ export default function useReportPost({onSuccess, isDetail}: IProps = {}) {
     mutationFn: async payload => {
       return axios.post(`${FORUM_SERVICE}/post-reports`, payload);
     },
-    onSuccess: async (response, payload) => {
+    onSuccess: async response => {
       if (response?.data?.success) {
-        if (isDetail) {
-          await client.invalidateQueries({
-            queryKey: ['get-post', payload?.postId],
-          });
-        } else {
-          await client.invalidateQueries({
-            queryKey: ['get-posts'],
-          });
-        }
+        await client.invalidateQueries({
+          queryKey: queryKey,
+        });
 
         Toast.show({
           topOffset: insets.top,

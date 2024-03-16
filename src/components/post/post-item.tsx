@@ -23,11 +23,15 @@ import Status from '../ui/status';
 import PostAction from './interaction';
 import useReportPost from '../../hooks/forum/useReportPost';
 import useDeletePost from '../../hooks/forum/useDeletePost';
+import {QueryKey} from '@tanstack/react-query';
+import useUnsavePost from '../../hooks/user/useUnSavePost';
+import {useNavigation} from '@react-navigation/native';
+import useAuth from '../../_store/useAuth';
 
 type IProps = {
   post: Post;
   isPostDetail?: boolean;
-  queryKey?: 'get-posts' | 'get-posts-profile';
+  queryKey: QueryKey;
   orther?: boolean;
   nav?: NativeStackNavigationProp<RootStackProps, 'PostDetail', undefined>;
 };
@@ -39,6 +43,10 @@ export default function PostItem({
   queryKey,
   orther = false,
 }: IProps) {
+  const {data: user} = useAuth();
+
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackProps, 'PostDetail'>>();
   const refAction = React.useRef<Modalize>();
   const insets = useSafeAreaInsets();
 
@@ -50,17 +58,18 @@ export default function PostItem({
     onSuccess: () => {
       onCloseAction();
     },
-    isDetail: !!isPostDetail,
+    queryKey: queryKey,
   });
 
   const {loadingReport, onReportPost} = useReportPost({
     onSuccess: () => {
       onCloseAction();
     },
-    isDetail: !!isPostDetail,
+    queryKey: queryKey,
   });
 
   const {loadingDelete, onDeletePost} = useDeletePost({
+    queryKey,
     onSuccess: () => {
       onCloseAction();
       if (isPostDetail) {
@@ -69,11 +78,28 @@ export default function PostItem({
     },
   });
 
+  const {loadingDelete: loadingUnsave, onUnsavePost} = useUnsavePost({
+    onSuccess: () => {
+      onCloseAction();
+    },
+    queryKey: queryKey,
+  });
+
   return (
     <>
       <View style={styles.container}>
         <View style={styles.header}>
-          <View style={styles.headerInfo}>
+          <TouchableOpacity
+            style={styles.headerInfo}
+            onPress={() => {
+              if (user?.userId === post?.postAuthorId) {
+                navigation.navigate('Profile');
+              } else {
+                navigation.navigate('UserProfile', {
+                  userId: post?.postAuthorId,
+                });
+              }
+            }}>
             {!!nav && (
               <Icon
                 icon={back}
@@ -90,7 +116,7 @@ export default function PostItem({
               username={post?.postAuthorName ?? 'Z'}
             />
             <Text style={styles.username}>{post?.postAuthorName}</Text>
-          </View>
+          </TouchableOpacity>
 
           {!orther && (
             <TouchableOpacity
@@ -110,11 +136,7 @@ export default function PostItem({
           <ImageCarousel photos={post?.postImages ?? []} />
         )}
 
-        <PostAction
-          post={post}
-          queryKey={queryKey}
-          isPostDetail={isPostDetail}
-        />
+        <PostAction post={post} queryKey={queryKey} />
       </View>
 
       <Portal>
@@ -167,9 +189,13 @@ export default function PostItem({
                 <>
                   <TouchableOpacity
                     onPress={() =>
-                      onSavePost({
-                        postId: post?.postId,
-                      })
+                      post?.saved
+                        ? onUnsavePost({
+                            postId: post?.postId,
+                          })
+                        : onSavePost({
+                            postId: post?.postId,
+                          })
                     }
                     style={{
                       alignItems: 'center',
@@ -178,14 +204,14 @@ export default function PostItem({
                       flexDirection: 'row',
                       gap: 8,
                     }}
-                    disabled={!!post?.saved || loading}>
-                    {loading && <ActivityIndicator />}
+                    disabled={loading || loadingUnsave}>
+                    {(loading || loadingUnsave) && <ActivityIndicator />}
                     <Text
                       style={{
                         fontSize: 18,
-                        color: post?.saved ? color.success : color.link,
+                        color: post?.saved ? color.danger : color.link,
                       }}>
-                      {post?.saved ? 'Saved' : 'Save'}
+                      {post?.saved ? 'Unsave' : 'Save'}
                     </Text>
                   </TouchableOpacity>
                   <View

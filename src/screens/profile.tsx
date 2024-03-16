@@ -37,7 +37,7 @@ export default function ProfileScreen({navigation}: ProfileScreenProps) {
         <View>
           <FlatList
             renderItem={({item}) => (
-              <PostItem post={item} queryKey="get-posts-profile" />
+              <PostItem post={item} queryKey={['get-posts-profile']} />
             )}
             data={posts}
             showsVerticalScrollIndicator={false}

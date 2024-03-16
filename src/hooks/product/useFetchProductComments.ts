@@ -8,11 +8,6 @@ type IProps = {
   productId: ProductDetail['productId'];
 };
 
-type Filter = {
-  page: number;
-  productId: ProductDetail['productId'];
-};
-
 export type MetaProductCommentsResponse = {
   data: ProductComment[];
   maxPage: number;
@@ -33,23 +28,16 @@ export default function useFetchProductComments({productId}: IProps) {
     isLoading,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: [
-      'get-product-comments',
-      {
-        productId,
-      },
-    ],
-    queryFn: async ({queryKey}) => {
-      const filter = queryKey[1] as Filter;
-
+    queryKey: ['get-product-comments', productId],
+    queryFn: async ({queryKey, pageParam}) => {
       const res: DataResponse<{
         data: ProductComment[];
         total: number;
       }> = await axios.get(
-        `${PRODUCT_SERVICE}/products/comments/products/${filter.productId}`,
+        `${PRODUCT_SERVICE}/products/comments/products/${queryKey[1]}`,
         {
           params: {
-            currentPage: filter.page,
+            currentPage: pageParam,
             pageSize: 5,
           },
         },

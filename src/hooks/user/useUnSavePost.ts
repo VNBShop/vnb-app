@@ -1,4 +1,4 @@
-import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {QueryKey, useMutation, useQueryClient} from '@tanstack/react-query';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import {DataError, DataResponse} from '../../../types/auth';
@@ -12,9 +12,10 @@ type UnsavePostPayload = {
 
 type IProps = {
   onSuccess?: () => void;
+  queryKey: QueryKey;
 };
 
-export default function useUnsavePost({onSuccess}: IProps = {}) {
+export default function useUnsavePost({onSuccess, queryKey}: IProps) {
   const axios = useAxiosPrivate();
   const insets = useSafeAreaInsets();
   const client = useQueryClient();
@@ -25,12 +26,14 @@ export default function useUnsavePost({onSuccess}: IProps = {}) {
     UnsavePostPayload
   >({
     mutationFn: async payload => {
+      console.log('payload', payload);
+
       return axios.delete(`${FORUM_SERVICE}/post-saves/${payload?.postId}`);
     },
     onSuccess: async response => {
       if (response?.data?.success) {
         await client.invalidateQueries({
-          queryKey: ['get-posts-saved'],
+          queryKey: queryKey,
         });
         Toast.show({
           topOffset: insets.top,
@@ -44,6 +47,8 @@ export default function useUnsavePost({onSuccess}: IProps = {}) {
       }
     },
     onError: err => {
+      console.log('err unsaved', err);
+
       Toast.show({
         topOffset: insets.top,
         type: 'error',

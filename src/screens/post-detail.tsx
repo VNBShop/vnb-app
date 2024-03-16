@@ -61,6 +61,7 @@ export default function PostDetailScreen({route, navigation}: IProps) {
                     isPostDetail
                     post={postData as Post}
                     nav={navigation}
+                    queryKey={['get-post', postData?.postId]}
                   />
                   <View
                     style={{

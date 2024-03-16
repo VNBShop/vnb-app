@@ -24,6 +24,7 @@ import useAuth from '../_store/useAuth';
 import {useMutation} from '@tanstack/react-query';
 import {DataError, DataResponse} from '../../types/auth';
 import useAxiosPrivate from '../api/private/hook/useAxiosPrivate';
+import ModalSearchForum from '../components/modal-search-forum';
 
 export default function PersonalScreen() {
   const navigation =
@@ -77,7 +78,9 @@ export default function PersonalScreen() {
 
             <View style={flex.flex_row}>
               <IconOutline icon={setting} size={36} />
-              <IconOutline icon={search} size={36} />
+              <ModalSearchForum isProfile>
+                <IconOutline icon={search} size={36} />
+              </ModalSearchForum>
             </View>
           </View>
 
