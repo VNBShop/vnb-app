@@ -22,11 +22,9 @@ export default function useResendOTP({onSuccess}: IProps = {}) {
     ResendOTPPayload
   >({
     mutationFn: async payload => {
-      return await axios.get(
+      return await axios.post(
         `${API_URL}/user-service/api/v1/account/resend-confirmation-code`,
-        {
-          params: payload,
-        },
+        payload,
       );
     },
     onSuccess: res => {

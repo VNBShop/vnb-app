@@ -1,12 +1,13 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import * as React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {RootStackProps} from '../../types/route';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, flex, spec} from '../UIkit/styles';
-import {google, icon} from '../assets';
+import {icon} from '../assets';
+import GooogleSigninButton from '../components/google-signin';
 import OrHr from '../components/ui/or-hr';
-import {RootStackProps} from '../../types/route';
 
 type SignupOptionScreenProps = NativeStackScreenProps<
   RootStackProps,
@@ -32,11 +33,7 @@ export default function SignupOptionScreen({
             Create your account to discover wonderful things
           </Text>
 
-          <TouchableOpacity style={styles.button}>
-            <Image source={google} style={styles.button_logo} />
-            <Text style={styles.button_text}>Continue with google</Text>
-          </TouchableOpacity>
-
+          <GooogleSigninButton />
           <OrHr isText />
 
           <TouchableOpacity

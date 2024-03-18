@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 
 import {Socket, io} from 'socket.io-client';
 import useAuth from '../../_store/useAuth';
+import {API_SOCKET} from '@env';
 
 export default function useSocket() {
   const [socket, setSocket] = useState<Socket>();
@@ -10,7 +11,7 @@ export default function useSocket() {
 
   useEffect(() => {
     try {
-      const socketIns = io('http://0.tcp.ap.ngrok.io:19654', {
+      const socketIns = io(API_SOCKET, {
         withCredentials: true,
         query: {
           token: user?.accessToken,
