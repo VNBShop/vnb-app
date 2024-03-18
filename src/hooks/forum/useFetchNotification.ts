@@ -1,38 +1,39 @@
 import {useEffect, useState} from 'react';
 
 import {useQuery} from '@tanstack/react-query';
-
 import {DataResponse} from '../../../types/auth';
-import {ChatCard} from '../../../types/messenger';
+import {Notification} from '../../../types/forum';
 import useAxiosPrivate from '../../api/private/hook/useAxiosPrivate';
 import {MESSAGE_SERVICE} from '../../libs/microservice';
 
-export default function useFetchChats() {
+export default function useFetchNotify() {
   const axios = useAxiosPrivate();
 
+  const [notifys, setNotifys] = useState<Notification[]>([]);
   const [page, setPage] = useState(1);
-  const [messages, setMessages] = useState<ChatCard[]>([]);
 
-  const {data, refetch, isPending, isError} = useQuery({
-    queryKey: ['get-messages', page],
+  const {data, isPending, isError, refetch} = useQuery({
+    queryKey: ['get-posts', page],
     queryFn: async ({queryKey}) => {
       const res: DataResponse<{
-        messages: ChatCard[];
+        messages: {
+          notifications: Notification[];
+        };
         nextPage: number;
-      }> = await axios.get(`${MESSAGE_SERVICE}/messages`, {
+      }> = await axios.get(`${MESSAGE_SERVICE}/notifications`, {
         params: {
           currentPage: queryKey[1],
-          pageSize: 30,
+          pageSize: 10,
         },
       });
 
       if (res?.data?.success) {
         return {
-          messages: res?.data?.metadata?.messages as ChatCard[],
+          notifications: res?.data?.metadata?.messages?.notifications,
           hasNextPage: !!res?.data?.metadata?.nextPage ?? false,
         };
       } else {
-        throw new Error('Cant not fetch this message!');
+        throw new Error('');
       }
     },
     refetchOnWindowFocus: false,
@@ -43,16 +44,16 @@ export default function useFetchChats() {
   };
 
   useEffect(() => {
-    setMessages(prev => [...prev, ...(data?.messages ?? [])]);
-  }, [data?.messages]);
+    setNotifys(prev => [...prev, ...(data?.notifications ?? [])]);
+  }, [data?.notifications]);
 
   return {
-    messages,
-    isError,
+    notifys,
     isPending,
+    isError,
     hasNextPage: data?.hasNextPage,
-    setMessages,
     onFetchNextPage,
+    setNotifys,
     refetch,
   };
 }

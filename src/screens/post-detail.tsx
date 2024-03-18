@@ -20,10 +20,10 @@ import PostsSkeleton from '../components/products/posts-skeleton';
 type IProps = NativeStackScreenProps<RootStackProps, 'PostDetail'>;
 
 export default function PostDetailScreen({route, navigation}: IProps) {
-  const post = route?.params?.post;
+  const postId = route?.params?.postId;
 
   const {postData, isPending: fetchingData} = useFetchPost({
-    postId: post?.postId as number,
+    postId: postId as number,
   });
 
   const [isHaveUpdateCmt, setIsHaveUpdateComment] = React.useState(false);
@@ -36,7 +36,7 @@ export default function PostDetailScreen({route, navigation}: IProps) {
     isFetchingNextPage,
     isPending,
   } = useFetchComments({
-    postId: post?.postId as number,
+    postId: postId as number,
   });
 
   return (
@@ -46,7 +46,7 @@ export default function PostDetailScreen({route, navigation}: IProps) {
           data={comments}
           renderItem={({item}) => (
             <CommentCard
-              postId={post?.postId as number}
+              postId={postId as number}
               setIsHaveUpdateComment={setIsHaveUpdateComment}
               comment={item}
             />
@@ -110,7 +110,7 @@ export default function PostDetailScreen({route, navigation}: IProps) {
 
         {!isHaveUpdateCmt && <BottomSafeArea />}
 
-        {!isHaveUpdateCmt && <CommentAction post={post as Post} />}
+        {!isHaveUpdateCmt && <CommentAction post={postData as Post} />}
       </SafeArea>
     </KeyboardShift>
   );

@@ -24,3 +24,17 @@ export type Comment = {
   createdAt: Date;
   yourComment: boolean;
 };
+
+export type Notification = {
+  notificationId: number;
+  actorName: string;
+  content: string;
+  postId: Post['postId'];
+  isRead: boolean;
+  actorAvatar: string;
+};
+
+export type SocketProps<T> = {
+  type: 'NOTIFICATION' | 'CHAT' | 'CHAT_LIST';
+  data: T;
+};

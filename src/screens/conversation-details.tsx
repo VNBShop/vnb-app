@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import {v4 as uuidv4} from 'uuid';
+import {SocketProps} from '../../types/forum';
 import {Chat, ChatCommunicate} from '../../types/messenger';
 import {RootStackProps} from '../../types/route';
 import KeyboardShift from '../UIkit/layouts/keyboard-shift';
@@ -19,38 +19,22 @@ import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, flex} from '../UIkit/styles';
 import useAuth from '../_store/useAuth';
-import {back, messenger, photo} from '../assets';
+import {back, messenger} from '../assets';
 import ChatApp from '../components/chat';
 import ChatSkeleton from '../components/skeleton/chat-skeleton';
 import Avatar from '../components/ui/avatar';
 import {Icon} from '../components/ui/icon';
+import {useSocketContext} from '../context/socket';
 import useFetchChat from '../hooks/messenger/useFetchChat';
-import useSocketChat from '../hooks/messenger/useSocketChat';
 import useFetchUserAcc from '../hooks/user/useFetchUserAcc';
 
-type ConversationDetailScreenProps = NativeStackScreenProps<
-  RootStackProps,
-  'ConversationDetail'
->;
-export default function ConversationDetailScreen({
-  navigation,
-  route,
-}: ConversationDetailScreenProps) {
+type IProps = NativeStackScreenProps<RootStackProps, 'ConversationDetail'>;
+export default function ConversationDetailScreen({navigation, route}: IProps) {
   const userId = route.params?.userId;
-
-  const [chats, setChats] = React.useState<Chat[]>([]);
 
   const {data: user} = useAuth();
 
-  const {
-    room,
-    messages,
-    // fetchNextPage,
-    // hasNextPage,
-    isError,
-    isFetchingNextPage,
-    isPending,
-  } = useFetchChat({
+  const {chats, setChats, isError, isPending} = useFetchChat({
     chatId: userId,
   });
 
@@ -62,25 +46,21 @@ export default function ConversationDetailScreen({
     userId,
   });
 
-  const socket = useSocketChat({room: room as string});
+  const socket = useSocketContext();
 
   React.useEffect(() => {
-    if (JSON.stringify(messages) !== JSON.stringify(chats)) {
-      setChats(prev => [...messages, ...prev]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFetchingNextPage, isPending]);
-
-  React.useEffect(() => {
-    const handleMessageRead = (message: Chat) => {
-      setChats(prevChats => [...prevChats, message]);
+    const handleMessageRead = (message: SocketProps<Chat>) => {
+      if (message?.type === 'CHAT') {
+        setChats(prevChats => [...prevChats, message?.data]);
+      }
     };
 
-    socket?.on('read_message', handleMessageRead);
+    socket?.on('receive_message', handleMessageRead);
 
     return () => {
-      socket?.off('read_message', handleMessageRead);
+      socket?.off('receive_message', handleMessageRead);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
   const form = useForm<{chat: string}>({
@@ -112,7 +92,6 @@ export default function ConversationDetailScreen({
     const payload: ChatCommunicate = {
       content: chat,
       receiverId: userId as number,
-      room: room as string,
       senderId: user?.userId,
       isImage: false,
     };
@@ -120,7 +99,6 @@ export default function ConversationDetailScreen({
     setChats(prev => [
       ...prev,
       {
-        messageId: uuidv4() as any,
         content: chat,
         isImage: false,
         recipientId: userId as number,
@@ -203,31 +181,6 @@ export default function ConversationDetailScreen({
           </View>
         </View>
 
-        {!isFetchingNextPage && !isPending && (
-          <View style={styles.emptyContainer}>
-            <View>
-              <Avatar
-                source={userAccount?.avatar ?? ''}
-                username={
-                  userAccount?.firstName ??
-                  userAccount?.lastName ??
-                  userAccount?.email ??
-                  'Z'
-                }
-                size={60}
-              />
-            </View>
-
-            <Text style={[common.text_base]}>
-              {userAccount?.firstName || userAccount?.lastName
-                ? `${userAccount?.firstName} ${userAccount?.lastName}`
-                : userAccount?.email}
-            </Text>
-
-            <Text style={common.text_gray}>Let&apos; start conversation!</Text>
-          </View>
-        )}
-
         <View style={styles.messContainer}>
           {!!chats?.length && !isError && (
             <ScrollView
@@ -235,10 +188,38 @@ export default function ConversationDetailScreen({
               ref={scrollViewRef}
               onLayout={onLayout}
               onContentSizeChange={onContentSizeChange}>
-              <ChatApp chats={chats} />
+              <>
+                {!isPending && (
+                  <View style={styles.emptyContainer}>
+                    <View>
+                      <Avatar
+                        source={userAccount?.avatar ?? ''}
+                        username={
+                          userAccount?.firstName ??
+                          userAccount?.lastName ??
+                          userAccount?.email ??
+                          'Z'
+                        }
+                        size={60}
+                      />
+                    </View>
+
+                    <Text style={[common.text_base]}>
+                      {userAccount?.firstName || userAccount?.lastName
+                        ? `${userAccount?.firstName} ${userAccount?.lastName}`
+                        : userAccount?.email}
+                    </Text>
+
+                    <Text style={common.text_gray}>
+                      Let&apos; start conversation!
+                    </Text>
+                  </View>
+                )}
+                <ChatApp chats={chats} />
+              </>
             </ScrollView>
           )}
-          {!isError && (isFetchingNextPage || isPending) && <ChatSkeleton />}
+          {!isError && isPending && <ChatSkeleton />}
         </View>
 
         <View
@@ -248,7 +229,6 @@ export default function ConversationDetailScreen({
               display: isErrorFetchUser || loading ? 'none' : 'flex',
             },
           ]}>
-          <Icon size={32} icon={photo} />
           <Controller
             control={form.control}
             name="chat"

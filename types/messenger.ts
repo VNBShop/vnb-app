@@ -4,7 +4,6 @@ export type ChatResponse = {
 };
 
 export type Chat = {
-  messageId: number;
   senderId: number;
   recipientId: number;
   content: string;
@@ -12,7 +11,6 @@ export type Chat = {
 };
 
 export type ChatCommunicate = {
-  room: string;
   senderId: number;
   receiverId: number;
   content: string;

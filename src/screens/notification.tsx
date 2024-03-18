@@ -1,76 +1,132 @@
+/* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import {common, flex} from '../UIkit/styles';
-import {ellipsisBlack, filter, icon, search_gray} from '../assets';
-import {Icon, IconOutline} from '../components/ui/icon';
+import {
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import SafeArea from '../UIkit/layouts/safe-area';
-import Avatar from '../components/ui/avatar';
 import {color} from '../UIkit/palette';
+import {common, flex} from '../UIkit/styles';
+import {search_gray} from '../assets';
+import ModalSearchForum from '../components/modal-search-forum';
+import ChatCardSkeleton from '../components/skeleton/chat-card-skeleton';
+import Avatar from '../components/ui/avatar';
+import {IconOutline} from '../components/ui/icon';
+import {useNotifyContext} from '../context/notify';
+import {Notification, Post} from '../../types/forum';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackProps} from '../../types/route';
 
 export default function NotificationScreen() {
+  const noti = useNotifyContext();
+
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackProps, 'Root'>>();
+
+  const onRead = ({
+    id,
+    postId,
+  }: {
+    id: Notification['notificationId'];
+    postId: Post['postId'];
+  }) => {
+    if (!id) {
+      return;
+    }
+
+    // socket?.emit('read_notification', id)
+
+    noti?.setNotifys?.(prev => {
+      const findIndex = prev.findIndex(i => i?.notificationId === id);
+
+      if (findIndex !== -1) {
+        const newNotifys = [...prev];
+
+        newNotifys[findIndex] = {
+          ...newNotifys[findIndex],
+          isRead: true,
+        };
+
+        return newNotifys;
+      }
+      return prev;
+    });
+
+    navigation.navigate('PostDetail', {
+      postId: postId,
+    });
+  };
+
   return (
     <SafeArea>
       <View style={styles.header}>
         <Text style={common.titleLeft}>Notification</Text>
 
         <View style={flex.flex_row}>
-          <IconOutline icon={filter} size={36} />
-          <IconOutline icon={search_gray} size={36} />
+          <ModalSearchForum isProfile>
+            <IconOutline icon={search_gray} size={36} />
+          </ModalSearchForum>
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.textTitle}>All</Text>
-
-        <View style={styles.notifyContainer}>
-          <View style={[styles.notifyItem, styles.notRead]}>
-            <Avatar size={50} source={icon} username="VNB" />
-
-            <Text style={styles.notifyContent} numberOfLines={2}>
-              Your product has been processing by{' '}
-              <Text style={common.fontBase}>admin</Text>, please check your
-              phone, we will call you to confirm ordered
-            </Text>
-
-            <Icon icon={ellipsisBlack} size={35} />
-          </View>
-
-          <View style={styles.notifyItem}>
+      <FlatList
+        data={noti?.notifys}
+        renderItem={({item}) => (
+          <TouchableOpacity
+            onPress={() =>
+              onRead({
+                id: item?.notificationId,
+                postId: item?.postId,
+              })
+            }
+            style={[styles.notifyItem, !item?.isRead && styles.notRead]}>
             <Avatar
               size={50}
-              source={
-                'https://res.cloudinary.com/drpksxymr/image/upload/v1693791342/j2d6vpciwkyx1viznov0.jpg'
-              }
-              username="VNB"
+              source={item?.actorAvatar ?? ''}
+              username={item?.actorName ?? 'Z'}
             />
 
             <Text style={styles.notifyContent} numberOfLines={2}>
-              <Text style={common.fontBase}>Taroa</Text> has been commented on
-              your post: You are the best on my mind
+              <Text style={common.fontBase}>{item?.actorName}</Text>{' '}
+              {item?.content}
             </Text>
+          </TouchableOpacity>
+        )}
+        keyExtractor={item => item?.notificationId?.toString()}
+        ListHeaderComponent={<Text style={styles.textTitle}>All</Text>}
+        ListFooterComponent={
+          <>
+            {!noti?.isPending && !noti?.notifys?.length && (
+              <Text
+                style={{
+                  alignItems: 'center',
+                  color: color.gray,
+                }}>
+                You has no notifications yet!
+              </Text>
+            )}
 
-            <Icon icon={ellipsisBlack} size={35} />
-          </View>
-
-          <View style={[styles.notifyItem, styles.notRead]}>
-            <Avatar
-              size={50}
-              source={
-                'https://res.cloudinary.com/drpksxymr/image/upload/v1692624061/emtrangtri.jpg'
-              }
-              username="VNB"
-            />
-
-            <Text style={styles.notifyContent} numberOfLines={2}>
-              <Text style={common.fontBase}>Meow Meow</Text> has been commented
-              on your post: Well, that is nice racket, your
-            </Text>
-
-            <Icon icon={ellipsisBlack} size={35} />
-          </View>
-        </View>
-      </ScrollView>
+            {noti?.isPending && <ChatCardSkeleton />}
+          </>
+        }
+        showsVerticalScrollIndicator={false}
+        numColumns={1}
+        onEndReachedThreshold={0.1}
+        onEndReached={() => {
+          if (noti?.hasNextPage) {
+            noti?.onFetchNextPage();
+          }
+        }}
+        refreshControl={
+          <RefreshControl refreshing={false} onRefresh={noti?.refetch} />
+        }
+      />
     </SafeArea>
   );
 }

@@ -57,7 +57,7 @@ export default function PostAction({post, queryKey}: IProps) {
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('PostDetail', {
-                post: post,
+                postId: post?.postId,
               })
             }>
             <Icon size={25} icon={commentOutline} />

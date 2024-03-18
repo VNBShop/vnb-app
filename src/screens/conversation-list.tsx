@@ -13,6 +13,9 @@ import ModalSearchForum from '../components/modal-search-forum';
 import ChatCardSkeleton from '../components/skeleton/chat-card-skeleton';
 import {Icon} from '../components/ui/icon';
 import useFetchChats from '../hooks/messenger/useFetchChats';
+import {useSocketContext} from '../context/socket';
+import {ChatCard} from '../../types/messenger';
+import {SocketProps} from '../../types/forum';
 
 type ConversationListScreenProps = NativeStackScreenProps<
   RootStackProps,
@@ -23,14 +26,47 @@ export default function ConversationListScreen({
   navigation,
 }: ConversationListScreenProps) {
   const {
-    fetchNextPage,
     hasNextPage,
     refetch,
-    isFetchingNextPage,
     isPending,
     messages,
-    isRefetching,
+    onFetchNextPage,
+    setMessages,
   } = useFetchChats();
+
+  const socket = useSocketContext();
+
+  React.useEffect(() => {
+    const handleMessageRead = (message: SocketProps<ChatCard>) => {
+      console.log('message message', message);
+
+      if (message?.type === 'CHAT_LIST') {
+        setMessages(prevChats => {
+          const findIndex = prevChats?.findIndex(
+            i => i?.receiverId === message?.data?.receiverId,
+          );
+
+          if (findIndex !== -1) {
+            const newMess = prevChats?.filter(
+              i => i?.receiverId !== message?.data?.receiverId,
+            );
+
+            return [message?.data, ...newMess];
+          }
+
+          return [message?.data, ...prevChats];
+        });
+      }
+    };
+
+    socket?.on('update_list_message', handleMessageRead);
+
+    return () => {
+      socket?.off('update_list_message', handleMessageRead);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
+
   return (
     <SafeArea>
       <View style={styles.header}>
@@ -60,12 +96,8 @@ export default function ConversationListScreen({
             keyExtractor={item => item?.receiverId?.toLocaleString()}
             ListFooterComponent={
               <>
-                {isFetchingNextPage || isPending ? (
-                  <ChatCardSkeleton />
-                ) : (
-                  <BottomSafeArea />
-                )}
-                {!messages?.length && !isFetchingNextPage && !isPending ? (
+                {isPending ? <ChatCardSkeleton /> : <BottomSafeArea />}
+                {!messages?.length && !isPending ? (
                   <View
                     // eslint-disable-next-line react-native/no-inline-styles
                     style={{justifyContent: 'center', alignItems: 'center'}}>
@@ -80,11 +112,11 @@ export default function ConversationListScreen({
             onEndReachedThreshold={0.1}
             onEndReached={() => {
               if (hasNextPage) {
-                fetchNextPage();
+                onFetchNextPage();
               }
             }}
             refreshControl={
-              <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+              <RefreshControl refreshing={false} onRefresh={refetch} />
             }
           />
         </View>

@@ -15,20 +15,26 @@ import RQProvider from './src/components/provider';
 import LoadingScreen from './src/components/ui/loading-screen';
 import Navigation from './src/routes';
 import 'react-native-get-random-values';
+import {SocketProvider} from './src/context/socket';
+import {NotifyProvider} from './src/context/notify';
 
 function App() {
   return (
     <GestureHandlerRootView style={common.flex_full}>
       <SafeAreaProvider>
         <RQProvider>
-          <StatusBar
-            translucent={true}
-            barStyle={'dark-content'}
-            backgroundColor={'transparent'}
-          />
-          <Navigation />
-          <LoadingScreen />
-          <Toast />
+          <SocketProvider>
+            <NotifyProvider>
+              <StatusBar
+                translucent={true}
+                barStyle={'dark-content'}
+                backgroundColor={'transparent'}
+              />
+              <Navigation />
+              <LoadingScreen />
+              <Toast />
+            </NotifyProvider>
+          </SocketProvider>
         </RQProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

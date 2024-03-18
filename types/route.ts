@@ -31,7 +31,7 @@ export type RootStackProps = {
     user?: User;
   };
   PostDetail: {
-    post?: Partial<Post>;
+    postId: Post['postId'];
   };
   PostSaved: undefined;
   UserProfile: {
