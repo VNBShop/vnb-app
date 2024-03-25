@@ -2,6 +2,7 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useQuery} from '@tanstack/react-query';
 import * as React from 'react';
+import {Controller, useForm} from 'react-hook-form';
 import {
   ActivityIndicator,
   Image,
@@ -17,12 +18,13 @@ import {AirbnbRating} from 'react-native-ratings';
 import {ProductDetail} from '../../types/product';
 import {RootStackProps} from '../../types/route';
 import BottomSafeArea from '../UIkit/layouts/bottom-safe-area';
+import KeyboardShift from '../UIkit/layouts/keyboard-shift';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, spec} from '../UIkit/styles';
 import useAuth from '../_store/useAuth';
 import {axiosProduct} from '../api/axios/axios-product';
-import {back, heartOutline, messenger, share} from '../assets';
+import {back, heart, messenger} from '../assets';
 import Empty from '../components/404';
 import CartButton from '../components/cart-button';
 import CommentProductCard from '../components/comment/comment-product-card';
@@ -32,12 +34,10 @@ import ProductDetailSkeleton from '../components/skeleton/product-detail-skeleto
 import {Icon} from '../components/ui/icon';
 import OrHr from '../components/ui/or-hr';
 import Tag from '../components/ui/tag';
-import useFetchProductComments from '../hooks/product/useFetchProductComments';
-import {Controller, useForm} from 'react-hook-form';
-import KeyboardShift from '../UIkit/layouts/keyboard-shift';
 import useCreateProductCmt, {
   CreateProductCmtPayload,
 } from '../hooks/product/useCreateCommentProduct';
+import useFetchProductComments from '../hooks/product/useFetchProductComments';
 
 type ProductDetailScreenProps = NativeStackScreenProps<
   RootStackProps,
@@ -92,8 +92,6 @@ export default function ProductDetailScreen({
   } = useFetchProductComments({
     productId: data?.productId as number,
   });
-
-  console.log('comments', data);
 
   const {loading, onCreateCmt} = useCreateProductCmt({
     onSuccess: () => {},
@@ -176,7 +174,7 @@ export default function ProductDetailScreen({
                         })
                       : null}
                   </Text>
-                  <Text style={styles.sale}>-15%</Text>
+                  {/* <Text style={styles.sale}>-15%</Text> */}
                 </View>
 
                 <View style={styles.footer}>
@@ -188,11 +186,11 @@ export default function ProductDetailScreen({
                     size={18}
                   />
                   <View style={styles.footerAction}>
-                    <TouchableOpacity>
+                    {/* <TouchableOpacity>
                       <Icon size={28} icon={share} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <TouchableOpacity>
-                      <Icon size={25} icon={heartOutline} />
+                      <Icon size={25} icon={heart} />
                     </TouchableOpacity>
                   </View>
                 </View>

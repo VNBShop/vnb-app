@@ -33,7 +33,17 @@ export default function TabNavigation() {
   React.useEffect(() => {
     const onReceiveNoti = (notify: SocketProps<Notification>) => {
       if (notify?.type === 'NOTIFICATION') {
-        noti?.setNotifys?.(prev => [notify?.data, ...prev]);
+        console.log('notify?.data', notify?.data);
+
+        noti?.setNotifys?.(prev => {
+          console.log('prev', prev);
+
+          const pr = [notify?.data, ...prev];
+
+          console.log('pr', pr.length);
+
+          return pr;
+        });
       }
     };
 
@@ -116,7 +126,7 @@ export default function TabNavigation() {
                         fontSize: 9,
                         color: color.white,
                       }}>
-                      {noti?.notifys.filter(n => !n?.isRead)?.length}
+                      {noti?.notifys?.filter(n => !n?.isRead)?.length}
                     </Text>
                   </View>
                 )}

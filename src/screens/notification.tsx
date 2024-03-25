@@ -36,7 +36,7 @@ export default function NotificationScreen() {
     id: Notification['notificationId'];
     postId: Post['postId'];
   }) => {
-    if (!id) {
+    if (!id || !postId) {
       return;
     }
 
@@ -147,6 +147,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     paddingHorizontal: 16,
+    marginBottom: 8,
   },
   notifyContainer: {
     marginTop: 16,

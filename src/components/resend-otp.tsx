@@ -11,13 +11,13 @@ type IProps = {
 };
 
 export default function ResendOTP({type, email}: IProps) {
-  const [minutes, setMinutes] = useState(1);
-  const [seconds, setSeconds] = useState(30);
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(60);
 
   const {loading, onResendOTP} = useResendOTP({
     onSuccess() {
-      setMinutes(1);
-      setSeconds(30);
+      setMinutes(0);
+      setSeconds(60);
     },
   });
 

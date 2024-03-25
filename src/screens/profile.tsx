@@ -62,7 +62,7 @@ export default function ProfileScreen({navigation}: ProfileScreenProps) {
                   <ProfileHeader user={user as User} nav={navigation} />
                 )}
 
-                <CreatePost pageKey="get-posts" />
+                <CreatePost pageKey="get-posts-profile" />
               </>
             }
             ListFooterComponent={

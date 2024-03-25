@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import * as React from 'react';
 import {
@@ -30,6 +31,7 @@ import HrVertical from './ui/hrVertical';
 import {Icon} from './ui/icon';
 import OrHr from './ui/or-hr';
 import Tag from './ui/tag';
+import dayjs from 'dayjs';
 
 type IProps = Partial<NativeStackScreenProps<RootStackProps, 'Ordered'>> & {
   status?: OrderedStatus;
@@ -41,7 +43,6 @@ export default function AllOrder({navigation, status}: IProps) {
     orders,
     fetchNextPage,
     hasNextPage,
-    isError,
     isFetchingNextPage,
     isRefetching,
     isPending,
@@ -94,7 +95,6 @@ export default function AllOrder({navigation, status}: IProps) {
           renderItem={({item}) => (
             <View style={styles.orderItem}>
               <View
-                // eslint-disable-next-line react-native/no-inline-styles
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
@@ -143,7 +143,7 @@ export default function AllOrder({navigation, status}: IProps) {
                         </View>
 
                         <View style={flex.between}>
-                          <Text style={common.text_secondary}>
+                          <Text style={common.text_gray}>
                             {prod?.priceUnit?.toLocaleString('vi-VI', {
                               currency: 'VND',
                               style: 'currency',
@@ -170,30 +170,64 @@ export default function AllOrder({navigation, status}: IProps) {
                 );
               })}
 
-              {item?.orderStatus === 'SUCCESS' && (
-                <View style={styles.orderFooter}>
-                  {/* <TouchableOpacity style={styles.footerBtn}>
-                        <Text>View detail</Text>
-                      </TouchableOpacity> */}
-                  <Box />
+              <OrHr />
 
-                  <TouchableOpacity
-                    onPress={() => {
-                      const payload: CreateCartPayload[] = item?.products?.map(
-                        p => ({
-                          productSizeId: p?.productSizeId,
-                          quantity: p?.quantity,
-                        }),
-                      );
+              <View
+                style={{
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <Text style={common.text_gray}>
+                  {item?.orderDate
+                    ? dayjs(item?.orderDate)?.format('HH:mm:ss DD/MM/YYYY')
+                    : '-'}
+                </Text>
 
-                      onReDeem(payload);
-                    }}
-                    disabled={loading}
-                    style={[styles.footerBtn, styles.btnR]}>
-                    {loading && <ActivityIndicator />}
-                    <Text style={styles.textBtnR}>Redeem</Text>
-                  </TouchableOpacity>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 4,
+                  }}>
+                  <Text>Total: </Text>
+                  <Text style={common.text_secondary}>
+                    {(
+                      item?.totalPrice - (item?.totalDiscount ?? 0)
+                    ).toLocaleString('vi-VI', {
+                      currency: 'VND',
+                      style: 'currency',
+                    })}
+                  </Text>
                 </View>
+              </View>
+
+              {item?.orderStatus === 'SUCCESS' && (
+                <>
+                  <OrHr />
+                  <View style={styles.orderFooter}>
+                    {/* <TouchableOpacity style={styles.footerBtn}>
+                          <Text>View detail</Text>
+                        </TouchableOpacity> */}
+                    <Box />
+
+                    <TouchableOpacity
+                      onPress={() => {
+                        const payload: CreateCartPayload[] =
+                          item?.products?.map(p => ({
+                            productSizeId: p?.productSizeId,
+                            quantity: p?.quantity,
+                          }));
+
+                        onReDeem(payload);
+                      }}
+                      disabled={loading}
+                      style={[styles.footerBtn, styles.btnR]}>
+                      {loading && <ActivityIndicator />}
+                      <Text style={styles.textBtnR}>Redeem</Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
               )}
             </View>
           )}
@@ -205,11 +239,13 @@ export default function AllOrder({navigation, status}: IProps) {
             <>
               {(isFetchingNextPage || isPending) && <OrderedSkeleton />}
 
-              {isError &&
-              !isPending &&
-              !isFetchingNextPage &&
-              !orders?.length ? (
-                <Empty message="Your ordered is empty" />
+              {!isPending && !isFetchingNextPage && !orders?.length ? (
+                <View
+                  style={{
+                    marginTop: 50,
+                  }}>
+                  <Empty message="Your ordered is empty" />
+                </View>
               ) : null}
             </>
           }

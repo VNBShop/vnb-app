@@ -19,7 +19,7 @@ export type CreatePostPayload = {
   postAssets?: Photo[];
 };
 
-export default function useCreatePost({onSuccess, onError}: IProps) {
+export default function useCreatePost({onSuccess, onError, pageKey}: IProps) {
   const axios = useAxiosPrivate();
   const client = useQueryClient();
   const insets = useSafeAreaInsets();
@@ -35,13 +35,15 @@ export default function useCreatePost({onSuccess, onError}: IProps) {
     onSuccess: async res => {
       if (res?.data?.success) {
         await client.refetchQueries({
-          queryKey: ['get-posts'],
+          queryKey: [pageKey],
         });
         onSuccess();
       }
     },
     onError: err => {
       onError();
+      console.log('err', err);
+
       Toast.show({
         type: 'error',
         text2:

@@ -22,6 +22,7 @@ export type Ordered = {
   totalPrice: number;
   products: ProductOrdered[];
   orderDate: Date;
+  totalDiscount: number;
 };
 
 export type ProductOrdered = {
@@ -41,3 +42,14 @@ export type OrderedStatus =
   | 'RE_DELIVERING'
   | 'SUCCESS'
   | 'DELIVER_FAILED';
+
+export type Voucher = {
+  voucherId: number;
+  voucherCode: string;
+  maxDiscount: number;
+  voucherAmount: number;
+  quantity: number;
+  voucherPercent: number;
+  startedAt: string;
+  expiredAt: string;
+};

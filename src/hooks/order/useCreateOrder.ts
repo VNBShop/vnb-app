@@ -10,6 +10,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 export type CreateOrderPayload = {
   cartIds: number[];
   paymentType: PaymentType;
+  voucherCode?: string;
 };
 
 type IProps = {
