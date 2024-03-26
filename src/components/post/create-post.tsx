@@ -126,6 +126,7 @@ export default function CreatePost({pageKey}: IProps) {
     } else {
       onCreatePost({
         content: status,
+        postAssets: [],
       });
     }
   };
@@ -135,7 +136,7 @@ export default function CreatePost({pageKey}: IProps) {
       setLoading(false);
       setPhotos([]);
     };
-  }, []);
+  }, [modal]);
 
   return (
     <>
