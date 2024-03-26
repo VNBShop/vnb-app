@@ -76,3 +76,6 @@ export {default as gear} from './gear.png';
 export {default as changepass} from './changepass.png';
 export {default as cat} from './cat.png';
 export {default as messengerwhite} from './messwhite.png';
+export {default as heartWhite} from './heartWhite.png';
+export {default as commentWhite} from './commentWhite.png';
+export {default as bellWhite} from './bellWhite.png';

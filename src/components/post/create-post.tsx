@@ -117,8 +117,6 @@ export default function CreatePost({pageKey}: IProps) {
         }
       }
 
-      console.log('uploadPhotosCloudinary >>', uploadPhotosCloudinary);
-
       const payload: CreatePostPayload = {
         content: status,
         postAssets: uploadPhotosCloudinary,
@@ -131,6 +129,13 @@ export default function CreatePost({pageKey}: IProps) {
       });
     }
   };
+
+  React.useEffect(() => {
+    return () => {
+      setLoading(false);
+      setPhotos([]);
+    };
+  }, []);
 
   return (
     <>

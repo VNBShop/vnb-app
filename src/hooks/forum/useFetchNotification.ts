@@ -13,7 +13,7 @@ export default function useFetchNotify() {
   const [page, setPage] = useState(1);
 
   const {data, isPending, isError, refetch} = useQuery({
-    queryKey: ['get-posts', page],
+    queryKey: ['get-notifys', page],
     queryFn: async ({queryKey}) => {
       const res: DataResponse<{
         messages: {
@@ -37,6 +37,9 @@ export default function useFetchNotify() {
       }
     },
     refetchOnWindowFocus: false,
+    refetchInterval: false,
+    refetchOnMount: false,
+    refetchIntervalInBackground: false,
   });
 
   const onFetchNextPage = () => {
@@ -44,8 +47,13 @@ export default function useFetchNotify() {
   };
 
   useEffect(() => {
+    if (!data?.notifications?.length) {
+      return;
+    }
+
     setNotifys(prev => [...prev, ...(data?.notifications ?? [])]);
-  }, [data?.notifications]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.notifications?.length]);
 
   return {
     notifys,

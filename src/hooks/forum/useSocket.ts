@@ -10,6 +10,9 @@ export default function useSocket() {
   const {data: user, logout} = useAuth();
 
   useEffect(() => {
+    if (!user?.accessToken || !user?.notificationRoom) {
+      return;
+    }
     try {
       const socketIns = io(API_SOCKET, {
         withCredentials: true,

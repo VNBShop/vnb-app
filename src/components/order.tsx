@@ -176,7 +176,7 @@ export default function AllOrder({navigation, status}: IProps) {
                 style={{
                   justifyContent: 'space-between',
                   flexDirection: 'row',
-                  alignItems: 'center',
+                  alignItems: 'flex-start',
                 }}>
                 <Text style={common.text_gray}>
                   {item?.orderDate
@@ -184,21 +184,42 @@ export default function AllOrder({navigation, status}: IProps) {
                     : '-'}
                 </Text>
 
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 4,
-                  }}>
-                  <Text>Total: </Text>
-                  <Text style={common.text_secondary}>
-                    {(
-                      item?.totalPrice - (item?.totalDiscount ?? 0)
-                    ).toLocaleString('vi-VI', {
-                      currency: 'VND',
-                      style: 'currency',
-                    })}
-                  </Text>
+                <View>
+                  {!!item?.totalDiscount && (
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 4,
+                      }}>
+                      <Text>Discount: </Text>
+                      <Text style={common.text_success}>
+                        -
+                        {item.totalDiscount.toLocaleString('vi-VI', {
+                          currency: 'VND',
+                          style: 'currency',
+                        })}
+                      </Text>
+                    </View>
+                  )}
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'flex-end',
+                      marginTop: 4,
+                      gap: 4,
+                    }}>
+                    <Text>Total: </Text>
+                    <Text style={common.text_secondary}>
+                      {(
+                        item?.totalPrice - (item?.totalDiscount ?? 0)
+                      ).toLocaleString('vi-VI', {
+                        currency: 'VND',
+                        style: 'currency',
+                      })}
+                    </Text>
+                  </View>
                 </View>
               </View>
 

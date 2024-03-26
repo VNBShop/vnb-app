@@ -1,6 +1,8 @@
 /* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {
   FlatList,
   RefreshControl,
@@ -9,19 +11,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {Notification, Post} from '../../types/forum';
+import {RootStackProps} from '../../types/route';
 import SafeArea from '../UIkit/layouts/safe-area';
 import {color} from '../UIkit/palette';
 import {common, flex} from '../UIkit/styles';
-import {search_gray} from '../assets';
+import {bellWhite, commentWhite, heartWhite, search_gray} from '../assets';
 import ModalSearchForum from '../components/modal-search-forum';
 import ChatCardSkeleton from '../components/skeleton/chat-card-skeleton';
 import Avatar from '../components/ui/avatar';
-import {IconOutline} from '../components/ui/icon';
+import {Icon, IconOutline} from '../components/ui/icon';
 import {useNotifyContext} from '../context/notify';
-import {Notification, Post} from '../../types/forum';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackProps} from '../../types/route';
 
 export default function NotificationScreen() {
   const noti = useNotifyContext();
@@ -86,11 +86,41 @@ export default function NotificationScreen() {
               })
             }
             style={[styles.notifyItem, !item?.isRead && styles.notRead]}>
-            <Avatar
-              size={50}
-              source={item?.actorAvatar ?? ''}
-              username={item?.actorName ?? 'Z'}
-            />
+            <View style={{position: 'relative'}}>
+              <Avatar
+                size={50}
+                source={item?.actorAvatar ?? ''}
+                username={item?.actorName ?? 'Z'}
+              />
+
+              <View
+                style={{
+                  position: 'absolute',
+                  bottom: -4,
+                  right: 0,
+                  width: 23,
+                  height: 23,
+                  borderRadius: 9999,
+                  backgroundColor: item?.content?.includes('commented')
+                    ? color?.success
+                    : item?.content?.includes('reacted')
+                    ? color?.secondary
+                    : color?.link,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Icon
+                  icon={
+                    item?.content?.includes('commented')
+                      ? commentWhite
+                      : item?.content?.includes('reacted')
+                      ? heartWhite
+                      : bellWhite
+                  }
+                  size={16}
+                />
+              </View>
+            </View>
 
             <Text style={styles.notifyContent} numberOfLines={2}>
               <Text style={common.fontBase}>{item?.actorName}</Text>{' '}
@@ -103,13 +133,15 @@ export default function NotificationScreen() {
         ListFooterComponent={
           <>
             {!noti?.isPending && !noti?.notifys?.length && (
-              <Text
-                style={{
-                  alignItems: 'center',
-                  color: color.gray,
-                }}>
-                You has no notifications yet!
-              </Text>
+              <View style={{alignSelf: 'center', marginTop: 16}}>
+                <Text
+                  style={{
+                    alignItems: 'center',
+                    color: color.gray,
+                  }}>
+                  You has no notifications yet!
+                </Text>
+              </View>
             )}
 
             {noti?.isPending && <ChatCardSkeleton />}
@@ -119,7 +151,7 @@ export default function NotificationScreen() {
         numColumns={1}
         onEndReachedThreshold={0.1}
         onEndReached={() => {
-          if (noti?.hasNextPage) {
+          if (noti?.hasNextPage && !noti?.isPending) {
             noti?.onFetchNextPage();
           }
         }}
