@@ -29,7 +29,7 @@ function App() {3213
                 translucent={true}
                 barStyle={'dark-content'}21
                 backgroundColor={'transparent'}
-              />
+              />123
               <Navigation />
               <LoadingScreen />
               <Toast />
