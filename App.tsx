@@ -27,7 +27,7 @@ function App() {3213
             <NotifyProvider>
               <StatusBar
                 translucent={true}
-                barStyle={'dark-content'}
+                barStyle={'dark-content'}21
                 backgroundColor={'transparent'}
               />
               <Navigation />
