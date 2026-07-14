@@ -13,7 +13,7 @@ import Toast from 'react-native-toast-message';
 import {common} from './src/UIkit/styles';
 import RQProvider from './src/components/provider';
 import LoadingScreen from './src/components/ui/loading-screen';
-import Navigation from './src/routes';
+import Navigation from './src/routes123
 import 'react-native-get-random-values';
 import {SocketProvider} from './src/context/socket';
 import {NotifyProvider} from './src/context/notify';
