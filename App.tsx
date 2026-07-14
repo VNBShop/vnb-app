@@ -18,7 +18,7 @@ import 'react-native-get-random-values';
 import {SocketProvider} from './src/context/socket';
 import {NotifyProvider} from './src/context/notify';
 
-function App() {
+function App() {3213
   return (
     <GestureHandlerRootView style={common.flex_full}>
       <SafeAreaProvider>
